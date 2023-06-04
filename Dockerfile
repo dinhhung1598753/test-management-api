@@ -21,7 +21,7 @@ WORKDIR /app
 COPY --from=build /app/target/Project_Design_I-0.0.1-SNAPSHOT.jar /app/app.jar
 
 # Expose the port that the application listens on
-EXPOSE 8080
+EXPOSE 8000
 
 # Set the command to run the application when the container starts
 CMD ["java", "-jar", "/app/app.jar"]

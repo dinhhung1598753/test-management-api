@@ -42,4 +42,4 @@ jobs:
             docker stop test-management-api || true
             docker rm test-management-api || true
             docker pull h1598753/test-management-api:latest
-            docker run -d --restart=always --name=test-management -p 8000:8000 h1598753/test-management-api:latest
+            docker run -d --restart=always --name=test-management-api -p 443:8000 h1598753/test-management-api:latest
