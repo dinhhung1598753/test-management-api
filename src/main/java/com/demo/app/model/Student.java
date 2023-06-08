@@ -3,6 +3,7 @@ package com.demo.app.model;
 import jakarta.persistence.*;
 
 import lombok.*;
+import org.hibernate.annotations.Nationalized;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -23,11 +24,15 @@ public class Student implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Nationalized
     @Column(name = "full_name")
     private String fullName;
 
     @Column(name = "code")
     private String code;
+
+    @Column(name = "course")
+    private int course;
 
     @Column(name = "birthday")
     private LocalDate birthday;

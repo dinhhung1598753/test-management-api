@@ -3,6 +3,7 @@ package com.demo.app.model;
 import jakarta.persistence.*;
 
 import lombok.*;
+import org.hibernate.annotations.Nationalized;
 
 import java.io.Serializable;
 import java.util.List;
@@ -23,6 +24,7 @@ public class Subject implements Serializable {
     private int id;
 
     @Column(name = "title")
+    @Nationalized
     private String title;
 
     @Column(name = "code", length = 10)

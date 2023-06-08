@@ -43,7 +43,9 @@ public class QuestionController {
                 .build();
         try {
             questionService.addQuestion(chapterId, request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage("Add question successfully !"));
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(new ResponseMessage("Add question successfully !"));
         } catch (IOException ex) {
             throw new FileInputException("Could not upload image !", HttpStatus.EXPECTATION_FAILED);
         }
@@ -74,12 +76,16 @@ public class QuestionController {
                 .level(level)
                 .build();
         questionService.updateQuestion(questionId, request);
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("Update question successfully !"));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ResponseMessage("Update question successfully !"));
     }
 
     @DeleteMapping(path = "/disable/{id}")
     public ResponseEntity<?> disableQuestion(@PathVariable(name = "id") int questionId){
         questionService.disableQuestion(questionId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .body(new ResponseMessage("Disable question successfully !"));
     }
 }

@@ -3,6 +3,7 @@ package com.demo.app.model;
 import jakarta.persistence.*;
 
 import lombok.*;
+import org.hibernate.annotations.Nationalized;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -21,6 +22,7 @@ public class Chapter implements Serializable {
     private int id;
 
     @Column(name = "title")
+    @Nationalized
     private String title;
 
     @Column(name = "[order]")

@@ -3,15 +3,18 @@ package com.demo.app.controller;
 import com.demo.app.dto.examClass.ClassRequest;
 import com.demo.app.dto.message.ResponseMessage;
 import com.demo.app.service.ExamClassService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/v1/class")
+@Tag(name = "Exam Class")
 @RequiredArgsConstructor
 @CrossOrigin(allowedHeaders = "*", origins = "*")
 public class ExamClassController {
@@ -19,9 +22,8 @@ public class ExamClassController {
     private final ExamClassService examClassService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createExamClass(@RequestBody ClassRequest request){
-        examClassService.createExamClass(request);
-        //Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public ResponseEntity<?> createExamClass(@RequestBody ClassRequest request, Principal principal){
+        examClassService.createExamClass(request, principal);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage("Create Exam Class successfully !"));
     }
 

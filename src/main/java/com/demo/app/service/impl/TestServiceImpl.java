@@ -2,6 +2,7 @@ package com.demo.app.service.impl;
 
 import com.demo.app.dto.answer.AnswerResponse;
 import com.demo.app.dto.question.QuestionResponse;
+import com.demo.app.dto.test.TestDetailRequest;
 import com.demo.app.dto.test.TestRequest;
 import com.demo.app.dto.test.TestDetailResponse;
 import com.demo.app.dto.test.TestResponse;
@@ -148,6 +149,22 @@ public class TestServiceImpl implements TestService {
             testSetQuestionAnswers.add(testSetQuestionAnswer);
         }
         testSetQuestionAnswerRepository.saveAll(testSetQuestionAnswers);
+    }
+    @Override
+    public void disableTest(int testId){
+        var test = testRepository.findById(testId).orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find any chapter with id %d", testId), HttpStatus.NOT_FOUND));
+        test.setEnabled(false);
+        testRepository.save(test);
+    }
+    @Override
+    @Transactional
+    public void updateTest(int testId, TestDetailRequest request){
+        var test = testRepository.findById(testId).orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find any chapter with id %d", testId), HttpStatus.NOT_FOUND));
+        var questions = request.getQuestionResponses().stream().map(questionResponse -> mapper.map(questionResponse, Question.class) ).collect(Collectors.toList());
+        test.setQuestions(questions);
+        var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        test.setTestDay(LocalDate.parse(request.getTestDay(), formatter));
+        testRepository.save(test);
     }
 
 }

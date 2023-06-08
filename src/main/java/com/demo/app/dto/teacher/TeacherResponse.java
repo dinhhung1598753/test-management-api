@@ -25,4 +25,6 @@ public class TeacherResponse {
 
     private String email;
 
+    private String code;
+
 }

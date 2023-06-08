@@ -30,27 +30,77 @@ import java.util.List;
 @AllArgsConstructor
 @CrossOrigin(allowedHeaders = "*", origins = "*")
 public class StudentController {
-    private final String EXAMPLE_LIST_STUDENT_RESPONSES = "[{\"id\":11,\"username\":\"AliceBouder00\",\"fullName\":\"Alice Boudering\",\"birthday\":\"2002-08-03\",\"phoneNumber\":\"0987654654\",\"email\":\"alicee@gmail.com\",\"code\":\"2.0205435E7\",\"gender\":\"FEMALE\"},{\"id\":12,\"username\":\"JohnBuford00\",\"fullName\":\"John Buford\",\"birthday\":\"2000-07-08\",\"phoneNumber\":\"0987654312\",\"email\":\"johnny00@gmail.com\",\"code\":\"2.0184235E7\",\"gender\":\"MALE\"}]";
-    private final String EXAMPLE_STUDENT_INFORMATION_CREATE_AND_UPDATE = "{\"username\":\"ThanhKien00\",\"email\":\"knkuro00@gmail.com\",\"password\":\"kien123\",\"fullName\":\"Nguyen Thanh Kien\",\"birthday\":\"2002-01-01\",\"gender\":\"MALE\",\"phoneNumber\":\"0987654321\",\"code\":\"20203478\"}";
-    private final String EXAMPLE_NO_DATA_IN_DB = "{\"message\":\"no information in database\"}";
-    private final String EXAMPLE_INFORMATION_NOT_FOUND = "{\"message\":\"information not found\"}";
-
+    private final String EXAMPLE_LIST_STUDENT_RESPONSES = """
+            [
+                {
+                    "id": 1,
+                    "username":"NguyenVanA00",
+                    "fullName":"Alice Boudering",
+                    "birthday":"2002-08-03",
+                    "phoneNumber":"0987654654",
+                    "email":"alicee@gmail.com",
+                    "code":"20201234",
+                    "gender":"FEMALE"
+                },
+                {
+                    "id":3,
+                    "username":"NguyenVanB01",
+                    "fullName":"Nguyen Van B",
+                    "birthday":"2000-07-08",
+                    "phoneNumber":"0987654312",
+                    "email":"vanb00@gmail.com",
+                    "code":"20181234",
+                    "gender":"MALE"
+                }
+            ]
+            """;
+    private final String EXAMPLE_STUDENT_INFORMATION_CREATE_AND_UPDATE = """
+            {
+                "username":"NguyenVanA00",
+                "email":"nguyenvana123@gmail.com",
+                "password":"vana123",
+                "fullName":"Nguyen Van A",
+                "course":"65",
+                "birthday":"2002-01-01",
+                "gender":"MALE",
+                "phoneNumber":"0987654321",
+                "code":"20201234"
+            }
+            """;
+    private final String EXAMPLE_NO_DATA_IN_DB = """
+            {
+                "message" : "no information in database"
+            }
+            """;
+    private final String EXAMPLE_INFORMATION_NOT_FOUND = """
+            {
+                "message" : "information not found"
+            }
+            """;
+    private final String EXAMPLE_UPDATE_SUCCESS = """
+            {
+                "message" : "Student with id = %d updated successfully !"
+            }
+            """;
     private final StudentService studentService;
 
     @PostMapping(path = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> importExcelFile(@RequestPart final MultipartFile file) throws FileInputException {
         studentService.saveStudentsExcelFile(file);
         String message = "Uploaded the file successfully: " + file.getOriginalFilename();
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ResponseMessage(message));
     }
 
     @GetMapping(path = "/export")
     public ResponseEntity<?> exportExcelFile() throws IOException {
-        String filename = "Students-" + System.currentTimeMillis() + ".xlsx";
+        String filename = "Students" + System.currentTimeMillis() + ".xlsx";
         var file = new InputStreamResource(studentService.exportStudentsExcel());
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-                .contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(file);
+                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+                .body(file);
     }
 
     @Operation(
@@ -60,37 +110,20 @@ public class StudentController {
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(
-                                    implementation = StudentRequest.class,
-                                    description = "Information's need to be sent to create s new student"
-                            ),
-                            examples = @ExampleObject(
-                                    value = EXAMPLE_STUDENT_INFORMATION_CREATE_AND_UPDATE
-                            )
-                    ),
-                    required = true
-            ),
+                            schema = @Schema(implementation = StudentRequest.class, description = "Information's need to be sent to create s new student"),
+                            examples = @ExampleObject(value = EXAMPLE_STUDENT_INFORMATION_CREATE_AND_UPDATE)),
+                    required = true),
             responses = {
                     @ApiResponse(
                             responseCode = "201",
                             description = "New Student is created successfully",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(
-                                            implementation = ResponseMessage.class,
-                                            description = "Create a new student"
-                                    ),
-                                    examples = @ExampleObject(
-                                            value = "New student is created"
-                                    )
-                            )
-                    ),
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ResponseMessage.class, description = "Create a new student"),
+                                    examples = @ExampleObject(value = "New student is created"))),
                     @ApiResponse(
                             responseCode = "409",
-                            description = "Information is duplicated"
-                    )
-            }
-    )
+                            description = "Information is duplicated")
+            })
     @PostMapping(path = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewStudent(@RequestBody @Valid StudentRequest request) {
         studentService.saveStudent(request);
@@ -108,47 +141,23 @@ public class StudentController {
                             description = "Return all information of students successfully",
                             content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(
-                                            implementation = List.class,
-                                            description = "Return a list"
-                                    ),
-                                    examples = @ExampleObject(
-                                            description = "Return a list",
-                                            value = EXAMPLE_LIST_STUDENT_RESPONSES
-                                    )
-                            )
-                    ),
+                                    schema = @Schema(implementation = List.class, description = "Return a list"),
+                                    examples = @ExampleObject(description = "Return a list", value = EXAMPLE_LIST_STUDENT_RESPONSES))),
                     @ApiResponse(
                             responseCode = "404",
                             description = "There is no student in database",
                             content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(
-                                            implementation = ResponseMessage.class,
-                                            description = "Information is incorrect"
-                                    ),
-                                    examples = @ExampleObject(
-                                            description = "Information is incorrect",
-                                            value = EXAMPLE_NO_DATA_IN_DB
-                                    )
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "401",
+                                    schema = @Schema(implementation = ResponseMessage.class, description = "Information is incorrect"),
+                                    examples = @ExampleObject(description = "Information is incorrect", value = EXAMPLE_NO_DATA_IN_DB))),
+                    @ApiResponse(responseCode = "401",
                             description = "Unauthorized",
                             content = @Content(
-                                    schema = @Schema(
-                                            implementation = String.class
-                                    ),
-                                    examples = @ExampleObject(
-                                            description = "Unauthorized",
-                                            value = "Error: Unauthorized"
-                                    )
+                                    schema = @Schema(implementation = String.class),
+                                    examples = @ExampleObject(description = "Unauthorized", value = "Error: Unauthorized")
                             )
-
                     )
-            }
-    )
+            })
     @GetMapping(path = "/list")
     public ResponseEntity<?> getAllStudents() {
         var studentResponses = studentService.getAllStudents();
@@ -163,77 +172,44 @@ public class StudentController {
                     description = "Information student update",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(
-                                    implementation = StudentRequest.class,
-                                    description = "Information student update"
-                            ),
-                            examples = @ExampleObject(
-                                    value = EXAMPLE_STUDENT_INFORMATION_CREATE_AND_UPDATE
-                            )
-                    ),
-                    required = true
-            ),
+                            schema = @Schema(implementation = StudentRequest.class, description = "Information student update"),
+                            examples = @ExampleObject(value = EXAMPLE_STUDENT_INFORMATION_CREATE_AND_UPDATE)), required = true),
             responses = {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Updated successfully",
                             content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(
-                                            implementation = ResponseMessage.class
-                                    ),
+                                    schema = @Schema(implementation = ResponseMessage.class),
                                     examples = @ExampleObject(
                                             description = "there is string announcement is returned to know that the student is updated",
-                                            value = "{\"message\":\"Student with id = %d updated successfully !\"}"
-                                    )
-
-                            )
-                    ),
+                                            value = EXAMPLE_UPDATE_SUCCESS))),
                     @ApiResponse(
                             responseCode = "404",
                             description = "Information not found",
                             content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(
-                                          implementation = ResponseMessage.class
-                                    ),
-                                    examples = @ExampleObject(
-                                            description = "Information is incorrect",
-                                            value = EXAMPLE_INFORMATION_NOT_FOUND
-                                    )
-                            )
-                    ),
+                                    schema = @Schema(implementation = ResponseMessage.class),
+                                    examples = @ExampleObject(description = "Information is incorrect", value = EXAMPLE_INFORMATION_NOT_FOUND))),
                     @ApiResponse(
                             responseCode = "401",
                             description = "Unauthorized",
-                            content = @Content(
-                                    schema = @Schema(
-                                            implementation = String.class
-                                    ),
-                                    examples = @ExampleObject(
-                                            description = "Unauthorized",
-                                            value = "Error: Unauthorized"
-                                    )
-                            )
-
+                            content = @Content(schema = @Schema(implementation = String.class),
+                                    examples = @ExampleObject(description = "Unauthorized", value = "Error: Unauthorized"))
                     )
-            }
-    )
+            })
     @PutMapping(path = "/update/{id}")
     public ResponseEntity<?> updateStudent(
-            @Parameter(name = "id",
-                    description = "This is the ID student need to be updated",
-                    example = "1")
-            @PathVariable(name = "id") int studentId,
-            @RequestBody StudentRequest request) {
+            @Parameter(name = "id", description = "This is the ID student need to be updated", example = "1") @PathVariable(name = "id") int studentId,
+            @Parameter(name = "password") @RequestBody StudentRequest request) {
         studentService.updateStudent(studentId, request);
         String message = String.format("Student with id = %d updated successfully !", studentId);
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.OK);
     }
 
     @Operation(
-            summary = "Delete student",
-            description = "Delete student in Database",
+            summary = "Disable student",
+            description = "Soft delete student in Database",
             method = "DELETE",
             responses = {
                     @ApiResponse(
@@ -245,35 +221,26 @@ public class StudentController {
                             description = "Information not found",
                             content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(
-                                            implementation = ResponseMessage.class
-                                    ),
+                                    schema = @Schema(implementation = ResponseMessage.class),
                                     examples = @ExampleObject(
                                             description = "Information is incorrect",
-                                            value = EXAMPLE_INFORMATION_NOT_FOUND
-                                    )
-                            )
+                                            value = EXAMPLE_INFORMATION_NOT_FOUND))
                     ),
                     @ApiResponse(
                             responseCode = "401",
                             description = "Unauthorized",
                             content = @Content(
-                                    schema = @Schema(
-                                            implementation = String.class
-                                    ),
-                                    examples = @ExampleObject(
-                                            description = "Unauthorized",
-                                            value = "Error: Unauthorized"
-                                    )
+                                    schema = @Schema(implementation = String.class),
+                                    examples = @ExampleObject(description = "Unauthorized", value = "Error: Unauthorized")
                             )
-
                     )
-            }
-    )
+            })
     @DeleteMapping(path = "/disable/{id}")
-    public ResponseEntity<?> disableStudent(@Parameter(description = "This is ID of student need to be deleted", example = "1")
-                                            @PathVariable(name = "id") int studentId) {
+    public ResponseEntity<?> disableStudent(
+            @Parameter(description = "This is ID of student need to be deleted", example = "1") @PathVariable(name = "id") int studentId){
         studentService.disableStudent(studentId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 }

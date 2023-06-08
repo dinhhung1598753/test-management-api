@@ -3,6 +3,7 @@ package com.demo.app.model;
 import jakarta.persistence.*;
 
 import lombok.*;
+import org.hibernate.annotations.Nationalized;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -10,7 +11,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "teacher", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "phone_number", name = "uni_phone_number")
+        @UniqueConstraint(columnNames = "phone_number", name = "uni_phone_number"),
+        @UniqueConstraint(columnNames = "code", name = "uni_code")
 })
 @Getter
 @Setter
@@ -24,6 +26,7 @@ public class Teacher implements Serializable {
     private int id;
 
     @Column(name = "full_name")
+    @Nationalized
     private String fullName;
 
     @Column(name = "birthday")
@@ -35,6 +38,9 @@ public class Teacher implements Serializable {
 
     @Column(name = "phone_number")
     private String phoneNumber;
+
+    @Column(name = "code")
+    private String code;
 
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
     private List<ExamClass> examClasses;
@@ -48,6 +54,4 @@ public class Teacher implements Serializable {
     @OneToOne
     @JoinColumn(referencedColumnName = "id", name = "user_id")
     private User user;
-
-
 }

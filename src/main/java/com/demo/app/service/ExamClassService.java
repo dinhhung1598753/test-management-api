@@ -4,11 +4,12 @@ import com.demo.app.dto.examClass.ClassRequest;
 import com.demo.app.dto.examClass.ClassResponse;
 import jakarta.transaction.Transactional;
 
+import java.security.Principal;
 import java.util.List;
 
 public interface ExamClassService {
     @Transactional
-    void createExamClass(ClassRequest request);
+    void createExamClass(ClassRequest request, Principal principal);
 
     void addStudentsToExamClass(int examClassId, List<Integer> studentIds);
 

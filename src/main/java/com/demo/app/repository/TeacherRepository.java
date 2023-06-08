@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
@@ -14,5 +15,10 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
 
     @Query("select t from Teacher t join User u on t.user.id = u.id where u.enabled = :enabled")
     List<Teacher> findByEnabled(@Param("enabled") boolean enabled);
+
+    @Query("select t from Teacher t join User u on t.user.id = u.id where u.username = :username")
+    Optional<Teacher> findByUsername(String username);
+
+    Boolean existsByCode(String code);
 }
 

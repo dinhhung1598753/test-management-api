@@ -17,6 +17,8 @@ public class StudentResponse {
 
     private String fullName;
 
+    private int course;
+
     private String birthday;
 
     private String gender;
@@ -27,4 +29,5 @@ public class StudentResponse {
 
     private String code;
 
+    private String joinDate;
 }

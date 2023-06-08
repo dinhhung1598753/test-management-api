@@ -2,6 +2,7 @@ package com.demo.app.util;
 
 import com.demo.app.model.Gender;
 import com.demo.app.model.Student;
+import com.demo.app.model.Teacher;
 import com.demo.app.model.User;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
@@ -28,7 +29,9 @@ public class ExcelUtils {
     private static final int COLUMN_INDEX_PHONE_NUMBER = 6;
     private static final int COLUMN_INDEX_CODE = 7;
     private static final int COLUMN_INDEX_ENABLED = 8;
-    private static final String[] HEADERs = {"Username", "Email", "Password", "Fullname", "Birthday", "Gender", "Phone Number", "Code", "Enabled"};
+
+    private static final int COLUMN_INDEX_COURSE = 9;
+    private static final String[] HEADERs = {"Username", "Email", "Password", "Fullname", "Birthday", "Gender", "Phone Number", "Code", "Enabled", "Course"};
     public static boolean hasExcelFormat(MultipartFile file) {
         return Objects.equals(file.getContentType(), TYPE);
     }
@@ -63,6 +66,7 @@ public class ExcelUtils {
                         case COLUMN_INDEX_GENDER -> student.setGender(Gender.valueOf(cell.getStringCellValue()));
                         case COLUMN_INDEX_PHONE_NUMBER -> student.setPhoneNumber(cell.getStringCellValue());
                         case COLUMN_INDEX_CODE -> student.setCode(String.valueOf(cell.getNumericCellValue()));
+                        case COLUMN_INDEX_COURSE -> student.setCourse((int) cell.getNumericCellValue());
                     }
                     userStudents.put(user, student);
                 });
@@ -91,6 +95,70 @@ public class ExcelUtils {
                 row.createCell(COLUMN_INDEX_PHONE_NUMBER).setCellValue(student.getPhoneNumber());
                 row.createCell(COLUMN_INDEX_CODE).setCellValue(student.getCode());
                 row.createCell(COLUMN_INDEX_ENABLED).setCellValue(student.getUser().isEnabled());
+                row.createCell(COLUMN_INDEX_COURSE).setCellValue(student.getCourse());
+            }
+            workbook.write(outputStream);
+            return new ByteArrayInputStream(outputStream.toByteArray());
+        }
+    }
+
+    public static Map<User, Teacher> excelFileToUserTeachers(MultipartFile file) throws IOException {
+        try (var inputStream = file.getInputStream();
+             var workbook = new XSSFWorkbook(inputStream)) {
+
+            var sheet = workbook.getSheetAt(0);
+            var userTeachers = new HashMap<User, Teacher>();
+
+            for (var row : sheet) {
+                if (row.getRowNum() == 0) {
+                    continue;
+                }
+                var user = new User();
+                user.setEnabled(true);
+                var teacher = new Teacher();
+                row.forEach(cell -> {
+                    switch (cell.getColumnIndex()) {
+                        case COLUMN_INDEX_USERNAME -> user.setUsername(cell.getStringCellValue());
+                        case COLUMN_INDEX_EMAIL -> user.setEmail(cell.getStringCellValue());
+                        case COLUMN_INDEX_PASSWORD -> user.setPassword(cell.getStringCellValue());
+                        case COLUMN_INDEX_FULLNAME -> teacher.setFullName(cell.getStringCellValue());
+                        case COLUMN_INDEX_BIRTHDAY -> {
+                            Date date = cell.getDateCellValue();
+                            LocalDate birthday = Instant.ofEpochMilli(date.getTime())
+                                    .atZone(ZoneId.systemDefault())
+                                    .toLocalDate();
+                            teacher.setBirthday(birthday);
+                        }
+                        case COLUMN_INDEX_GENDER -> teacher.setGender(Gender.valueOf(cell.getStringCellValue()));
+                        case COLUMN_INDEX_PHONE_NUMBER -> teacher.setPhoneNumber(cell.getStringCellValue());
+                        case COLUMN_INDEX_CODE -> teacher.setCode(String.valueOf(cell.getNumericCellValue()));
+                    }
+                    userTeachers.put(user, teacher);
+                });
+            }
+            return userTeachers;
+        }
+    }
+    public static ByteArrayInputStream teachersToExcelFile(List<Teacher> teachers) throws IOException {
+        try( var outputStream = new ByteArrayOutputStream();
+             var workbook = new XSSFWorkbook()){
+            var sheet = workbook.createSheet("Teachers");
+            var headerRow = sheet.createRow(0);
+            for (int col = 0; col < HEADERs.length; col++){
+                var cell = headerRow.createCell(col);
+                cell.setCellValue(HEADERs[col]);
+            }
+            var rowIndex = 1;
+            for(var teacher : teachers){
+                var row = sheet.createRow(rowIndex++);
+                row.createCell(COLUMN_INDEX_USERNAME).setCellValue(teacher.getUser().getUsername());
+                row.createCell(COLUMN_INDEX_EMAIL).setCellValue(teacher.getUser().getEmail());
+                row.createCell(COLUMN_INDEX_FULLNAME).setCellValue(teacher.getFullName());
+                row.createCell(COLUMN_INDEX_BIRTHDAY).setCellValue(teacher.getBirthday());
+                row.createCell(COLUMN_INDEX_GENDER).setCellValue(teacher.getGender().toString());
+                row.createCell(COLUMN_INDEX_PHONE_NUMBER).setCellValue(teacher.getPhoneNumber());
+                row.createCell(COLUMN_INDEX_CODE).setCellValue(teacher.getCode());
+                row.createCell(COLUMN_INDEX_ENABLED).setCellValue(teacher.getUser().isEnabled());
             }
             workbook.write(outputStream);
             return new ByteArrayInputStream(outputStream.toByteArray());

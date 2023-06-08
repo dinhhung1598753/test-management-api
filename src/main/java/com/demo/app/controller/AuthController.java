@@ -4,12 +4,10 @@ import com.demo.app.dto.auth.AuthenticationRequest;
 import com.demo.app.dto.auth.AuthenticationResponse;
 import com.demo.app.dto.auth.RegisterRequest;
 import com.demo.app.dto.message.ErrorResponse;
-import com.demo.app.dto.message.ResponseMessage;
 import com.demo.app.exception.FieldExistedException;
 import com.demo.app.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,7 +37,7 @@ public class AuthController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Sign In Successfully !",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseMessage.class))
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthenticationResponse.class))
                     ),
                     @ApiResponse(
                             responseCode = "401",
@@ -53,7 +51,11 @@ public class AuthController {
         AuthenticationResponse authResponse = authService.login(request);
         return ResponseEntity.ok()
                 .header("token", authResponse.getAccessToken())
-                .body(new ResponseMessage("Sign in successfully !"));
+                .body(AuthenticationResponse.builder()
+                        .message("Sign in successfully !")
+                        .accessToken(authResponse.getAccessToken())
+                        .refreshToken(authResponse.getRefreshToken())
+                        .build());
     }
 
     @Operation(
@@ -72,12 +74,12 @@ public class AuthController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Sign Up Successfully !",
-                            content = @Content(mediaType = "application/json", examples = @ExampleObject())
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthenticationResponse.class))
                     ),
                     @ApiResponse(
                             responseCode = "409",
                             description = "Username or email already taken !",
-                            content = @Content(mediaType = "application/json")
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
                     )
             }
     )
@@ -86,7 +88,11 @@ public class AuthController {
         var authResponse = authService.register(registerRequest, request);
         return ResponseEntity.ok()
                 .header("token", authResponse.getAccessToken())
-                .body(new ResponseMessage("Sign in successfully !"));
+                .body(AuthenticationResponse.builder()
+                        .message("Sign up successfully !")
+                        .accessToken(authResponse.getAccessToken())
+                        .refreshToken(authResponse.getRefreshToken())
+                        .build());
     }
 
     @PostMapping(path = "/refresh-token")

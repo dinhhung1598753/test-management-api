@@ -7,6 +7,7 @@ import com.demo.app.dto.subject.SubjectResponse;
 import com.demo.app.dto.teacher.TeacherResponse;
 import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.exception.FieldExistedException;
+import com.demo.app.exception.InvalidRoleException;
 import com.demo.app.model.ExamClass;
 import com.demo.app.repository.ExamClassRepository;
 import com.demo.app.repository.StudentRepository;
@@ -19,6 +20,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,12 +40,16 @@ public class ExamClassServiceImpl implements ExamClassService {
 
     @Override
     @Transactional
-    public void createExamClass(ClassRequest request) {
+    public void createExamClass(ClassRequest request, Principal principal) {
         if(examClassRepository.existsByCode(request.getCode())){
             throw new FieldExistedException("Class's code already taken !", HttpStatus.CONFLICT);
         }
+        var teacher = teacherRepository.findByUsername(principal.getName()).orElseThrow(
+                () -> new InvalidRoleException("You don't have role to do this action!", HttpStatus.UNAUTHORIZED)
+        );
 
         var examClass = mapper.map(request, ExamClass.class);
+        examClass.setTeacher(teacher);
         examClassRepository.save(examClass);
     }
 

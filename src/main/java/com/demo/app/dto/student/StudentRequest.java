@@ -26,6 +26,8 @@ public class StudentRequest {
     @NotBlank(message = "Please enter your name !")
     private String fullName;
 
+    private int course;
+
     private String birthday;
 
     private String gender;

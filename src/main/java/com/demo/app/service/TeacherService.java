@@ -16,5 +16,4 @@ public interface TeacherService {
 
     void disableTeacher(int teacherId) throws EntityNotFoundException;
 
-    void deleteTeacher(int teacherId) throws EntityNotFoundException;
 }

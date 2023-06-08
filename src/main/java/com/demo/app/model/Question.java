@@ -3,6 +3,8 @@ package com.demo.app.model;
 import lombok.*;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Nationalized;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -24,6 +26,7 @@ public class Question implements Serializable {
 
     @Column(name = "topic_text")
     @EqualsAndHashCode.Include
+    @Nationalized
     private String topicText;
 
     @Lob

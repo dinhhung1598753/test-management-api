@@ -1,5 +1,6 @@
 package com.demo.app.service;
 
+import com.demo.app.dto.test.TestDetailRequest;
 import com.demo.app.dto.test.TestRequest;
 import com.demo.app.dto.test.TestDetailResponse;
 import com.demo.app.dto.test.TestResponse;
@@ -17,4 +18,9 @@ public interface TestService {
     List<TestResponse> getAllTests();
 
     void createTestSetFromTest(int testId, TestSetRequest request);
+
+    void disableTest(int testId);
+
+    @Transactional
+    void updateTest(int testId, TestDetailRequest request);
 }

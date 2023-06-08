@@ -28,6 +28,8 @@ public class TeacherController {
 
     private final String EXAMPLE_INFORMATION_NOT_FOUND = "{\"message\":\"information not found\"}";
 
+    private final String EXAMPLE_STUDENT_INFORMATION_CREATE_AND_UPDATE = "";
+
     private final TeacherService teacherService;
 
 
@@ -210,10 +212,4 @@ public class TeacherController {
         return ResponseEntity.noContent().build();
     }
 
-
-    @DeleteMapping(path = "/delete/{id}")
-    public ResponseEntity<?> deleteTeacher(@PathVariable("id") int teacherId){
-        teacherService.deleteTeacher(teacherId);
-        return ResponseEntity.noContent().build();
-    }
 }

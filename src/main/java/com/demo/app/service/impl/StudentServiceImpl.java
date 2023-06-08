@@ -86,6 +86,7 @@ public class StudentServiceImpl implements StudentService {
         checkIfUsernameExists(request.getUsername());
         checkIfEmailExists(request.getEmail());
         checkIfPhoneNumberExists(request.getPhoneNumber());
+        checkIfCodeExists(request.getCode());
 
         List<Role> roles = roleRepository.findAllByRoleNameIn(Arrays.asList(Role.RoleType.ROLE_USER, Role.RoleType.ROLE_STUDENT));
         User user = mapper.map(request, User.class);
@@ -125,15 +126,18 @@ public class StudentServiceImpl implements StudentService {
         if (!existStudent.getUser().getEmail().equals(request.getEmail())) {
             checkIfEmailExists(request.getEmail());
         }
+        if (!existStudent.getCode().equals(request.getCode())) {
+            checkIfCodeExists(request.getCode());
+        }
 
         var student = mapper.map(request, Student.class);
         student.setJoinDate(existStudent.getJoinDate());
         student.setUser(existStudent.getUser());
         student.setId(existStudent.getId());
         var user = student.getUser();
-        user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
         user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.passwordEncode().encode(request.getPassword()));
         studentRepository.save(student);
     }
 
@@ -163,4 +167,11 @@ public class StudentServiceImpl implements StudentService {
             throw new FieldExistedException("Email already taken!", HttpStatus.CONFLICT);
         }
     }
+
+    private void checkIfCodeExists(String code) throws FieldExistedException {
+        if (studentRepository.existsByCode(code)) {
+            throw new FieldExistedException("Code already taken!", HttpStatus.CONFLICT);
+        }
+    }
+
 }

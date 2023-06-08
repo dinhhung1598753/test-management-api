@@ -42,6 +42,7 @@ public class TeacherServiceImpl implements TeacherService {
         checkIfUsernameExists(request.getUsername());
         checkIfEmailExists(request.getEmail());
         checkIfPhoneNumberExists(request.getPhoneNumber());
+        checkIfCodeExists(request.getCode());
 
         var roles = roleRepository.findAllByRoleNameIn(Arrays.asList(Role.RoleType.ROLE_USER, Role.RoleType.ROLE_TEACHER));
 
@@ -83,6 +84,9 @@ public class TeacherServiceImpl implements TeacherService {
         if (!existTeacher.getUser().getEmail().equals(request.getEmail())) {
             checkIfEmailExists(request.getEmail());
         }
+        if (!existTeacher.getCode().equals(request.getCode())) {
+            checkIfCodeExists(request.getCode());
+        }
 
         Teacher teacher = mapper.map(request, Teacher.class);
         teacher.setId(existTeacher.getId());
@@ -102,20 +106,6 @@ public class TeacherServiceImpl implements TeacherService {
         teacherRepository.save(existTeacher);
     }
 
-    @Override
-    @Transactional
-    public void deleteTeacher(int teacherId) throws EntityNotFoundException{
-        var existTeacher = teacherRepository.findById(teacherId).
-                orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Not found any teacher with id = %d", teacherId), HttpStatus.NOT_FOUND)
-                );
-        var user = existTeacher.getUser();
-        user.setRoles(null);
-        userRepository.save(user);
-        teacherRepository.delete(existTeacher);
-        userRepository.delete(user);
-    }
-
     private void checkIfUsernameExists(String username) throws FieldExistedException {
         if (userRepository.existsByUsername(username)) {
             throw new FieldExistedException("Username already taken!", HttpStatus.CONFLICT);
@@ -131,6 +121,12 @@ public class TeacherServiceImpl implements TeacherService {
     private void checkIfEmailExists(String email) throws FieldExistedException {
         if (userRepository.existsByEmail(email)) {
             throw new FieldExistedException("Email already taken!", HttpStatus.CONFLICT);
+        }
+    }
+
+    private void checkIfCodeExists(String code) throws FieldExistedException {
+        if (teacherRepository.existsByCode(code)) {
+            throw new FieldExistedException("Code already taken!", HttpStatus.CONFLICT);
         }
     }
 }

@@ -72,7 +72,8 @@ public class User implements Serializable, UserDetails {
         return this
                 .getRoles()
                 .stream()
-                .map((role -> new SimpleGrantedAuthority(role.getRoleName().toString()))).collect(Collectors.toList());
+                .map((role -> new SimpleGrantedAuthority(role.getRoleName().toString())))
+                .collect(Collectors.toList());
     }
 
     @Override
