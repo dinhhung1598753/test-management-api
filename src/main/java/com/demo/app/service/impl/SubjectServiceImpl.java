@@ -44,7 +44,7 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public List<SubjectResponse> getAllSubjects() throws EntityNotFoundException{
-        List<Subject> subjects = subjectRepository.findAll();
+        List<Subject> subjects = subjectRepository.findByEnabledIsTrue();
         if (subjects.size() == 0){
             throw new EntityNotFoundException("Not found any subject !", HttpStatus.NOT_FOUND);
         }

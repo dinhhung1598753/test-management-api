@@ -75,7 +75,7 @@ def load_model(num_classes=1, model_name="mbv3", checkpoint_path=None, device=No
     return model
 
 
-CHECKPOINT_MODEL_PATH = r"Data/Model/model_mbv3_iou_mix_2C049.pth"
+CHECKPOINT_MODEL_PATH = r"Model/model_mbv3_iou_mix_2C049.pth"
 
 trained_model = load_model(num_classes=2, model_name="mbv3",
                            checkpoint_path=CHECKPOINT_MODEL_PATH, device=device)
@@ -411,7 +411,7 @@ def get_answer(img, number_answer):
     #     cv2.imwrite(f"a10.{i}.jpg", answer)
     # cv2.waitKey(0)
     '''================ Yolo predict ================================'''
-    pWeight = 'Data/Model/best.pt'
+    pWeight = './Model/best.pt'
     model = YOLO(pWeight)
     # Get result
     dict_results = {}
@@ -622,7 +622,7 @@ def get_info(img):
     list_info_cropped = process_info_blocks(box_info)
 
     '''================ Yolo predict ================================'''
-    pWeight = './Data/Model/info.pt'
+    pWeight = './Model/info.pt'
     model = YOLO(pWeight)
     # Get result
     dict_results = {}
@@ -651,7 +651,7 @@ if __name__ == '__main__':
     parser.add_argument('number_answer', help='number')
     args = parser.parse_args()
 
-    path = './Data/Test/' + args.input
+    path = './images/answer-sheets/exam-class1/' + args.input
 
     image = cv2.imread(path,
                        cv2.IMREAD_COLOR)[:, :, ::-1]

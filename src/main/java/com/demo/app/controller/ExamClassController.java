@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/v1/class")
-@Tag(name = "Exam Class")
+@Tag(name = "Exam-Class")
 @RequiredArgsConstructor
 @CrossOrigin(allowedHeaders = "*", origins = "*")
 public class ExamClassController {

@@ -88,7 +88,9 @@ public class StudentServiceImpl implements StudentService {
         checkIfPhoneNumberExists(request.getPhoneNumber());
         checkIfCodeExists(request.getCode());
 
-        List<Role> roles = roleRepository.findAllByRoleNameIn(Arrays.asList(Role.RoleType.ROLE_USER, Role.RoleType.ROLE_STUDENT));
+        List<Role> roles = roleRepository.findAllByRoleNameIn(
+                Arrays.asList(Role.RoleType.ROLE_USER, Role.RoleType.ROLE_STUDENT)
+        );
         User user = mapper.map(request, User.class);
         user.setPassword(passwordEncoder.passwordEncode().encode(request.getPassword()));
         user.setRoles(roles);

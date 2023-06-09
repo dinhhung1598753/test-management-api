@@ -51,6 +51,5 @@ public class FileStorageServiceImpl implements FileStorageService {
                 throw new FileInputException("File format must be .jpg, .jpeg or .png", HttpStatus.BAD_REQUEST);
             }
         }
-
     }
 }

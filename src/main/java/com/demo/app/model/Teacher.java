@@ -1,13 +1,10 @@
 package com.demo.app.model;
 
 import jakarta.persistence.*;
-
 import lombok.*;
-import org.hibernate.annotations.Nationalized;
 
-import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.List;
+
 
 @Entity
 @Table(name = "teacher", uniqueConstraints = {
@@ -19,28 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Teacher implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-
-    @Column(name = "full_name")
-    @Nationalized
-    private String fullName;
-
-    @Column(name = "birthday")
-    private LocalDate birthday;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "gender", length = 10)
-    private Gender gender;
-
-    @Column(name = "phone_number")
-    private String phoneNumber;
-
-    @Column(name = "code")
-    private String code;
+public class Teacher extends Person {
 
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
     private List<ExamClass> examClasses;

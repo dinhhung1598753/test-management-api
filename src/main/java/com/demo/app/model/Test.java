@@ -37,6 +37,9 @@ public class Test implements Serializable {
     @Column(name = "updated_at")
     private LocalDate updatedAt;
 
+    @Column(name = "question_quantity")
+    private int questionQuantity;
+
     @OneToMany(mappedBy = "test", cascade = CascadeType.ALL)
     private Set<TestSet> testSets;
 

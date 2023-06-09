@@ -1,0 +1,58 @@
+.a-sidebar-menu-title {
+  margin-left: 10px;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+}
+
+.a-sidebar-layout {
+  position: fixed;
+  left: 0px;
+  top: var(--height-header);
+  z-index: 1000;
+  border-right: 1px solid #ececf5;
+  background-color: var(--hust-color);
+
+  .a-scrollable {
+    height: 100%;
+    overflow-y: scroll;
+  }
+
+  .a-sidebar {
+    height: calc(100vh - var(--height-header));
+    overflow-y: scroll;
+    overflow-x: hidden;
+
+    .ant-menu-inline {
+      border-right: 0px;
+      background-color: var(--hust-color);
+    }
+
+    .ant-menu-inline-collapsed {
+      width: var(--width-sidebar-collapse);
+    }
+  }
+
+  .ant-menu-title-content {
+    font-size: 16px;
+    color: #ffff;
+  }
+
+  .ant-menu-item-group-title {
+    color: #fff;
+    font-size: 18px;
+  }
+
+  .ant-menu-vertical {
+    border-right: 0px;
+    background-color: var(--hust-color);
+  }
+
+  .ant-menu-submenu-arrow {
+    color: #ffff;
+  }
+
+}
+
+.a-collapsed {
+  width: var(--width-sidebar-collapse) !important;
+}

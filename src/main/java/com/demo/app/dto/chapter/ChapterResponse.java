@@ -9,6 +9,8 @@ import lombok.*;
 @NoArgsConstructor
 public class ChapterResponse {
 
+    private int id;
+
     private String title;
 
     private String order;
