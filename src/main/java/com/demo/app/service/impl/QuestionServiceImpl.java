@@ -1,6 +1,6 @@
 package com.demo.app.service.impl;
 
-import com.demo.app.dto.answer.AnswerResponse;
+import com.demo.app.dto.chapter.ChapterResponse;
 import com.demo.app.dto.question.QuestionRequest;
 import com.demo.app.dto.question.QuestionResponse;
 import com.demo.app.exception.EntityNotFoundException;
@@ -37,9 +37,13 @@ public class QuestionServiceImpl implements QuestionService {
         var chapter = subject.getChapters().get(request.getChapterNo());
         var question = mapper.map(request, Question.class);
         question.setAnswers(
-                request.getAnswerRequests()
+                request.getAnswers()
                         .stream()
-                        .map(answerRequest -> mapper.map(answerRequest, Answer.class))
+                        .map(answerRequest -> {
+                            var answer = mapper.map(answerRequest, Answer.class);
+                            answer.setQuestion(question);
+                            return answer;
+                        })
                         .collect(Collectors.toList())
         );
         question.setChapter(chapter);
@@ -49,35 +53,36 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     @Transactional
-    public List<QuestionResponse> getAllQuestionsBySubjectCode(String code){
+    public List<QuestionResponse> getAllQuestionsBySubjectCode(String code) {
         var subject = subjectRepository.findByCode(code).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Subject with code: %s not found !", code), HttpStatus.NOT_FOUND)
         );
         var questions = new HashSet<Question>();
         subject.getChapters().forEach(chapter -> {
-            for (var question : chapter.getQuestions()){
-                if (question.isEnabled()){
+            for (var question : chapter.getQuestions()) {
+                if (question.isEnabled()) {
                     questions.add(question);
                 }
             }
         });
-        return questions.stream().map(question -> {
-            var response = mapper.map(question, QuestionResponse.class);
-            question.getAnswers().forEach(answer -> response.getAnswers().add(mapper.map(answer, AnswerResponse.class)));
-            return response;
-        }).collect(Collectors.toList());
+        return questions.stream()
+                .map(question -> {
+                    var questionResponse = mapper.map(question, QuestionResponse.class);
+                    questionResponse.setChapter(mapper.map(question.getChapter(), ChapterResponse.class));
+                    return questionResponse;
+                })
+                .collect(Collectors.toList());
     }
-
 
 
     @Override
     @Transactional
-    public void updateQuestion(int questionId, QuestionRequest request){
+    public void updateQuestion(int questionId, QuestionRequest request) {
         var existedQuestion = questionRepository.findById(questionId).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Not found any question with id: %d !", questionId), HttpStatus.NOT_FOUND)
         );
         var question = mapper.map(request, Question.class);
-        if(!existedQuestion.equals(question)){
+        if (!existedQuestion.equals(question)) {
             existedQuestion.setTopicText(question.getTopicText());
             existedQuestion.setTopicImage(question.getTopicImage());
             existedQuestion.setLevel(question.getLevel());
@@ -88,7 +93,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     @Transactional
-    public void disableQuestion(int questionId){
+    public void disableQuestion(int questionId) {
         var question = questionRepository.findById(questionId).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Not found any question with id: %d !", questionId), HttpStatus.NOT_FOUND)
         );

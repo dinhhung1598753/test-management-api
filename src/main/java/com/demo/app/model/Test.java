@@ -31,14 +31,17 @@ public class Test implements Serializable {
     @Column(name = "total_point")
     private double totalPoint;
 
+    @Column(name = "question_quantity")
+    private int questionQuantity;
+
+    @Column(name = "duration")
+    private int duration;
+
     @Column(name = "created_at")
     private LocalDate createdAt;
 
     @Column(name = "updated_at")
     private LocalDate updatedAt;
-
-    @Column(name = "question_quantity")
-    private int questionQuantity;
 
     @OneToMany(mappedBy = "test", cascade = CascadeType.ALL)
     private Set<TestSet> testSets;
@@ -62,6 +65,7 @@ public class Test implements Serializable {
         totalPoint = 100.0d;
         enabled = true;
     }
+
     @PreUpdate
     private void preUpdate(){
         updatedAt = LocalDate.now();

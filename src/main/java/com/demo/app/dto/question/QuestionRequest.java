@@ -26,7 +26,7 @@ public class QuestionRequest {
     @NotBlank(message = "Please enter question's level !")
     private String level;
 
-    private List<AnswerRequest> answerRequests;
+    private List<AnswerRequest> answers;
 
-    private byte[] questionImage;
+    private String questionImage;
 }

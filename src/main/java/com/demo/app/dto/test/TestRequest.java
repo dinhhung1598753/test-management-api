@@ -26,4 +26,8 @@ public class TestRequest {
     @NotBlank(message = "Please enter test day !")
     private String testDay;
 
+    @Min(value = 1, message = "Duration quantity must be greater than 1 !")
+    @Max(value = 60, message = "Duration quantity must be fewer than 60 !")
+    private int duration;
+
 }

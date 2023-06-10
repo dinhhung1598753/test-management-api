@@ -1,5 +1,6 @@
 package com.demo.app.dto.answer;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ public class AnswerResponse {
 
     private String content;
 
+    @JsonProperty("isCorrected")
     private boolean isCorrected;
 
 }

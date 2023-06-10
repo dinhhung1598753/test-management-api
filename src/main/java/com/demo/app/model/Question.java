@@ -7,7 +7,6 @@ import org.hibernate.annotations.Nationalized;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -32,7 +31,7 @@ public class Question implements Serializable {
     @Lob
     @Column(name = "topic_image", length = 100000)
     @EqualsAndHashCode.Include
-    private byte[] topicImage;
+    private String topicImage;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "level")
@@ -68,7 +67,7 @@ public class Question implements Serializable {
         return "Question{" +
                 "id=" + id +
                 ", topicText='" + topicText + '\'' +
-                ", topicImage=" + Arrays.toString(topicImage) +
+                ", topicImage=" + topicImage +
                 ", level=" + level +
                 ", createdDate=" + createdDate +
                 ", enabled=" + enabled +

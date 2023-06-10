@@ -12,6 +12,10 @@ public class AuthenticationResponse {
 
     private String message;
 
+    private String username;
+
+    private String email;
+
     @JsonProperty("access_token")
     private String accessToken;
 

@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TestDetailRequest {
+
     @NotBlank(message = "Not empty!")
     private String testDay;
 

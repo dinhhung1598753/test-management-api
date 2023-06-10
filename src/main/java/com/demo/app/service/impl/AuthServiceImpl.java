@@ -54,11 +54,9 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public AuthenticationResponse register(RegisterRequest registerRequest, HttpServletRequest request) {
-        if(userRepository.existsByEmail(registerRequest.getEmail())){
-            throw new FieldExistedException("Email already taken!", HttpStatus.CONFLICT);
-        }
-        if(userRepository.existsByUsername(registerRequest.getUsername())){
-            throw new FieldExistedException("Username already taken!", HttpStatus.CONFLICT);
+        if(userRepository.existsByEmail(registerRequest.getEmail()) ||
+                userRepository.existsByUsername(registerRequest.getUsername())){
+            throw new FieldExistedException("Email or Username already taken!", HttpStatus.CONFLICT);
         }
 
         var roles = Collections.singletonList(roleRepository.findByRoleName(Role.RoleType.ROLE_USER).get());
@@ -75,15 +73,17 @@ public class AuthServiceImpl implements AuthService {
         saveUserToken(savedUser,jwtToken);
 
         return AuthenticationResponse.builder()
+                .username(user.getUsername())
+                .email(user.getEmail())
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .build();
     }
+
     private String verificationEmailUrl(HttpServletRequest request) {
         return "http://" +request.getServerName()+":"
                 +request.getServerPort()+request.getContextPath();
     }
-
 
     @Override
     @Transactional
@@ -116,6 +116,8 @@ public class AuthServiceImpl implements AuthService {
         revokeAllUserTokens(user);
         saveUserToken(user, jwtToken);
         return AuthenticationResponse.builder()
+                .username(user.getUsername())
+                .email(user.getEmail())
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .build();

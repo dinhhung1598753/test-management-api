@@ -1,6 +1,7 @@
 package com.demo.app.dto.question;
 
 import com.demo.app.dto.answer.AnswerResponse;
+import com.demo.app.dto.chapter.ChapterResponse;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -21,6 +22,8 @@ public class QuestionResponse {
     private String level;
 
     private String createdDate;
+
+    private ChapterResponse chapter;
 
     private List<AnswerResponse> answers = new ArrayList<>();
 

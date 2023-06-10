@@ -26,7 +26,11 @@ import java.util.List;
 @CrossOrigin(allowedHeaders = "*", origins = "*")
 public class TeacherController {
 
-    private final String EXAMPLE_INFORMATION_NOT_FOUND = "{\"message\":\"information not found\"}";
+    private final String EXAMPLE_INFORMATION_NOT_FOUND = """
+        {
+            "message" : "information not found"\s
+        }
+    """;
 
     private final String EXAMPLE_STUDENT_INFORMATION_CREATE_AND_UPDATE = "";
 

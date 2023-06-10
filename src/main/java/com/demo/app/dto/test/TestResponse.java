@@ -19,4 +19,11 @@ public class TestResponse {
     private double totalPoint;
 
     private String testDay;
+
+    private String subjectCode;
+
+    private String subjectTitle;
+
+    private int duration;
+
 }

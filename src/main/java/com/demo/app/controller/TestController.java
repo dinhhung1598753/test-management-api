@@ -3,6 +3,7 @@ package com.demo.app.controller;
 import com.demo.app.dto.message.ResponseMessage;
 import com.demo.app.dto.test.TestDetailRequest;
 import com.demo.app.dto.test.TestDetailResponse;
+import com.demo.app.dto.test.TestQuestionRequest;
 import com.demo.app.dto.test.TestRequest;
 import com.demo.app.dto.testset.TestSetRequest;
 import com.demo.app.exception.EntityNotFoundException;
@@ -43,14 +44,27 @@ public class TestController {
                 .body(new ResponseMessage("Created test successfully !"));
     }
 
-    @GetMapping(path = "/list")
-    public ResponseEntity<?> getAllTests(){
-        return ResponseEntity.status(HttpStatus.OK).body(testService.getAllTests());
+    @PostMapping(path = "/create")
+    public ResponseEntity<?> saveTestByChooseQuestions(@RequestBody @Valid final TestQuestionRequest request){
+        testService.createTestByChooseQuestions(request);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new ResponseMessage("Created test successfully !"));
     }
 
-    @GetMapping(path = "/list/detail/{id}")
+    @GetMapping(path = "/list")
+    public ResponseEntity<?> getAllTests(){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(testService.getAllTests());
+    }
+
+    @GetMapping(path = "/detail/{id}")
     public ResponseEntity<?> getTestDetail(@PathVariable(name = "id") int testId){
-        return null;
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(testService.getTestDetail(testId));
     }
 
     @PostMapping(path = "/test-set/create/{id}")

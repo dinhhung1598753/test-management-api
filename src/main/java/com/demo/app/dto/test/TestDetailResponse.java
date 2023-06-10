@@ -24,4 +24,6 @@ public class TestDetailResponse {
 
     private String testDay;
 
+    private int duration;
+
 }

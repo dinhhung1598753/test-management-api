@@ -1,9 +1,6 @@
 package com.demo.app.service;
 
-import com.demo.app.dto.test.TestDetailRequest;
-import com.demo.app.dto.test.TestRequest;
-import com.demo.app.dto.test.TestDetailResponse;
-import com.demo.app.dto.test.TestResponse;
+import com.demo.app.dto.test.*;
 import com.demo.app.dto.testset.TestSetRequest;
 import jakarta.transaction.Transactional;
 
@@ -15,9 +12,14 @@ public interface TestService {
     @Transactional
     void createTestSecondStep(TestDetailResponse response);
 
+    @Transactional
+    void createTestByChooseQuestions(TestQuestionRequest request);
+
     List<TestResponse> getAllTests();
 
     void createTestSetFromTest(int testId, TestSetRequest request);
+
+    TestDetailResponse getTestDetail(int testId);
 
     void disableTest(int testId);
 

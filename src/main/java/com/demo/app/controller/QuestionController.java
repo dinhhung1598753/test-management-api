@@ -19,7 +19,7 @@ public class QuestionController {
     private final QuestionService questionService;
 
     @PostMapping(path = "/add")
-    public ResponseEntity<?> addQuestion(@RequestBody final QuestionRequest request) {
+    public ResponseEntity<?> addQuestion(@RequestBody final QuestionRequest request){
         questionService.addQuestion(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
