@@ -201,7 +201,7 @@ public class StudentController {
     @PutMapping(path = "/update/{id}")
     public ResponseEntity<?> updateStudent(
             @Parameter(name = "id", description = "This is the ID student need to be updated", example = "1") @PathVariable(name = "id") int studentId,
-            @Parameter(name = "password") @RequestBody StudentRequest request) {
+            @RequestBody StudentRequest request) {
         studentService.updateStudent(studentId, request);
         String message = String.format("Student with id = %d updated successfully !", studentId);
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.OK);

@@ -25,7 +25,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,8 +48,8 @@ public class StudentServiceImpl implements StudentService {
             throw new FileInputException("Please upload an excel file!", HttpStatus.BAD_REQUEST);
         }
         try {
-            Map<User, Student> userStudents = ExcelUtils.excelFileToUserStudents(file);
-            List<Role> roles = roleRepository.findAllByRoleNameIn(Arrays.asList(Role.RoleType.ROLE_USER, Role.RoleType.ROLE_STUDENT));
+            var userStudents = ExcelUtils.excelFileToUserStudents(file);
+            var roles = roleRepository.findAllByRoleNameIn(Arrays.asList(Role.RoleType.ROLE_USER, Role.RoleType.ROLE_STUDENT));
             userStudents.forEach((user, student) -> {
                 if (userRepository.existsByEmailOrUsername(user.getEmail(), user.getUsername()) ||
                         studentRepository.existsByPhoneNumber(student.getPhoneNumber()) ||
@@ -60,10 +59,9 @@ public class StudentServiceImpl implements StudentService {
                 user.setRoles(roles);
                 String encodePassword = passwordEncoder.passwordEncode().encode(user.getPassword());
                 user.setPassword(encodePassword);
-                student.setUser(user);
+                user.setStudent(student);
             });
             userRepository.saveAll(userStudents.keySet());
-            studentRepository.saveAll(userStudents.values());
         } catch (IOException ex) {
             throw new FileInputException("Could not read the file !", HttpStatus.EXPECTATION_FAILED);
         }

@@ -54,7 +54,13 @@ public class QuestionServiceImpl implements QuestionService {
                 () -> new EntityNotFoundException(String.format("Subject with code: %s not found !", code), HttpStatus.NOT_FOUND)
         );
         var questions = new HashSet<Question>();
-        subject.getChapters().forEach(chapter -> questions.addAll(chapter.getQuestions()));
+        subject.getChapters().forEach(chapter -> {
+            for (var question : chapter.getQuestions()){
+                if (question.isEnabled()){
+                    questions.add(question);
+                }
+            }
+        });
         return questions.stream().map(question -> {
             var response = mapper.map(question, QuestionResponse.class);
             question.getAnswers().forEach(answer -> response.getAnswers().add(mapper.map(answer, AnswerResponse.class)));

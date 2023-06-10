@@ -6,7 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.Nationalized;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "chapter")
@@ -35,7 +35,7 @@ public class Chapter implements Serializable {
     private Subject subject;
 
     @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL)
-    private Set<Question> questions;
+    private List<Question> questions;
 
     @PrePersist
     private void prePersist(){

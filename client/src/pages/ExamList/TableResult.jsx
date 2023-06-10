@@ -54,6 +54,7 @@ const TableResult = ({ resultAI, numberAnswer }) => {
   return (
     <div className="table-result-component">
       <Table
+        className="table-ai"
         columns={columns}
         dataSource={data}
         scroll={{

@@ -24,7 +24,6 @@ public class QuestionController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ResponseMessage("Add question successfully !"));
-
     }
 
     @GetMapping(path = "/list")

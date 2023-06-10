@@ -2,7 +2,6 @@ package com.demo.app.util;
 
 import com.demo.app.model.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
@@ -13,7 +12,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 
-@Component
+
 public class ExcelUtils {
 
     private static final String TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
