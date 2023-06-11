@@ -45,6 +45,7 @@ public class TestSet implements Serializable {
 
     @PrePersist
     private void prePersist(){
+        enabled = true;
         createdAt = LocalDate.now();
     }
     @PreUpdate

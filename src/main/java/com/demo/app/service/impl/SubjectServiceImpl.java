@@ -89,6 +89,7 @@ public class SubjectServiceImpl implements SubjectService {
         var subject = subjectRepository.findByCode(code).orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find any chapter with code %s", code), HttpStatus.NOT_FOUND));
         List<Chapter> chapters = chapterRepository.findBySubjectIdAndEnabledTrue(subject.getId());
         return chapters.stream().map(chapter -> ChapterResponse.builder()
+                .id(chapter.getId())
                 .title(chapter.getTitle())
                 .order(String.format("Chapter %d: ", chapter.getOrder()))
                 .build()).collect(Collectors.toList());

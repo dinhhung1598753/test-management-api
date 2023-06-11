@@ -1,6 +1,7 @@
 package com.demo.app.dto.question;
 
 import com.demo.app.dto.answer.AnswerRequest;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,7 @@ public class QuestionRequest {
     @NotBlank(message = "Please enter question's level !")
     private String level;
 
+    @JsonProperty("answers")
     private List<AnswerRequest> answers;
 
     private String questionImage;
