@@ -2,6 +2,7 @@ package com.demo.app.controller;
 
 import com.demo.app.dto.examClass.ClassRequest;
 import com.demo.app.dto.message.ResponseMessage;
+import com.demo.app.exception.InvalidRoleException;
 import com.demo.app.service.ExamClassService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/v1/class")
@@ -25,34 +25,20 @@ public class ExamClassController {
     @PostMapping("/create")
     @PreAuthorize("hasAnyRole('TEACHER')")
     public ResponseEntity<?> createExamClass(@RequestBody ClassRequest request, Principal principal){
+        if (principal == null){
+            throw new InvalidRoleException("You don't have role to do this action!", HttpStatus.UNAUTHORIZED);
+        }
+        System.out.println(request);
         examClassService.createExamClass(request, principal);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ResponseMessage("Create Exam Class successfully !"));
     }
 
-    @PostMapping(path = "/add-students/{id}")
-    public ResponseEntity<?> addStudentsToExamClass(@PathVariable(name = "id") int examClassId ,@RequestBody List<Integer> studentIds){
-        examClassService.addStudentsToExamClass(examClassId, studentIds);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ResponseMessage("Students have been add to Exam Class !"));
-    }
-
-    @PostMapping(path = "/add-teacher/{id}")
-    public ResponseEntity<?> addTeacherToExamClass(@PathVariable(name = "id") int examClassId, @RequestBody Integer teacherId){
-        examClassService.addTeacherToExamClass(examClassId, teacherId);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ResponseMessage("Teacher has been add to Exam Class !"));
-    }
-
-    @PostMapping(path = "/add-subject/{id}")
-    public ResponseEntity<?> addSubjectToExamClass(@PathVariable(name = "id") int examClassId, @RequestBody Integer subjectId){
-        examClassService.addSubjectToExamClass(examClassId, subjectId);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ResponseMessage("Subject has been add to Exam Class !"));
+    @PostMapping("/join")
+    @PreAuthorize("hasAnyRole('STUDENT')")
+    public ResponseEntity<?> joinExamClassByCode(@RequestParam String classCode, Principal principal){
+        return null;
     }
 
     @GetMapping(path = "/list")
@@ -69,5 +55,6 @@ public class ExamClassController {
                 .status(HttpStatus.NO_CONTENT)
                 .body(new ResponseMessage("Disabled exam class successfully !"));
     }
+
 
 }

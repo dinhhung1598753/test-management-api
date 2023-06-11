@@ -3,10 +3,10 @@ package com.demo.app.model;
 import jakarta.persistence.*;
 
 import lombok.*;
+import org.hibernate.annotations.Nationalized;
 
-import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "exam_class", uniqueConstraints = {
@@ -17,15 +17,17 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ExamClass implements Serializable {
+public class ExamClass{
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(name = "semester")
     private String semester;
 
     @Column(name = "room_name")
+    @Nationalized
     private String roomName;
 
     @Column(name = "code")
@@ -47,7 +49,7 @@ public class ExamClass implements Serializable {
     @JoinTable(name = "student_exam_class",
             joinColumns = @JoinColumn(name = "exam_class_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "student_id", referencedColumnName = "id"))
-    private Set<Student> students;
+    private List<Student> students;
 
     @ManyToOne
     private Test test;
@@ -58,4 +60,15 @@ public class ExamClass implements Serializable {
         enabled = true;
     }
 
+    @Override
+    public String toString() {
+        return "ExamClass{" +
+                "id=" + id +
+                ", semester='" + semester + '\'' +
+                ", roomName='" + roomName + '\'' +
+                ", code='" + code + '\'' +
+                ", createdDate=" + createdDate +
+                ", enabled=" + enabled +
+                '}';
+    }
 }

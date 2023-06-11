@@ -91,14 +91,18 @@ public class SubjectServiceImpl implements SubjectService {
         return chapters.stream().map(chapter -> ChapterResponse.builder()
                 .id(chapter.getId())
                 .title(chapter.getTitle())
-                .order(String.format("Chapter %d: ", chapter.getOrder()))
+                .order(chapter.getOrder())
                 .build()).collect(Collectors.toList());
    }
 
    @Override
    @Transactional
    public void addSubjectChapter(String code, ChapterRequest request) throws EntityNotFoundException{
-       var subject = subjectRepository.findByCode(code).orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find any chapter with code %s", code), HttpStatus.NOT_FOUND));
+       var subject = subjectRepository.findByCode(code)
+               .orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find any chapter with code %s", code), HttpStatus.NOT_FOUND));
+       if (chapterRepository.existsBySubjectIdAndOrder(subject.getId(), request.getOrder())){
+           throw new FieldExistedException("This chapter already existed in subject !", HttpStatus.BAD_REQUEST);
+       }
        var chapter = mapper.map(request, Chapter.class);
        chapter.setSubject(subject);
        chapterRepository.save(chapter);

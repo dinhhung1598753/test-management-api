@@ -25,15 +25,13 @@ public class StudentTest{
     @Column(name = "grade")
     private double grade;
 
-    @Lob
-    @Column(name = "image")
-    private String image;
-
     @Column(name = "is_enabled")
     private boolean enabled;
 
     @Column(name = "test_date")
     private LocalDate testDate;
+
+    private String state;
 
     @ManyToOne
     private Student student;

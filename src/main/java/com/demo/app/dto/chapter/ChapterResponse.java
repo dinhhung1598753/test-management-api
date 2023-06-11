@@ -13,6 +13,6 @@ public class ChapterResponse {
 
     private String title;
 
-    private String order;
+    private int order;
 
 }

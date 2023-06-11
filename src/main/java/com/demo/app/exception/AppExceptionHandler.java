@@ -54,4 +54,11 @@ public class AppExceptionHandler {
         return new ErrorResponse(status, ex.getMessage());
     }
 
+    @ExceptionHandler(InvalidRoleException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleInvalidRoleException(InvalidRoleException ex){
+        HttpStatus status = ex.getStatus();
+        return new ErrorResponse(status, ex.getMessage());
+    }
+
 }

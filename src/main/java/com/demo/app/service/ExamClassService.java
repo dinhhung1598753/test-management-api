@@ -11,12 +11,6 @@ public interface ExamClassService {
     @Transactional
     void createExamClass(ClassRequest request, Principal principal);
 
-    void addStudentsToExamClass(int examClassId, List<Integer> studentIds);
-
-    void addTeacherToExamClass(int examClassId, int teacherId);
-
-    void addSubjectToExamClass(int examClassId, int subjectId);
-
     List<ClassResponse> getAllEnabledExamClass();
 
     void disableExamClass(int examClassId);

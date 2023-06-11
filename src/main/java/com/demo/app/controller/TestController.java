@@ -66,8 +66,6 @@ public class TestController {
                 .body(testService.getTestDetail(testId));
     }
 
-
-
     @PutMapping(path = "/update/{id}")
     public  ResponseEntity<?> updateTest(@PathVariable(name = "id") int testId, @Valid final TestDetailRequest request){
         testService.updateTest(testId, request);
