@@ -51,11 +51,7 @@ public class AuthController {
         AuthenticationResponse authResponse = authService.login(request);
         return ResponseEntity.ok()
                 .header("token", authResponse.getAccessToken())
-                .body(AuthenticationResponse.builder()
-                        .message("Sign in successfully !")
-                        .accessToken(authResponse.getAccessToken())
-                        .refreshToken(authResponse.getRefreshToken())
-                        .build());
+                .body(authResponse);
     }
 
     @Operation(
@@ -88,11 +84,7 @@ public class AuthController {
         var authResponse = authService.register(registerRequest, request);
         return ResponseEntity.ok()
                 .header("token", authResponse.getAccessToken())
-                .body(AuthenticationResponse.builder()
-                        .message("Sign up successfully !")
-                        .accessToken(authResponse.getAccessToken())
-                        .refreshToken(authResponse.getRefreshToken())
-                        .build());
+                .body(authResponse);
     }
 
     @PostMapping(path = "/refresh-token")

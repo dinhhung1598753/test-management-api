@@ -18,7 +18,9 @@ public class TestDetailRequest {
     private String testDay;
 
     private List<QuestionResponse> questionResponses;
+
     @Min(value = 1, message = "Question quantity must be greater than 1!")
     private int questionQuantity;
 
+    private int duration;
 }

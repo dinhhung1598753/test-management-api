@@ -1,7 +1,6 @@
 package com.demo.app.service;
 
 import com.demo.app.dto.test.*;
-import com.demo.app.dto.testset.TestSetRequest;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
@@ -16,8 +15,6 @@ public interface TestService {
     void createTestByChooseQuestions(TestQuestionRequest request);
 
     List<TestResponse> getAllTests();
-
-    void createTestSetFromTest(int testId, TestSetRequest request);
 
     TestDetailResponse getTestDetail(int testId);
 

@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 
 import lombok.*;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -12,19 +11,22 @@ import java.util.List;
 @Table(name = "student_test")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class StudentTest implements Serializable {
+public class StudentTest{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "test_mark")
-    private double testMark;
+    @Column(name = "mark")
+    private int mark;
 
-    @Column(name = "image")
+    @Column(name = "grade")
+    private double grade;
+
     @Lob
+    @Column(name = "image")
     private String image;
 
     @Column(name = "is_enabled")

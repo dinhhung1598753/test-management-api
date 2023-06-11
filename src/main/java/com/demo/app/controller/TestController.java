@@ -5,7 +5,6 @@ import com.demo.app.dto.test.TestDetailRequest;
 import com.demo.app.dto.test.TestDetailResponse;
 import com.demo.app.dto.test.TestQuestionRequest;
 import com.demo.app.dto.test.TestRequest;
-import com.demo.app.dto.testset.TestSetRequest;
 import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.model.MyObject;
 import com.demo.app.service.TestService;
@@ -67,18 +66,14 @@ public class TestController {
                 .body(testService.getTestDetail(testId));
     }
 
-    @PostMapping(path = "/test-set/create/{id}")
-    public ResponseEntity<?> createTestSetFromTest(@PathVariable(name = "id") int testId, @RequestBody @Valid final TestSetRequest request){
-        testService.createTestSetFromTest(testId, request);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new ResponseMessage(String.format("Created Set of test with id %d successfully !", testId)));
-    }
+
 
     @PutMapping(path = "/update/{id}")
     public  ResponseEntity<?> updateTest(@PathVariable(name = "id") int testId, @Valid final TestDetailRequest request){
         testService.updateTest(testId, request);
-        return new ResponseEntity<>(new ResponseMessage("Update test successful !"), HttpStatus.OK);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ResponseMessage(String.format("Update test with id : %d successfully !", testId)));
     }
 
     @DeleteMapping(path = "/disable/{id}")
@@ -123,4 +118,6 @@ public class TestController {
         MyObject myObject = objectMapper.readValue(file, MyObject.class);
         return ResponseEntity.status(HttpStatus.CREATED).body(myObject);
     }
+
+
 }

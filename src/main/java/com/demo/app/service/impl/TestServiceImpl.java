@@ -2,10 +2,12 @@ package com.demo.app.service.impl;
 
 import com.demo.app.dto.question.QuestionResponse;
 import com.demo.app.dto.test.*;
-import com.demo.app.dto.testset.TestSetRequest;
 import com.demo.app.exception.EntityNotFoundException;
-import com.demo.app.model.*;
-import com.demo.app.repository.*;
+import com.demo.app.model.Question;
+import com.demo.app.model.Test;
+import com.demo.app.repository.QuestionRepository;
+import com.demo.app.repository.SubjectRepository;
+import com.demo.app.repository.TestRepository;
 import com.demo.app.service.TestService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,16 +18,12 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class TestServiceImpl implements TestService {
-
-    private static final int TEST_NO_ROOT_NUMBER = 100;
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -34,12 +32,6 @@ public class TestServiceImpl implements TestService {
     private final SubjectRepository subjectRepository;
 
     private final TestRepository testRepository;
-
-    private final TestSetRepository testSetRepository;
-
-    private final TestSetQuestionRepository testSetQuestionRepository;
-
-    private final TestSetQuestionAnswerRepository testSetQuestionAnswerRepository;
 
     private final ModelMapper mapper;
 
@@ -120,60 +112,6 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    @Transactional
-    public void createTestSetFromTest(int testId, TestSetRequest request) {
-        var test = testRepository.findById(testId).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Test with id: %d not found !", testId), HttpStatus.NOT_FOUND));
-        var questionNo = 0;
-        for (var testNo = 1; testNo <= request.getTestSetQuantity(); ++testNo) {
-            var testNoRootNumber = TEST_NO_ROOT_NUMBER;
-            if (testSetRepository.existsByTestAndTestNo(test, testNo + testNoRootNumber)){
-                testNoRootNumber = ((testNoRootNumber / 100) + 1) * testNoRootNumber;
-            }
-            var testSet = saveBlankTestSet(testNo + testNoRootNumber, test);
-            Collections.shuffle(test.getQuestions());
-
-            for (var question : test.getQuestions()) {
-                var testSetQuestion = saveBlankTestSetQuestion(questionNo, testSet, question);
-                saveAllTestSetQuestionAnswer(testSetQuestion, question);
-                questionNo++;
-            }
-            questionNo = 0;
-        }
-    }
-    private TestSet saveBlankTestSet(int testNo, Test test) {
-        var testSet = TestSet.builder()
-                .testNo(testNo)
-                .test(test)
-                .build();
-        return testSetRepository.save(testSet);
-    }
-    private TestSetQuestion saveBlankTestSetQuestion(int questionNo, TestSet testSet, Question question) {
-        var testSetQuestion = com.demo.app.model.TestSetQuestion.builder()
-                .questionNo(questionNo)
-                .question(question)
-                .testSet(testSet)
-                .build();
-        return testSetQuestionRepository.save(testSetQuestion);
-    }
-
-    private void saveAllTestSetQuestionAnswer(TestSetQuestion testSetQuestion, Question question) {
-        int answerNo = 0;
-        var testSetQuestionAnswers = new ArrayList<TestSetQuestionAnswer>();
-        Collections.shuffle(question.getAnswers());
-        for (var answer : question.getAnswers()) {
-            answerNo++;
-            var testSetQuestionAnswer = TestSetQuestionAnswer.builder()
-                    .answerNo(answerNo)
-                    .testSetQuestion(testSetQuestion)
-                    .answer(answer)
-                    .build();
-            testSetQuestionAnswers.add(testSetQuestionAnswer);
-        }
-        testSetQuestionAnswerRepository.saveAll(testSetQuestionAnswers);
-    }
-
-    @Override
     public TestDetailResponse getTestDetail(int testId){
         var test = testRepository.findById(testId).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Test with id : %d not found !", testId), HttpStatus.NOT_FOUND)
@@ -194,19 +132,25 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public void disableTest(int testId){
-        var test = testRepository.findById(testId).orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find any chapter with id %d", testId), HttpStatus.NOT_FOUND));
-        test.setEnabled(false);
-        testRepository.save(test);
-    }
-    @Override
     @Transactional
     public void updateTest(int testId, TestDetailRequest request){
-        var test = testRepository.findById(testId).orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find any chapter with id %d", testId), HttpStatus.NOT_FOUND));
-        var questions = request.getQuestionResponses().stream().map(questionResponse -> mapper.map(questionResponse, Question.class) ).collect(Collectors.toList());
+        var test = testRepository.findById(testId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find any chapter with id %d", testId), HttpStatus.NOT_FOUND));
+        var questions = request.getQuestionResponses()
+                .stream()
+                .map(questionResponse -> mapper.map(questionResponse, Question.class) )
+                .collect(Collectors.toList());
         test.setQuestions(questions);
-        var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        test.setTestDay(LocalDate.parse(request.getTestDay(), formatter));
+        test.setTestDay(LocalDate.parse(request.getTestDay(), FORMATTER));
+        test.setDuration(request.getDuration());
+        testRepository.save(test);
+    }
+
+    @Override
+    public void disableTest(int testId){
+        var test = testRepository.findById(testId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find any chapter with id %d", testId), HttpStatus.NOT_FOUND));
+        test.setEnabled(false);
         testRepository.save(test);
     }
 
