@@ -22,7 +22,7 @@ public class AppScheduler {
 
 
     @Transactional
-    @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.DAYS)
     public void cleanupUnverifiedAccounts(){
         var waitedTime = LocalDateTime.now().minusMinutes(5);
         var unverifiedUsers = userRepository.findByEnabledFalseAndCreatedAtBefore(waitedTime);

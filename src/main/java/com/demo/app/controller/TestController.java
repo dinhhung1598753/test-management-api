@@ -60,7 +60,6 @@ public class TestController {
 
     @GetMapping(path = "/detail/{id}")
     public ResponseEntity<?> getTestDetail(@PathVariable(name = "id") int testId){
-
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(testService.getTestDetail(testId));
@@ -82,7 +81,7 @@ public class TestController {
 
     @GetMapping(path="/mark-ai")
     public ResponseEntity<?> getModelAI(@RequestParam(name="pathImg") String pathImg,
-                                        @RequestParam(name="numberAnswer") Integer numberAnswer ) throws IOException {
+                                        @RequestParam(name="numberAnswer") Integer numberAnswer) throws IOException {
         class MyRunnable implements Runnable {
             public void run(){
                 String CMD =

@@ -4,6 +4,7 @@ import com.demo.app.dto.examClass.ClassRequest;
 import com.demo.app.dto.examClass.ClassResponse;
 import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.exception.FieldExistedException;
+import com.demo.app.exception.InvalidArgumentException;
 import com.demo.app.exception.InvalidRoleException;
 import com.demo.app.model.ExamClass;
 import com.demo.app.repository.ExamClassRepository;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,6 +55,20 @@ public class ExamClassServiceImpl implements ExamClassService {
         examClass.setTest(test);
         examClass.setSubject(test.getSubject());
         examClassRepository.save(examClass);
+    }
+
+
+    @Override
+    @Transactional
+    public ExamClass joinExamClassByCode(String classCode, Principal principal){
+        var student = studentRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new InvalidRoleException("You don't have role to do this action!", HttpStatus.UNAUTHORIZED));
+        var examClass = examClassRepository.findByCode(classCode)
+                .orElseThrow(() -> new InvalidArgumentException("Class does not existed", HttpStatus.BAD_REQUEST));
+        if(examClass.getStudents() == null)
+            examClass.setStudents(new ArrayList<>());
+        examClass.getStudents().add(student);
+        return examClassRepository.save(examClass);
     }
 
     @Override

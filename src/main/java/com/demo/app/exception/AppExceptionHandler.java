@@ -61,4 +61,11 @@ public class AppExceptionHandler {
         return new ErrorResponse(status, ex.getMessage());
     }
 
+    @ExceptionHandler(InvalidArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInvalidArgumentException(InvalidArgumentException ex){
+        HttpStatus status = ex.getStatus();
+        return new ErrorResponse(status, ex.getMessage());
+    }
+
 }

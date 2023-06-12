@@ -240,7 +240,7 @@ public class StudentController {
             @Parameter(description = "This is ID of student need to be deleted", example = "1") @PathVariable(name = "id") int studentId){
         studentService.disableStudent(studentId);
         return ResponseEntity
-                .noContent()
-                .build();
+                .status(HttpStatus.NO_CONTENT)
+                .body(new ResponseMessage(String.format("Student with id %d disabled successfully !", studentId)));
     }
 }

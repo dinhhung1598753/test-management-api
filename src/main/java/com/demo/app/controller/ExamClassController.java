@@ -26,9 +26,8 @@ public class ExamClassController {
     @PreAuthorize("hasAnyRole('TEACHER')")
     public ResponseEntity<?> createExamClass(@RequestBody ClassRequest request, Principal principal){
         if (principal == null){
-            throw new InvalidRoleException("You don't have role to do this action!", HttpStatus.UNAUTHORIZED);
+            throw new InvalidRoleException("You're not logged in !", HttpStatus.UNAUTHORIZED);
         }
-        System.out.println(request);
         examClassService.createExamClass(request, principal);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -38,7 +37,13 @@ public class ExamClassController {
     @PostMapping("/join")
     @PreAuthorize("hasAnyRole('STUDENT')")
     public ResponseEntity<?> joinExamClassByCode(@RequestParam String classCode, Principal principal){
-        return null;
+        if (principal == null){
+            throw new InvalidRoleException("You are not logged in", HttpStatus.UNAUTHORIZED);
+        }
+        var examClass = examClassService.joinExamClassByCode(classCode, principal);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ResponseMessage(String.format("Join class %s successfully !", examClass.getRoomName())));
     }
 
     @GetMapping(path = "/list")
