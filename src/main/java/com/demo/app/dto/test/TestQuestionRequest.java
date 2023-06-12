@@ -21,4 +21,6 @@ public class TestQuestionRequest {
     @NotNull(message = "Please choose questions to add to test !")
     private List<Integer> questionIds;
 
+    private int duration;
+
 }

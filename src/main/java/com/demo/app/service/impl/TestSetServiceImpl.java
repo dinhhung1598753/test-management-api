@@ -43,7 +43,7 @@ public class TestSetServiceImpl implements TestSetService {
     public void createTestSetFromTest(int testId, TestSetRequest request) {
         var test = testRepository.findById(testId).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Test with id: %d not found !", testId), HttpStatus.NOT_FOUND));
-        var questionNo = 0;
+        var questionNo = 1;
         for (var testNo = 1; testNo <= request.getTestSetQuantity(); ++testNo) {
             var testNoRootNumber = TEST_NO_ROOT_NUMBER;
             if (testSetRepository.existsByTestAndTestNo(test, testNo + testNoRootNumber)){
@@ -57,7 +57,7 @@ public class TestSetServiceImpl implements TestSetService {
                 saveAllTestSetQuestionAnswer(testSetQuestion, question);
                 questionNo++;
             }
-            questionNo = 0;
+            questionNo = 1;
         }
     }
     private TestSet saveBlankTestSet(int testNo, Test test) {
@@ -68,7 +68,7 @@ public class TestSetServiceImpl implements TestSetService {
         return testSetRepository.save(testSet);
     }
     private TestSetQuestion saveBlankTestSetQuestion(int questionNo, TestSet testSet, Question question) {
-        var testSetQuestion = com.demo.app.model.TestSetQuestion.builder()
+        var testSetQuestion = TestSetQuestion.builder()
                 .questionNo(questionNo)
                 .question(question)
                 .testSet(testSet)
@@ -114,12 +114,12 @@ public class TestSetServiceImpl implements TestSetService {
         var questionResponses = new ArrayList<TestSetQuestionResponse>();
         testSet.getTestSetQuestions().forEach(testSetQuestion -> {
             var questionResponse = mapper.map(testSetQuestion, TestSetQuestionResponse.class);
-            var question = testSetQuestion.getQuestion();
+            //var question = testSetQuestion.getQuestion();
             var answers = testSetQuestion.getTestSetQuestionAnswers();
 
-            questionResponse.setTopicText(question.getTopicText());
-            questionResponse.setTopicImage(question.getTopicImage());
-            questionResponse.setLevel(question.getLevel().toString());
+//            questionResponse.setTopicText(question.getTopicText());
+//            questionResponse.setTopicImage(question.getTopicImage());
+//            questionResponse.setLevel(question.getLevel().toString());
 
             for (var i = 0; i < answers.size(); i++){
                 String content = answers.get(i).getAnswer().getContent();

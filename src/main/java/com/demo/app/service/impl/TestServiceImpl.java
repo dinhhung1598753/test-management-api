@@ -83,12 +83,11 @@ public class TestServiceImpl implements TestService {
     @Transactional
     public void createTestByChooseQuestions(TestQuestionRequest request){
         var questions = questionRepository.findAllById(request.getQuestionIds());
-        var subject = questions.get(0)
-                .getChapter()
-                .getSubject();
+        var subject = (!questions.isEmpty()) ? questions.get(0).getChapter().getSubject() : null;
         var test = Test.builder()
                 .testDay(LocalDate.parse(request.getTestDay(), FORMATTER))
                 .questionQuantity(request.getQuestionQuantity())
+                .duration(request.getDuration())
                 .build();
         test = testRepository.save(test);
         test.setQuestions(questions);
@@ -121,13 +120,13 @@ public class TestServiceImpl implements TestService {
                 .stream()
                 .map(question -> mapper.map(question, QuestionResponse.class))
                 .collect(Collectors.toList());
-
         return TestDetailResponse.builder()
                 .questionResponses(questionResponses)
                 .questionQuantity(test.getQuestionQuantity())
                 .subjectCode(subject.getCode())
                 .subjectTitle(subject.getTitle())
                 .testDay(test.getTestDay().toString())
+                .duration(test.getDuration())
                 .build();
     }
 

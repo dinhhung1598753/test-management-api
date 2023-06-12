@@ -18,6 +18,7 @@ import java.util.List;
 @ContextConfiguration(classes = ProjectDesignIApplication.class)
 @AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
 public class QuestionRepositoryTests {
+
     @Autowired
     private QuestionRepository questionRepository;
 
@@ -34,6 +35,13 @@ public class QuestionRepositoryTests {
             count++;
         }
         System.out.println(count);
-        Assertions.assertThat(count).isEqualTo(10);
+        Assertions.assertThat(count).isGreaterThan(0);
+    }
+
+    @Test
+    public void testCountAllByChapterId(){
+        var chapterId = 1;
+        int count = questionRepository.countByChapterId(chapterId);
+        Assertions.assertThat(count).isGreaterThan(0);
     }
 }

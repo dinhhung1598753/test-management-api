@@ -74,13 +74,14 @@ public class QuestionServiceImpl implements QuestionService {
                 .collect(Collectors.toList());
     }
 
-
+    /** Need to fix */
     @Override
     @Transactional
     public void updateQuestion(int questionId, QuestionRequest request) {
         var existedQuestion = questionRepository.findById(questionId).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Not found any question with id: %d !", questionId), HttpStatus.NOT_FOUND)
         );
+
         var question = mapper.map(request, Question.class);
         if (!existedQuestion.equals(question)) {
             existedQuestion.setTopicText(question.getTopicText());

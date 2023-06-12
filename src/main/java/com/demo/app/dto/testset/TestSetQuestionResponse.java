@@ -1,5 +1,6 @@
 package com.demo.app.dto.testset;
 
+import com.demo.app.dto.question.QuestionResponse;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -16,11 +17,7 @@ public class TestSetQuestionResponse {
 
     private int questionNo;
 
-    private String topicText;
-
-    private String topicImage;
-
-    private String level;
+    private QuestionResponse question;
 
     @JsonProperty("answers")
     private List<TestSetQuestionAnswerResponse> answers;

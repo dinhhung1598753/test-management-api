@@ -23,4 +23,6 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
             """)
     Page<Question> findQuestionBySubjectChapterOrder(@Param("code") String code, @Param("chapterOrders") List<Integer> chapterOrders, Pageable pageable);
 
+    int countByChapterId(int chapterId);
+
 }
