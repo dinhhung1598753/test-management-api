@@ -23,4 +23,5 @@ public class Student extends Person {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<StudentTest> studentTests;
 
+
 }

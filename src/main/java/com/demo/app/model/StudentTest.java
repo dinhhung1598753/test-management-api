@@ -15,13 +15,19 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StudentTest{
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    /** Number of corrected question that student have been answered. */
     @Column(name = "mark")
     private int mark;
 
+    /**
+     * Grade is score of corrected answer out of all the question.
+     * Grade = mark / all question in test set  * 100.
+     * */
     @Column(name = "grade")
     private double grade;
 
@@ -31,6 +37,12 @@ public class StudentTest{
     @Column(name = "test_date")
     private LocalDate testDate;
 
+    /**
+     * A Student's test have 2 state: In-Process and Finished
+     * - In-Process: Students can continue to take the test even if they log out and back in
+     * - Finished: The test closed and show the mark/grade
+     * */
+    @Column(name = "state")
     private String state;
 
     @ManyToOne

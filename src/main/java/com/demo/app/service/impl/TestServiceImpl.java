@@ -86,7 +86,7 @@ public class TestServiceImpl implements TestService {
         var subject = (!questions.isEmpty()) ? questions.get(0).getChapter().getSubject() : null;
         var test = Test.builder()
                 .testDay(LocalDate.parse(request.getTestDay(), FORMATTER))
-                .questionQuantity(request.getQuestionQuantity())
+                .questionQuantity(questions.size())
                 .duration(request.getDuration())
                 .build();
         test = testRepository.save(test);

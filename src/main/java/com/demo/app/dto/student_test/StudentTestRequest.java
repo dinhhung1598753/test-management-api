@@ -13,7 +13,7 @@ public class StudentTestRequest {
 
     private int studentId;
 
-    private String examClassCode;
+    private String classCode;
 
     private int testNo;
 

@@ -7,7 +7,6 @@ import lombok.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "test")
@@ -44,7 +43,7 @@ public class Test implements Serializable {
     private LocalDate updatedAt;
 
     @OneToMany(mappedBy = "test", cascade = CascadeType.ALL)
-    private Set<TestSet> testSets;
+    private List<TestSet> testSets;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "test_question",

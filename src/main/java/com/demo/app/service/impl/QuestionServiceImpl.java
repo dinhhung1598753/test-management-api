@@ -67,8 +67,11 @@ public class QuestionServiceImpl implements QuestionService {
         });
         return questions.stream()
                 .map(question -> {
+                    var chapter = question.getChapter();
                     var questionResponse = mapper.map(question, QuestionResponse.class);
-                    questionResponse.setChapter(mapper.map(question.getChapter(), ChapterResponse.class));
+                    questionResponse.setChapter(mapper.map(chapter, ChapterResponse.class));
+                    questionResponse.setSubjectCode(subject.getCode());
+                    questionResponse.setSubjectTitle(subject.getTitle());
                     return questionResponse;
                 })
                 .collect(Collectors.toList());

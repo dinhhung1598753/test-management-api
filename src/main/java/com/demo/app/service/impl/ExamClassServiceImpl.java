@@ -2,15 +2,9 @@ package com.demo.app.service.impl;
 
 import com.demo.app.dto.examClass.ClassRequest;
 import com.demo.app.dto.examClass.ClassResponse;
-import com.demo.app.exception.EntityNotFoundException;
-import com.demo.app.exception.FieldExistedException;
-import com.demo.app.exception.InvalidArgumentException;
-import com.demo.app.exception.InvalidRoleException;
+import com.demo.app.exception.*;
+import com.demo.app.repository.*;
 import com.demo.app.model.ExamClass;
-import com.demo.app.repository.ExamClassRepository;
-import com.demo.app.repository.StudentRepository;
-import com.demo.app.repository.TeacherRepository;
-import com.demo.app.repository.TestRepository;
 import com.demo.app.service.ExamClassService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +38,7 @@ public class ExamClassServiceImpl implements ExamClassService {
             throw new FieldExistedException("Class's code already taken !", HttpStatus.CONFLICT);
         }
         var teacher = teacherRepository.findByUsername(principal.getName())
-                .orElseThrow(() -> new InvalidRoleException("You don't have role to do this action!", HttpStatus.UNAUTHORIZED));
+                .orElseThrow(() -> new InvalidRoleException("You don't have role to do this action!", HttpStatus.FORBIDDEN));
         var students = studentRepository.findAllById(request.getStudentIds());
         var test = testRepository.findById(request.getTestId())
                 .orElseThrow(() -> new EntityNotFoundException(String.format("test with id %d not found !", request.getTestId()), HttpStatus.NOT_FOUND));
@@ -62,7 +56,7 @@ public class ExamClassServiceImpl implements ExamClassService {
     @Transactional
     public ExamClass joinExamClassByCode(String classCode, Principal principal){
         var student = studentRepository.findByUsername(principal.getName())
-                .orElseThrow(() -> new InvalidRoleException("You don't have role to do this action!", HttpStatus.UNAUTHORIZED));
+                .orElseThrow(() -> new InvalidRoleException("You don't have role to do this action!", HttpStatus.FORBIDDEN));
         var examClass = examClassRepository.findByCode(classCode)
                 .orElseThrow(() -> new InvalidArgumentException("Class does not existed", HttpStatus.BAD_REQUEST));
         if(examClass.getStudents() == null)

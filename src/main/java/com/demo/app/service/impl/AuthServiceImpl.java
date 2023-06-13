@@ -89,7 +89,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public void activateUserAccount(String verifyToken) throws InvalidVerificationTokenException{
         var token = tokenRepository.findByTokenAndExpiredFalse(verifyToken).orElseThrow(
-                () -> new EntityNotFoundException("Invalid token !", HttpStatus.FORBIDDEN)
+                () -> new EntityNotFoundException("Invalid token !", HttpStatus.UNAUTHORIZED)
         );
         token.getUser().setEnabled(true);
         token.setRevoked(true);

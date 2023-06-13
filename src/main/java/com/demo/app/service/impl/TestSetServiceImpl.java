@@ -114,12 +114,7 @@ public class TestSetServiceImpl implements TestSetService {
         var questionResponses = new ArrayList<TestSetQuestionResponse>();
         testSet.getTestSetQuestions().forEach(testSetQuestion -> {
             var questionResponse = mapper.map(testSetQuestion, TestSetQuestionResponse.class);
-            //var question = testSetQuestion.getQuestion();
             var answers = testSetQuestion.getTestSetQuestionAnswers();
-
-//            questionResponse.setTopicText(question.getTopicText());
-//            questionResponse.setTopicImage(question.getTopicImage());
-//            questionResponse.setLevel(question.getLevel().toString());
 
             for (var i = 0; i < answers.size(); i++){
                 String content = answers.get(i).getAnswer().getContent();

@@ -25,6 +25,9 @@ public class QuestionResponse {
 
     private ChapterResponse chapter;
 
-    private List<AnswerResponse> answers = new ArrayList<>();
+    private String subjectTitle;
 
+    private String subjectCode;
+
+    private List<AnswerResponse> answers = new ArrayList<>();
 }

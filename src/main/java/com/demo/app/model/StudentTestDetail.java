@@ -22,9 +22,6 @@ public class StudentTestDetail implements Serializable {
     @Column(name = "is_enabled")
     private boolean enabled;
 
-    @Column(name = "question_mark")
-    private double questionMark;
-
     @Column(name = "selected_answer", length = 4)
     private String selectedAnswer;
 

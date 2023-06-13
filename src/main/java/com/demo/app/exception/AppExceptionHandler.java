@@ -48,14 +48,14 @@ public class AppExceptionHandler {
     }
 
     @ExceptionHandler(InvalidVerificationTokenException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponse handleInvalidVerificationTokenException(InvalidVerificationTokenException ex){
         HttpStatus status = ex.getStatus();
         return new ErrorResponse(status, ex.getMessage());
     }
 
     @ExceptionHandler(InvalidRoleException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleInvalidRoleException(InvalidRoleException ex){
         HttpStatus status = ex.getStatus();
         return new ErrorResponse(status, ex.getMessage());
@@ -64,6 +64,13 @@ public class AppExceptionHandler {
     @ExceptionHandler(InvalidArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalidArgumentException(InvalidArgumentException ex){
+        HttpStatus status = ex.getStatus();
+        return new ErrorResponse(status, ex.getMessage());
+    }
+
+    @ExceptionHandler(UserNotEnrolledException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleUserNotEnrolledException(InvalidVerificationTokenException ex){
         HttpStatus status = ex.getStatus();
         return new ErrorResponse(status, ex.getMessage());
     }
