@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface TestSetRepository extends JpaRepository<TestSet, Integer> {
 
-    Boolean existsByTestAndTestNo(Test test, int testNo);
+    Boolean existsByTestAndTestNoAndEnabledTrue(Test test, int testNo);
 
     List<TestSet> findByEnabledIsTrue();
 }

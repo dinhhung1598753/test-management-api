@@ -3,8 +3,10 @@ package com.demo.app.service.impl;
 import com.demo.app.config.security.PasswordEncoder;
 import com.demo.app.dto.teacher.TeacherRequest;
 import com.demo.app.dto.teacher.TeacherResponse;
+import com.demo.app.dto.teacher.TeacherUpdateRequest;
 import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.exception.FieldExistedException;
+import com.demo.app.model.Gender;
 import com.demo.app.model.Role;
 import com.demo.app.model.Teacher;
 import com.demo.app.model.User;
@@ -18,6 +20,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,9 +49,9 @@ public class TeacherServiceImpl implements TeacherService {
         checkIfCodeExists(request.getCode());
 
         var roles = roleRepository.findAllByRoleNameIn(Arrays.asList(Role.RoleType.ROLE_USER, Role.RoleType.ROLE_TEACHER));
-
         var user = mapper.map(request, User.class);
         String encodePassword = passwordEncoder.passwordEncode().encode(request.getPassword());
+
         user.setPassword(encodePassword);
         user.setRoles(roles);
         user.setEnabled(true);
@@ -71,30 +75,25 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     @Transactional
-    public void updateTeacher(int teacherId, TeacherRequest request) throws EntityNotFoundException, FieldExistedException{
-        var existTeacher = teacherRepository.findById(teacherId).
-                orElseThrow(() -> new EntityNotFoundException(String.format("Teacher %s not found !", request.getFullName()), HttpStatus.NOT_FOUND));
-
-        if (!existTeacher.getUser().getUsername().equals(request.getUsername())) {
-            checkIfUsernameExists(request.getUsername());
-        }
-        if (!existTeacher.getPhoneNumber().equals(request.getPhoneNumber())) {
+    public void updateTeacher(int teacherId, TeacherUpdateRequest request) throws EntityNotFoundException, FieldExistedException{
+        var teacher = teacherRepository.findById(teacherId).
+                orElseThrow(() -> new EntityNotFoundException(String.format("Teacher with id %d not found !", teacherId), HttpStatus.NOT_FOUND));
+        if (!teacher.getPhoneNumber().equals(request.getPhoneNumber())) {
             checkIfPhoneNumberExists(request.getPhoneNumber());
         }
-        if (!existTeacher.getUser().getEmail().equals(request.getEmail())) {
+        if (!teacher.getUser().getEmail().equals(request.getEmail())) {
             checkIfEmailExists(request.getEmail());
         }
-        if (!existTeacher.getCode().equals(request.getCode())) {
+        if (!teacher.getCode().equals(request.getCode())) {
             checkIfCodeExists(request.getCode());
         }
-
-        Teacher teacher = mapper.map(request, Teacher.class);
-        teacher.setId(existTeacher.getId());
-        teacher.setUser(existTeacher.getUser());
-        var user = teacher.getUser();
-        user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
-        user.setUsername(request.getUsername());
+        var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        teacher.setBirthday(LocalDate.parse(request.getBirthday(), formatter));
+        teacher.setCode(request.getCode());
+        teacher.setPhoneNumber(request.getPhoneNumber());
+        teacher.setFullname(request.getFullName());
+        teacher.getUser().setEmail(request.getEmail());
+        teacher.setGender(Gender.valueOf(request.getGender()));
         teacherRepository.save(teacher);
     }
 
@@ -119,7 +118,7 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     private void checkIfEmailExists(String email) throws FieldExistedException {
-        if (userRepository.existsByEmail(email)) {
+        if (userRepository.existsByEmailAndEnabledTrue(email)) {
             throw new FieldExistedException("Email already taken!", HttpStatus.CONFLICT);
         }
     }

@@ -13,5 +13,6 @@ public interface ChapterRepository extends JpaRepository<Chapter, Integer> {
 
     int countBySubjectId(int subjectId);
 
-    Boolean existsBySubjectIdAndOrder(int subjectId, int order);
+    Boolean existsBySubjectIdAndOrderAndEnabledTrue(int subjectId, int order);
+
 }

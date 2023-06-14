@@ -2,6 +2,7 @@ package com.demo.app.controller;
 
 import com.demo.app.dto.message.ResponseMessage;
 import com.demo.app.dto.teacher.TeacherRequest;
+import com.demo.app.dto.teacher.TeacherUpdateRequest;
 import com.demo.app.exception.FieldExistedException;
 import com.demo.app.service.TeacherService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,11 +29,11 @@ public class TeacherController {
 
     private final String EXAMPLE_INFORMATION_NOT_FOUND = """
         {
-            "message" : "information not found"\s
+            "message" : "information not found"
         }
     """;
 
-    private final String EXAMPLE_STUDENT_INFORMATION_CREATE_AND_UPDATE = "";
+    //private final String EXAMPLE_STUDENT_INFORMATION_CREATE_AND_UPDATE = "";
 
     private final TeacherService teacherService;
 
@@ -163,7 +164,7 @@ public class TeacherController {
     public ResponseEntity<?> updateTeacher(@Parameter(
             description = "This is ID of teacher need to be updated",
             example = "1"
-    ) @PathVariable("id") int teacherId, @RequestBody @Valid TeacherRequest request){
+    ) @PathVariable("id") int teacherId, @RequestBody @Valid TeacherUpdateRequest request){
         teacherService.updateTeacher(teacherId, request);
         String message = String.format("Teacher with id = %d updated successfully !", teacherId);
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.OK);

@@ -3,9 +3,11 @@ package com.demo.app.service.impl;
 import com.demo.app.config.security.PasswordEncoder;
 import com.demo.app.dto.student.StudentRequest;
 import com.demo.app.dto.student.StudentResponse;
+import com.demo.app.dto.student.StudentUpdateRequest;
 import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.exception.FieldExistedException;
 import com.demo.app.exception.FileInputException;
+import com.demo.app.model.Gender;
 import com.demo.app.model.Role;
 import com.demo.app.model.Student;
 import com.demo.app.model.User;
@@ -23,6 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -114,12 +118,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional
-    public void updateStudent(int studentId, StudentRequest request) throws EntityNotFoundException, FieldExistedException {
+    public void updateStudent(int studentId, StudentUpdateRequest request) throws EntityNotFoundException, FieldExistedException {
         Student existStudent = studentRepository.findById(studentId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Student %s not found !", request.getUsername()), HttpStatus.NOT_FOUND));
-        if (!existStudent.getUser().getUsername().equals(request.getUsername())) {
-            checkIfUsernameExists(request.getUsername());
-        }
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Student with id: %s not found !", studentId), HttpStatus.NOT_FOUND));
         if (!existStudent.getPhoneNumber().equals(request.getPhoneNumber())) {
             checkIfPhoneNumberExists(request.getPhoneNumber());
         }
@@ -129,16 +130,15 @@ public class StudentServiceImpl implements StudentService {
         if (!existStudent.getCode().equals(request.getCode())) {
             checkIfCodeExists(request.getCode());
         }
+        var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        existStudent.setPhoneNumber(request.getPhoneNumber());
+        existStudent.setCode(request.getCode());
+        existStudent.getUser().setEmail(request.getEmail());
+        existStudent.setCourse(request.getCourse());
+        existStudent.setBirthday(LocalDate.parse(request.getBirthday(), formatter));
+        existStudent.setGender(Gender.valueOf(request.getGender()));
 
-        var student = mapper.map(request, Student.class);
-        student.setJoinDate(existStudent.getJoinDate());
-        student.setUser(existStudent.getUser());
-        student.setId(existStudent.getId());
-        var user = student.getUser();
-        user.setUsername(request.getUsername());
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.passwordEncode().encode(request.getPassword()));
-        studentRepository.save(student);
+        studentRepository.save(existStudent);
     }
 
     @Override
@@ -163,7 +163,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     private void checkIfEmailExists(String email) throws FieldExistedException {
-        if (userRepository.existsByEmail(email)) {
+        if (userRepository.existsByEmailAndEnabledTrue(email)) {
             throw new FieldExistedException("Email already taken!", HttpStatus.CONFLICT);
         }
     }

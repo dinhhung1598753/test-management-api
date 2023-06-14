@@ -21,7 +21,7 @@ public class ChapterRepositoryTests {
 
     @Test
     public void testExistedByOrderAndSubjectId(){
-        boolean flag = chapterRepository.existsBySubjectIdAndOrder(1, 1);
+        boolean flag = chapterRepository.existsBySubjectIdAndOrderAndEnabledTrue(1, 1);
         Assertions.assertThat(flag).isTrue();
     }
 

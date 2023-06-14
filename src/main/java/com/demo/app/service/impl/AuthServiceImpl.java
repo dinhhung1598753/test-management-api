@@ -54,7 +54,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public AuthenticationResponse register(RegisterRequest registerRequest, HttpServletRequest request) {
-        if(userRepository.existsByEmail(registerRequest.getEmail()) ||
+        if(userRepository.existsByEmailAndEnabledTrue(registerRequest.getEmail()) ||
                 userRepository.existsByUsername(registerRequest.getUsername())){
             throw new FieldExistedException("Email or Username already taken!", HttpStatus.CONFLICT);
         }

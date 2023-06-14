@@ -46,7 +46,7 @@ public class TestSetServiceImpl implements TestSetService {
         var questionNo = 1;
         for (var testNo = 1; testNo <= request.getTestSetQuantity(); ++testNo) {
             var testNoRootNumber = TEST_NO_ROOT_NUMBER;
-            if (testSetRepository.existsByTestAndTestNo(test, testNo + testNoRootNumber)){
+            if (testSetRepository.existsByTestAndTestNoAndEnabledTrue(test, testNo + testNoRootNumber)){
                 testNoRootNumber = ((testNoRootNumber / 100) + 1) * testNoRootNumber;
             }
             var testSet = saveBlankTestSet(testNo + testNoRootNumber, test);

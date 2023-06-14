@@ -11,16 +11,10 @@ import org.hibernate.validator.constraints.Length;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TeacherRequest {
-
-    @NotBlank(message = "Please enter username !")
-    private String username;
+public class TeacherUpdateRequest {
 
     @Email(regexp = "[a-z0-9](\\.?[a-z0-9]){5,}@g(oogle)?mail\\.com$", message = "Email is invalid !")
     private String email;
-
-    @NotBlank(message = "Please enter password !")
-    private String password;
 
     @NotBlank(message = "Please enter your name !")
     private String fullName;
@@ -37,4 +31,5 @@ public class TeacherRequest {
     @NotBlank(message = "Please enter code !")
     @Length(max = 8)
     private String code;
+
 }

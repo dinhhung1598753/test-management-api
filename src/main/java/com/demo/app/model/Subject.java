@@ -31,6 +31,7 @@ public class Subject implements Serializable {
     private String code;
 
     @Column(name = "description")
+    @Nationalized
     private String description;
 
     @Column(name = "credit")

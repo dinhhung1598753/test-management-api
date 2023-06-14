@@ -11,7 +11,7 @@ public class AnswerRequest {
 
     private String content;
 
-    private String isCorrected;
+    private boolean isCorrected;
 
 
 }

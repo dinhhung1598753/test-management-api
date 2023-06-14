@@ -42,4 +42,8 @@ public class TestSetQuestion implements Serializable {
         enabled = true;
     }
 
+    @PreUpdate
+    public void preUpdate(){
+
+    }
 }

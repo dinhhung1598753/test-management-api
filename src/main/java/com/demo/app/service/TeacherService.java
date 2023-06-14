@@ -2,6 +2,7 @@ package com.demo.app.service;
 
 import com.demo.app.dto.teacher.TeacherRequest;
 import com.demo.app.dto.teacher.TeacherResponse;
+import com.demo.app.dto.teacher.TeacherUpdateRequest;
 import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.exception.FieldExistedException;
 
@@ -12,7 +13,7 @@ public interface TeacherService {
 
     List<TeacherResponse> getAllTeacher();
 
-    void updateTeacher(int teacherId, TeacherRequest request) throws EntityNotFoundException, FieldExistedException;
+    void updateTeacher(int teacherId, TeacherUpdateRequest request) throws EntityNotFoundException, FieldExistedException;
 
     void disableTeacher(int teacherId) throws EntityNotFoundException;
 

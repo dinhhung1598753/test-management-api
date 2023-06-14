@@ -2,6 +2,7 @@ package com.demo.app.service;
 
 import com.demo.app.dto.student.StudentRequest;
 import com.demo.app.dto.student.StudentResponse;
+import com.demo.app.dto.student.StudentUpdateRequest;
 import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.exception.FieldExistedException;
 import com.demo.app.exception.FileInputException;
@@ -20,7 +21,7 @@ public interface StudentService {
 
     List<StudentResponse> getAllStudents();
 
-    void updateStudent(int studentId, StudentRequest request) throws EntityNotFoundException;
+    void updateStudent(int studentId, StudentUpdateRequest request) throws EntityNotFoundException;
 
     void disableStudent(int studentId) throws EntityNotFoundException;
 

@@ -51,7 +51,7 @@ public class UserRepositoryTests {
 
     @Test
     public void testExistsByEmail(){
-        boolean existed = userRepository.existsByEmail("knkuro00@gmail.com");
+        boolean existed = userRepository.existsByEmailAndEnabledTrue("knkuro00@gmail.com");
         Assertions.assertThat(existed).isTrue();
     }
 

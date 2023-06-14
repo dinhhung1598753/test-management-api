@@ -22,10 +22,10 @@ public class TestSetRepositoryTests {
     @Test
     public void testExistByTestAndTestNo(){
         var test = com.demo.app.model.Test.builder()
-                .id(3)
+                .id(1)
                 .build();
         var testNo = 101;
-        var flag = testSetRepository.existsByTestAndTestNo(test, testNo);
+        var flag = testSetRepository.existsByTestAndTestNoAndEnabledTrue(test, testNo);
         Assertions.assertThat(flag).isTrue();
     }
 }

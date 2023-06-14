@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface SubjectRepository extends JpaRepository<Subject, Integer> {
 
-    Boolean existsByCode(String code);
+    Boolean existsByCodeAndEnabledTrue(String code);
 
     Optional<Subject> findByCode(String code);
 

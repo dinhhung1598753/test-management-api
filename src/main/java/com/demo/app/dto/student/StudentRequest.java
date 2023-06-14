@@ -1,6 +1,7 @@
 package com.demo.app.dto.student;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -26,10 +27,13 @@ public class StudentRequest {
     @NotBlank(message = "Please enter your name !")
     private String fullName;
 
+    @Min(value = 1, message = "course must be greater than 0 !")
     private int course;
 
+    @NotBlank(message = "Please choose your birthday !")
     private String birthday;
 
+    @NotBlank(message = "Please choose your Gender !")
     private String gender;
 
     @Pattern(regexp = "(84|0[3|5789])+([0-9]{8})\\b", message = "Phone number is invalid")

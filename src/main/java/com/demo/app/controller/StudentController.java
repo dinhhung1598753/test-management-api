@@ -2,6 +2,7 @@ package com.demo.app.controller;
 
 import com.demo.app.dto.message.ResponseMessage;
 import com.demo.app.dto.student.StudentRequest;
+import com.demo.app.dto.student.StudentUpdateRequest;
 import com.demo.app.exception.FileInputException;
 import com.demo.app.service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,7 +41,8 @@ public class StudentController {
                     "phoneNumber":"0987654654",
                     "email":"alicee@gmail.com",
                     "code":"20201234",
-                    "gender":"FEMALE"
+                    "gender":"FEMALE",
+                    "course" : 65
                 },
                 {
                     "id":3,
@@ -50,21 +52,21 @@ public class StudentController {
                     "phoneNumber":"0987654312",
                     "email":"vanb00@gmail.com",
                     "code":"20181234",
-                    "gender":"MALE"
+                    "gender":"MALE",
+                    "course" : 63
                 }
             ]
             """;
     private final String EXAMPLE_STUDENT_INFORMATION_CREATE_AND_UPDATE = """
             {
-                "username":"NguyenVanA00",
                 "email":"nguyenvana123@gmail.com",
-                "password":"vana123",
                 "fullName":"Nguyen Van A",
                 "course":"65",
                 "birthday":"2002-01-01",
                 "gender":"MALE",
                 "phoneNumber":"0987654321",
-                "code":"20201234"
+                "code":"20201234",
+                "course" : 65
             }
             """;
     private final String EXAMPLE_NO_DATA_IN_DB = """
@@ -201,7 +203,7 @@ public class StudentController {
     @PutMapping(path = "/update/{id}")
     public ResponseEntity<?> updateStudent(
             @Parameter(name = "id", description = "This is the ID student need to be updated", example = "1") @PathVariable(name = "id") int studentId,
-            @RequestBody StudentRequest request) {
+            @RequestBody @Valid StudentUpdateRequest request) {
         studentService.updateStudent(studentId, request);
         String message = String.format("Student with id = %d updated successfully !", studentId);
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.OK);
