@@ -57,7 +57,21 @@ public class StudentController {
                 }
             ]
             """;
-    private final String EXAMPLE_STUDENT_INFORMATION_CREATE_AND_UPDATE = """
+    private final String EXAMPLE_STUDENT_INFORMATION_CREATE = """
+            {
+                "username" : "NguyenVanA00",
+                "password" : "vana123",
+                "email":"nguyenvana123@gmail.com",
+                "fullName":"Nguyen Van A",
+                "course":"65",
+                "birthday":"2002-01-01",
+                "gender":"MALE",
+                "phoneNumber":"0987654321",
+                "code":"20201234",
+                "course" : 65
+            }
+            """;
+    private final String EXAMPLE_STUDENT_INFORMATION_UPDATE = """
             {
                 "email":"nguyenvana123@gmail.com",
                 "fullName":"Nguyen Van A",
@@ -113,7 +127,7 @@ public class StudentController {
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = StudentRequest.class, description = "Information's need to be sent to create s new student"),
-                            examples = @ExampleObject(value = EXAMPLE_STUDENT_INFORMATION_CREATE_AND_UPDATE)),
+                            examples = @ExampleObject(value = EXAMPLE_STUDENT_INFORMATION_CREATE)),
                     required = true),
             responses = {
                     @ApiResponse(
@@ -175,7 +189,7 @@ public class StudentController {
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = StudentRequest.class, description = "Information student update"),
-                            examples = @ExampleObject(value = EXAMPLE_STUDENT_INFORMATION_CREATE_AND_UPDATE)), required = true),
+                            examples = @ExampleObject(value = EXAMPLE_STUDENT_INFORMATION_UPDATE)), required = true),
             responses = {
                     @ApiResponse(
                             responseCode = "200",

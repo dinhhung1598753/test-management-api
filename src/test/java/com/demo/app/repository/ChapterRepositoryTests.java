@@ -19,10 +19,20 @@ public class ChapterRepositoryTests {
     @Autowired
     private ChapterRepository chapterRepository;
 
+    @Autowired
+    private SubjectRepository subjectRepository;
+
     @Test
     public void testExistedByOrderAndSubjectId(){
         boolean flag = chapterRepository.existsBySubjectIdAndOrderAndEnabledTrue(1, 1);
         Assertions.assertThat(flag).isTrue();
+    }
+
+    @Test
+    public void testFindBySubjectAndOrder(){
+        var subject = subjectRepository.findByCode("IT4110").get();
+        var chapter = chapterRepository.findBySubjectAndOrder(subject, 1);
+        Assertions.assertThat(chapter).isNotNull();
     }
 
 }

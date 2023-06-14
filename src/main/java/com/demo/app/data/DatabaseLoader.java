@@ -25,31 +25,31 @@ public class DatabaseLoader implements CommandLineRunner {
 
     @Override
     @Transactional
-    public void run(String... args){
+    public void run(String... args) {
         initializeRoles();
         initializeAdminUser();
     }
-    private void initializeRoles(){
-        long roleCount = roleRepository.count();
-        if (roleCount == 0) {
-            List<Role> roles = new ArrayList<>();
-            for (Role.RoleType type : Role.RoleType.values()){
-                roles.add(new Role(type));
-            }
-            roleRepository.saveAll(roles);
+
+    private void initializeRoles() {
+        if (roleRepository.count() != 0) return;
+        List<Role> roles = new ArrayList<>();
+        for (Role.RoleType type : Role.RoleType.values()) {
+            roles.add(new Role(type));
         }
+        roleRepository.saveAll(roles);
+
     }
-    private void initializeAdminUser(){
-        if (!userRepository.existsByUsername("admin")) {
-            var roles = roleRepository.findAll();
-            User user = User.builder()
-                    .username("admin")
-                    .email("knkuro00@gmail.com")
-                    .password(passwordEncoder.passwordEncode().encode("admin"))
-                    .enabled(true)
-                    .roles(roles)
-                    .build();
-            userRepository.save(user);
-        }
+
+    private void initializeAdminUser() {
+        if (userRepository.existsByUsername("admin")) return;
+        var roles = roleRepository.findAll();
+        User user = User.builder()
+                .username("admin")
+                .email("knkuro00@gmail.com")
+                .password(passwordEncoder.passwordEncode().encode("admin"))
+                .enabled(true)
+                .roles(roles)
+                .build();
+        userRepository.save(user);
     }
 }

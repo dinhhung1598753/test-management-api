@@ -131,6 +131,7 @@ public class StudentServiceImpl implements StudentService {
             checkIfCodeExists(request.getCode());
         }
         var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        existStudent.setFullname(request.getFullName());
         existStudent.setPhoneNumber(request.getPhoneNumber());
         existStudent.setCode(request.getCode());
         existStudent.getUser().setEmail(request.getEmail());

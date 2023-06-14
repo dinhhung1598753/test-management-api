@@ -6,6 +6,7 @@ import com.demo.app.dto.question.QuestionResponse;
 import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.model.Answer;
 import com.demo.app.model.Question;
+import com.demo.app.repository.ChapterRepository;
 import com.demo.app.repository.QuestionRepository;
 import com.demo.app.repository.SubjectRepository;
 import com.demo.app.service.QuestionService;
@@ -27,6 +28,8 @@ public class QuestionServiceImpl implements QuestionService {
 
     private final QuestionRepository questionRepository;
 
+    private final ChapterRepository chapterRepository;
+
     private final ModelMapper mapper;
 
     @Override
@@ -34,7 +37,11 @@ public class QuestionServiceImpl implements QuestionService {
         var subject = subjectRepository.findByCode(request.getSubjectCode()).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Not found any subject with code: %s !", request.getSubjectCode()), HttpStatus.NOT_FOUND)
         );
-        var chapter = subject.getChapters().get(request.getChapterNo());
+
+        var chapter = chapterRepository.findBySubjectAndOrder(subject, request.getChapterNo()).orElseThrow(
+                () -> new EntityNotFoundException(String.format("Not found any chapter with order %d in subject %s !", request.getChapterNo(), request.getSubjectCode()), HttpStatus.NOT_FOUND)
+        );
+
         var question = mapper.map(request, Question.class);
         question.setAnswers(
                 request.getAnswers()
