@@ -25,6 +25,6 @@ public class TestRepositoryTests {
         var tests = testRepository.findByEnabledIsTrue();
         var test = tests.get(0);
         System.out.println(test.toString());
-        Assertions.assertThat(test.isEnabled()).isTrue();
+        Assertions.assertThat(test.getEnabled()).isTrue();
     }
 }

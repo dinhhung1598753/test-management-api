@@ -36,17 +36,34 @@ public class TestServiceImpl implements TestService {
     private final ModelMapper mapper;
 
     @Override
-    public TestDetailResponse createTestFirstStep(TestRequest request) throws EntityNotFoundException {
-        var subject = subjectRepository.findByCode(request.getSubjectCode()).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Code: %s not found !", request.getSubjectCode()), HttpStatus.NOT_FOUND)
-        );
-
-        final var FIRST_RESULTS = 0;
+    @Transactional
+    public TestDetailResponse createTestRandomQuestion(TestRequest request) throws EntityNotFoundException {
+        var subject = subjectRepository.findByCode(request.getSubjectCode())
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Code: %s not found !", request.getSubjectCode()), HttpStatus.NOT_FOUND));
+        final int FIRST_RESULTS = 0;
         var pageable = PageRequest.of(FIRST_RESULTS, request.getQuestionQuantity());
-        var questions = questionRepository.findQuestionBySubjectChapterOrder(request.getSubjectCode(), request.getChapterOrders(), pageable);
+        var questions = questionRepository.findQuestionBySubjectChapterOrder(
+                request.getSubjectCode(),
+                request.getChapterOrders(),
+                pageable
+        );
         var questionResponses = questions.stream()
-                .map(question -> mapper.map(question, QuestionResponse.class))
+                .map(question -> {
+                    var response = mapper.map(question, QuestionResponse.class);
+                    response.setSubjectTitle(subject.getTitle());
+                    response.setSubjectCode(subject.getCode());
+                    return response;
+                })
                 .collect(Collectors.toList());
+        var test = Test.builder()
+                .testDay(LocalDate.parse(request.getTestDay(), FORMATTER))
+                .questionQuantity(request.getQuestionQuantity())
+                .duration(request.getDuration())
+                .build();
+
+        test.setQuestions(questions.stream().toList());
+        test.setSubject(subject);
+        testRepository.save(test);
 
         return TestDetailResponse.builder()
                 .questionQuantity(request.getQuestionQuantity())
@@ -60,28 +77,7 @@ public class TestServiceImpl implements TestService {
 
     @Override
     @Transactional
-    public void createTestSecondStep(TestDetailResponse response) {
-        var subject = subjectRepository.findByCode(response.getSubjectCode()).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Code: %s not found !", response.getSubjectCode()), HttpStatus.NOT_FOUND)
-        );
-        var questions = response.getQuestionResponses()
-                .stream()
-                .map(questionResponse -> mapper.map(questionResponse, Question.class))
-                .collect(Collectors.toList());
-        var test = Test.builder()
-                .testDay(LocalDate.parse(response.getTestDay(), FORMATTER))
-                .questionQuantity(response.getQuestionQuantity())
-                .duration(response.getDuration())
-                .build();
-        test = testRepository.save(test);
-        test.setQuestions(questions);
-        test.setSubject(subject);
-        testRepository.save(test);
-    }
-
-    @Override
-    @Transactional
-    public void createTestByChooseQuestions(TestQuestionRequest request){
+    public void createTestByChooseQuestions(TestQuestionRequest request) {
         var questions = questionRepository.findAllById(request.getQuestionIds());
         var subject = (!questions.isEmpty()) ? questions.get(0).getChapter().getSubject() : null;
         var test = Test.builder()
@@ -89,7 +85,6 @@ public class TestServiceImpl implements TestService {
                 .questionQuantity(questions.size())
                 .duration(request.getDuration())
                 .build();
-        test = testRepository.save(test);
         test.setQuestions(questions);
         test.setSubject(subject);
         testRepository.save(test);
@@ -111,12 +106,12 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public TestDetailResponse getTestDetail(int testId){
-        var test = testRepository.findById(testId).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Test with id : %d not found !", testId), HttpStatus.NOT_FOUND)
-        );
+    public TestDetailResponse getTestDetail(int testId) {
+        var test = testRepository.findById(testId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Test with id : %d not found !", testId), HttpStatus.NOT_FOUND));
         var subject = test.getSubject();
-        List<QuestionResponse> questionResponses = test.getQuestions()
+        System.out.println(subject.getId());
+        var questionResponses = test.getQuestions()
                 .stream()
                 .map(question -> mapper.map(question, QuestionResponse.class))
                 .collect(Collectors.toList());
@@ -132,12 +127,12 @@ public class TestServiceImpl implements TestService {
 
     @Override
     @Transactional
-    public void updateTest(int testId, TestDetailRequest request){
+    public void updateTest(int testId, TestDetailRequest request) {
         var test = testRepository.findById(testId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find any chapter with id %d", testId), HttpStatus.NOT_FOUND));
         var questions = request.getQuestionResponses()
                 .stream()
-                .map(questionResponse -> mapper.map(questionResponse, Question.class) )
+                .map(questionResponse -> mapper.map(questionResponse, Question.class))
                 .collect(Collectors.toList());
         test.setQuestions(questions);
         test.setTestDay(LocalDate.parse(request.getTestDay(), FORMATTER));
@@ -146,7 +141,7 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public void disableTest(int testId){
+    public void disableTest(int testId) {
         var test = testRepository.findById(testId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find any chapter with id %d", testId), HttpStatus.NOT_FOUND));
         test.setEnabled(false);

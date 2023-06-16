@@ -39,17 +39,18 @@ public class DatabaseLoader implements CommandLineRunner {
         roleRepository.saveAll(roles);
 
     }
+ 
+    private void initializeAdminUser(){
+        if (!userRepository.existsByUsername("admin")) {
+            var roles = roleRepository.findAll();
+            User user = User.builder()
+                    .username("admin")
+                    .email("knkuro00@gmail.com")
+                    .password(passwordEncoder.passwordEncode().encode("admin"))
+                    .roles(roles)
+                    .build();
+            userRepository.save(user);
+        }
 
-    private void initializeAdminUser() {
-        if (userRepository.existsByUsername("admin")) return;
-        var roles = roleRepository.findAll();
-        User user = User.builder()
-                .username("admin")
-                .email("knkuro00@gmail.com")
-                .password(passwordEncoder.passwordEncode().encode("admin"))
-                .enabled(true)
-                .roles(roles)
-                .build();
-        userRepository.save(user);
     }
 }

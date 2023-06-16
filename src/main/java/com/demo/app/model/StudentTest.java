@@ -14,11 +14,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudentTest{
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+public class StudentTest extends BaseEntity{
 
     /** Number of corrected question that student have been answered. */
     @Column(name = "mark")
@@ -30,9 +26,6 @@ public class StudentTest{
      * */
     @Column(name = "grade")
     private double grade;
-
-    @Column(name = "is_enabled")
-    private boolean enabled;
 
     @Column(name = "test_date")
     private LocalDate testDate;

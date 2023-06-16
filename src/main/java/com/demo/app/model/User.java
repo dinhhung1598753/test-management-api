@@ -2,14 +2,11 @@ package com.demo.app.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -25,11 +22,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User implements Serializable, UserDetails {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+public class User extends BaseEntity implements UserDetails {
 
     @Column(name = "username")
     private String username;
@@ -40,12 +33,6 @@ public class User implements Serializable, UserDetails {
     @JsonIgnore
     @Column(name = "password")
     private String password;
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @Column(name = "is_enabled")
-    private boolean enabled;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Student student;
@@ -61,11 +48,6 @@ public class User implements Serializable, UserDetails {
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles;
-
-    @PrePersist
-    private void prePersist(){
-        createdAt = LocalDateTime.now();
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

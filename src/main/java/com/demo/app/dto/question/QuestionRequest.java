@@ -30,5 +30,5 @@ public class QuestionRequest {
     @JsonProperty("answers")
     private List<AnswerRequest> answers;
 
-    private String questionImage;
+    private String topicImage;
 }

@@ -13,5 +13,4 @@ public class AnswerRequest {
 
     private String isCorrected;
 
-
 }

@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Nationalized;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -17,11 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ExamClass{
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class ExamClass extends BaseEntity{
 
     @Column(name = "semester")
     private String semester;
@@ -32,9 +27,6 @@ public class ExamClass{
 
     @Column(name = "code")
     private String code;
-
-    @Column(name = "created_date")
-    private LocalDate createdDate;
 
     @Column(name = "is_enabled")
     private boolean enabled;
@@ -54,21 +46,5 @@ public class ExamClass{
     @ManyToOne
     private Test test;
 
-    @PrePersist
-    private void prePersist() {
-        createdDate = LocalDate.now();
-        enabled = true;
-    }
 
-    @Override
-    public String toString() {
-        return "ExamClass{" +
-                "id=" + id +
-                ", semester='" + semester + '\'' +
-                ", roomName='" + roomName + '\'' +
-                ", code='" + code + '\'' +
-                ", createdDate=" + createdDate +
-                ", enabled=" + enabled +
-                '}';
-    }
 }

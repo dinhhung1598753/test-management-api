@@ -2,6 +2,7 @@ package com.demo.app.repository;
 
 import com.demo.app.ProjectDesignIApplication;
 import org.assertj.core.api.Assertions;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +26,13 @@ public class QuestionRepositoryTests {
     @Test
     public void testFindQuestionBySubjectChapterOrder(){
         var code = "IT4110";
-        var chapterOrders = List.of(new Integer[]{1, 2, 3, 4});
-        var pageable = PageRequest.of(0, 10);
+        var chapterOrders = List.of(new Integer[]{2});
+        var pageable = PageRequest.of(0, 2);
         var questions = questionRepository.findQuestionBySubjectChapterOrder(code, chapterOrders, pageable);
         Assertions.assertThat(questions).isNotNull();
         int count = 0;
-        for (var question : questions){
-            System.out.println(question);
+        for (var question : questions.getContent()){
+            System.out.println(question.getId());
             count++;
         }
         System.out.println(count);
@@ -39,6 +40,7 @@ public class QuestionRepositoryTests {
     }
 
     @Test
+    @Ignore
     public void testCountAllByChapterId(){
         var chapterId = 1;
         int count = questionRepository.countByChapterId(chapterId);

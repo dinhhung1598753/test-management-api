@@ -2,7 +2,6 @@ package com.demo.app.controller;
 
 import com.demo.app.dto.message.ResponseMessage;
 import com.demo.app.dto.test.TestDetailRequest;
-import com.demo.app.dto.test.TestDetailResponse;
 import com.demo.app.dto.test.TestQuestionRequest;
 import com.demo.app.dto.test.TestRequest;
 import com.demo.app.exception.EntityNotFoundException;
@@ -28,19 +27,11 @@ public class TestController {
 
     private final TestService testService;
 
-    @PostMapping(path = "/create/first-step")
+    @PostMapping(path = "/create/random")
     public ResponseEntity<?> createTest(@RequestBody @Valid final TestRequest request) throws EntityNotFoundException {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(testService.createTestFirstStep(request));
-    }
-
-    @PostMapping(path = "/create/second-step")
-    public ResponseEntity<?> saveTest(@RequestBody final TestDetailResponse response) {
-        testService.createTestSecondStep(response);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new ResponseMessage("Created test successfully !"));
+                .body(testService.createTestRandomQuestion(request));
     }
 
     @PostMapping(path = "/create")

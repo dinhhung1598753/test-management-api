@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 
 import lombok.*;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -15,32 +14,19 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Test implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-
-    @Column(name = "is_enabled")
-    private boolean enabled;
+public class Test extends BaseEntity {
 
     @Column(name = "test_day")
     private LocalDate testDay;
 
     @Column(name = "total_point")
-    private double totalPoint;
+    private double totalPoint = 100.0d;
 
     @Column(name = "question_quantity")
     private int questionQuantity;
 
     @Column(name = "duration")
     private int duration;
-
-    @Column(name = "created_at")
-    private LocalDate createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDate updatedAt;
 
     @OneToMany(mappedBy = "test", cascade = CascadeType.ALL)
     private List<TestSet> testSets;
@@ -58,27 +44,4 @@ public class Test implements Serializable {
     @ManyToOne
     private Subject subject;
 
-    @PrePersist
-    private void prePersist(){
-        createdAt = LocalDate.now();
-        totalPoint = 100.0d;
-        enabled = true;
-    }
-
-    @PreUpdate
-    private void preUpdate(){
-        updatedAt = LocalDate.now();
-    }
-
-    @Override
-    public String toString() {
-        return "Test{" +
-                "id=" + id +
-                ", enabled=" + enabled +
-                ", testDay=" + testDay +
-                ", totalPoint=" + totalPoint +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                '}';
-    }
 }

@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Nationalized;
 
-import java.io.Serializable;
 import java.util.List;
 
 @Entity
@@ -17,11 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Subject implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+public class Subject extends BaseEntity {
 
     @Column(name = "title")
     @Nationalized
@@ -31,14 +26,10 @@ public class Subject implements Serializable {
     private String code;
 
     @Column(name = "description")
-    @Nationalized
     private String description;
 
     @Column(name = "credit")
     private int credit;
-
-    @Column(name = "is_enabled")
-    private boolean enabled;
 
     @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL)
     private List<Chapter> chapters;
@@ -49,8 +40,4 @@ public class Subject implements Serializable {
     @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL)
     private List<Test> tests;
 
-    @PrePersist
-    private void prePersist(){
-        enabled = true;
-    }
 }

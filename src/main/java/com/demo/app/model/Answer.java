@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Nationalized;
 
-import java.io.Serializable;
 import java.util.List;
 
 @Entity
@@ -14,20 +13,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Answer implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+public class Answer extends BaseEntity {
 
     @Column(name = "content")
     @Nationalized
     private String content;
 
     @Column(name = "is_corrected")
-    private boolean isCorrected;
-
-    @Column(name = "is_enabled")
-    private boolean enabled;
+    private Boolean isCorrected;
 
     @ManyToOne
     private Question question;
@@ -35,9 +28,5 @@ public class Answer implements Serializable {
     @OneToMany(mappedBy = "answer", cascade = CascadeType.ALL)
     private List<TestSetQuestionAnswer> testSetQuestionAnswers;
 
-    @PrePersist
-    private void prePersist() {
-        enabled = true;
-    }
 
 }

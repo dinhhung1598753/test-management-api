@@ -15,6 +15,6 @@ public class AnswerResponse {
     private String content;
 
     @JsonProperty("isCorrected")
-    private boolean isCorrected;
+    private String isCorrected;
 
 }

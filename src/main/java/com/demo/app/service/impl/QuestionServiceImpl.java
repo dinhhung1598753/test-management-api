@@ -16,6 +16,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,14 +35,21 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public void addQuestion(QuestionRequest request) throws EntityNotFoundException {
-        var subject = subjectRepository.findByCode(request.getSubjectCode()).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Not found any subject with code: %s !", request.getSubjectCode()), HttpStatus.NOT_FOUND)
-        );
+        questionRepository.save(mapRequestToQuestion(request));
+    }
 
-        var chapter = chapterRepository.findBySubjectAndOrder(subject, request.getChapterNo()).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Not found any chapter with order %d in subject %s !", request.getChapterNo(), request.getSubjectCode()), HttpStatus.NOT_FOUND)
-        );
-
+    @Override
+    @Transactional
+    public void addAllQuestions(List<QuestionRequest> requests) throws EntityNotFoundException{
+        var questions = new ArrayList<Question>();
+        requests.forEach(request -> questions.add(mapRequestToQuestion(request)));
+        questionRepository.saveAll(questions);
+    }
+    private Question mapRequestToQuestion(QuestionRequest request){
+        var subject = subjectRepository.findByCode(request.getSubjectCode())
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Not found any subject with code: %s !", request.getSubjectCode()), HttpStatus.NOT_FOUND));
+        var chapter = chapterRepository.findBySubjectAndOrder(subject, request.getChapterNo())
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Not found any chapter with order %d in subject %s !", request.getChapterNo(), request.getSubjectCode()), HttpStatus.NOT_FOUND));
         var question = mapper.map(request, Question.class);
         question.setAnswers(
                 request.getAnswers()
@@ -54,8 +62,7 @@ public class QuestionServiceImpl implements QuestionService {
                         .collect(Collectors.toList())
         );
         question.setChapter(chapter);
-        question.setTopicImage(request.getQuestionImage());
-        questionRepository.save(question);
+        return question;
     }
 
     @Override
@@ -67,7 +74,7 @@ public class QuestionServiceImpl implements QuestionService {
         var questions = new HashSet<Question>();
         subject.getChapters().forEach(chapter -> {
             for (var question : chapter.getQuestions()) {
-                if (question.isEnabled()) {
+                if (question.getEnabled()) {
                     questions.add(question);
                 }
             }
@@ -84,30 +91,23 @@ public class QuestionServiceImpl implements QuestionService {
                 .collect(Collectors.toList());
     }
 
-    /** Need to fix */
     @Override
     @Transactional
     public void updateQuestion(int questionId, QuestionRequest request) {
-        var existedQuestion = questionRepository.findById(questionId).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Not found any question with id: %d !", questionId), HttpStatus.NOT_FOUND)
-        );
-
-        var question = mapper.map(request, Question.class);
-        if (!existedQuestion.equals(question)) {
-            existedQuestion.setTopicText(question.getTopicText());
-            existedQuestion.setTopicImage(question.getTopicImage());
-            existedQuestion.setLevel(question.getLevel());
+        if (!questionRepository.existsById(questionId)){
+            throw new EntityNotFoundException(String.format("Not found any question with id: %d !", questionId), HttpStatus.NOT_FOUND);
         }
-        questionRepository.save(existedQuestion);
+        var question = mapRequestToQuestion(request);
+        question.setId(questionId);
+        questionRepository.save(question);
 
     }
 
     @Override
     @Transactional
     public void disableQuestion(int questionId) {
-        var question = questionRepository.findById(questionId).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Not found any question with id: %d !", questionId), HttpStatus.NOT_FOUND)
-        );
+        var question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Not found any question with id: %d !", questionId), HttpStatus.NOT_FOUND));
         question.setEnabled(false);
         questionRepository.save(question);
     }

@@ -6,10 +6,7 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 
 public interface TestService {
-    TestDetailResponse createTestFirstStep(TestRequest request);
-
-    @Transactional
-    void createTestSecondStep(TestDetailResponse response);
+    TestDetailResponse createTestRandomQuestion(TestRequest request);
 
     @Transactional
     void createTestByChooseQuestions(TestQuestionRequest request);

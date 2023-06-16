@@ -39,7 +39,8 @@ public class ModelMapperConfig {
         };
         mapper.createTypeMap(String.class, LocalDate.class);
         mapper.addConverter(converter);
-        mapper.getTypeMap(String.class, LocalDate.class).setProvider(localDateProvider);
+        mapper.getTypeMap(String.class, LocalDate.class)
+                .setProvider(localDateProvider);
     }
 
     private void convertGender(ModelMapper mapper) {
@@ -56,18 +57,20 @@ public class ModelMapperConfig {
                 context -> switch (context.getSource()) {
                     case "easy", "Easy", "EASY" -> Question.Level.EASY;
                     case "medium", "Medium", "MEDIUM" -> Question.Level.MEDIUM;
-                    case "difficult", "Difficult", "DIFFICULT" -> Question.Level.DIFFICULT;
+                    case "hard", "Hard", "HARD" -> Question.Level.HARD;
                     default -> null;
                 });
     }
 
     private void convertBoolean(ModelMapper mapper) {
-        mapper.createTypeMap(String.class, Boolean.class).setConverter(
-                context -> switch (context.getSource()) {
+        mapper.createTypeMap(String.class, Boolean.class)
+                .setConverter(context -> switch (context.getSource()) {
                     case "True", "TRUE", "true", "1", "Correct" -> true;
                     case "False", "FALSE", "false", "0", "Incorrect" -> false;
                     default -> null;
                 });
+        mapper.createTypeMap(Boolean.class, String.class)
+                .setConverter(context -> context.getSource() ? "true" : "false");
     }
 
 }

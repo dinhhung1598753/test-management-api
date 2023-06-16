@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Nationalized;
 
-import java.io.Serializable;
 import java.util.List;
 
 @Entity
@@ -15,11 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Chapter implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+public class Chapter extends BaseEntity {
 
     @Column(name = "title")
     @Nationalized
@@ -28,17 +23,10 @@ public class Chapter implements Serializable {
     @Column(name = "[order]")
     private int order;
 
-    @Column(name = "is_enabled")
-    private boolean enabled;
-
     @ManyToOne(fetch = FetchType.EAGER)
     private Subject subject;
 
     @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL)
     private List<Question> questions;
 
-    @PrePersist
-    private void prePersist(){
-        enabled = true;
-    }
 }

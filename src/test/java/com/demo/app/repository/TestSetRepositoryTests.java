@@ -21,9 +21,8 @@ public class TestSetRepositoryTests {
 
     @Test
     public void testExistByTestAndTestNo(){
-        var test = com.demo.app.model.Test.builder()
-                .id(1)
-                .build();
+        var test = new com.demo.app.model.Test();
+        test.setId(1);
         var testNo = 101;
         var flag = testSetRepository.existsByTestAndTestNoAndEnabledTrue(test, testNo);
         Assertions.assertThat(flag).isTrue();

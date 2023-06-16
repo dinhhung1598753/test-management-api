@@ -37,7 +37,6 @@ public class UserRepositoryTests {
         var expectUser = User.builder()
                 .username("admin")
                 .email("knkuro00@gmail.com")
-                .enabled(true)
                 .build();
         var actualUser = userRepository.findByUsernameAndEnabledIsTrue("admin").get();
         Assertions.assertThat(actualUser.equals(expectUser)).isTrue();

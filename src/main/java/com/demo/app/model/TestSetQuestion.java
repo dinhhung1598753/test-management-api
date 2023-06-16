@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 
 import lombok.*;
 
-import java.io.Serializable;
 import java.util.List;
 
 @Entity
@@ -14,16 +13,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TestSetQuestion implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+public class TestSetQuestion extends BaseEntity {
 
     @Column(name = "question_no")
     private int questionNo;
-
-    @Column(name = "is_enabled")
-    private boolean enabled;
 
     @ManyToOne
     private TestSet testSet;
@@ -37,13 +30,4 @@ public class TestSetQuestion implements Serializable {
     @OneToMany(mappedBy = "testSetQuestion", cascade = CascadeType.ALL)
     private List<TestSetQuestionAnswer> testSetQuestionAnswers;
 
-    @PrePersist
-    private void prePersist(){
-        enabled = true;
-    }
-
-    @PreUpdate
-    public void preUpdate(){
-
-    }
 }

@@ -34,7 +34,7 @@ public class SecurityConfig {
     private final LogoutHandler logoutHandler;
 
     private static final String[] AUTH_WHITELIST = {
-            "api/v*/auth/**", "/verify-email",
+            "api/v1/auth/**", "/verify-email",
             "/v3/api-docs/**", "/v3/api-docs.yaml",
             "/swagger-ui/**", "/swagger-ui.html",
             "/documentation", "/api/v1/student/export",
@@ -65,8 +65,7 @@ public class SecurityConfig {
                     auth.anyRequest().authenticated();
 
                 })
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(daoAuthenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling()

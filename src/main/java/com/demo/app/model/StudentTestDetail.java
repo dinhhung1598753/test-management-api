@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 
 import lombok.*;
 
-import java.io.Serializable;
-
 @Entity
 @Table(name = "student_test_detail")
 @Getter
@@ -13,14 +11,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StudentTestDetail implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-
-    @Column(name = "is_enabled")
-    private boolean enabled;
+public class StudentTestDetail extends BaseEntity {
 
     @Column(name = "selected_answer", length = 4)
     private String selectedAnswer;

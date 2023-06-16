@@ -4,19 +4,13 @@ import jakarta.persistence.*;
 
 import lombok.*;
 
-import java.io.Serializable;
-
 @Entity
 @Table(name = "role")
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class Role implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+public class Role extends BaseEntity {
 
     @Column(name = "role_name", length = 20)
     @Enumerated(EnumType.STRING)

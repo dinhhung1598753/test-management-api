@@ -78,7 +78,7 @@ public class SubjectServiceImpl implements SubjectService {
         }
         var subject = mapper.map(request, Subject.class);
         subject.setId(existSubject.getId());
-        subject.setEnabled(existSubject.isEnabled());
+        subject.setEnabled(existSubject.getEnabled());
 
         subjectRepository.save(subject);
     }
@@ -95,7 +95,8 @@ public class SubjectServiceImpl implements SubjectService {
    @Override
    @Transactional
    public List<ChapterResponse> getAllSubjectChapters(String code) throws EntityNotFoundException {
-        var subject = subjectRepository.findByCode(code).orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find any chapter with code %s", code), HttpStatus.NOT_FOUND));
+        var subject = subjectRepository.findByCode(code)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find any chapter with code %s", code), HttpStatus.NOT_FOUND));
         List<Chapter> chapters = chapterRepository.findBySubjectIdAndEnabledTrue(subject.getId());
         return chapters.stream().map(chapter -> ChapterResponse.builder()
                 .id(chapter.getId())
@@ -117,7 +118,7 @@ public class SubjectServiceImpl implements SubjectService {
        chapterRepository.save(chapter);
    }
 
-   @Override
+
    @Transactional
    public void addSubjectChapters(String code, List<ChapterRequest> request) {
         var subject = subjectRepository.findByCode(code)
