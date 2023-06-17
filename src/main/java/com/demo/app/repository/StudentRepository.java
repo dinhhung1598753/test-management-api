@@ -25,9 +25,9 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     Optional<Student> findByUsername(String username);
 
     @Query("""
-            select s from Student s
-            where concat(s.code, s.birthday, s.fullname, s.gender, s.course, s.phoneNumber) like %?1%
-                  and s.enabled is true
+            select s from Student s inner join User u on s.user.id = u.id
+            where u.enabled = true and concat(s.code, s.birthday, s.fullname, s.gender, s.course, s.phoneNumber) like %?1%
+                  
             """)
     List<Student> searchBy(String keyword);
 

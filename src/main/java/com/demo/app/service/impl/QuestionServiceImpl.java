@@ -40,12 +40,13 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     @Transactional
-    public void addAllQuestions(List<QuestionRequest> requests) throws EntityNotFoundException{
+    public void addAllQuestions(List<QuestionRequest> requests) throws EntityNotFoundException {
         var questions = new ArrayList<Question>();
         requests.forEach(request -> questions.add(mapRequestToQuestion(request)));
         questionRepository.saveAll(questions);
     }
-    private Question mapRequestToQuestion(QuestionRequest request){
+
+    private Question mapRequestToQuestion(QuestionRequest request) {
         var chapter = chapterRepository.findById(request.getChapterId())
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Chapter with id %d not found !", request.getChapterId()),
@@ -60,8 +61,7 @@ public class QuestionServiceImpl implements QuestionService {
                             answer.setQuestion(question);
                             return answer;
                         })
-                        .collect(Collectors.toList())
-        );
+                        .collect(Collectors.toList()));
         question.setChapter(chapter);
         return question;
     }
@@ -96,14 +96,24 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     @Transactional
     public void updateQuestion(int questionId, QuestionRequest request) {
-        if (!questionRepository.existsById(questionId)){
-            throw new EntityNotFoundException(
-                    String.format("Not found any question with id: %d !", questionId),
-                    HttpStatus.NOT_FOUND);
+        var question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Not found any question with id: %d !", questionId),
+                        HttpStatus.NOT_FOUND));
+        var chapter = chapterRepository.findById(request.getChapterId())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Not found any question with id: %d !", questionId),
+                        HttpStatus.NOT_FOUND));
+        question.setLevel(Question.Level.valueOf(request.getLevel()));
+        question.setTopicText(request.getTopicText());
+        question.setTopicImage(request.getTopicImage());
+        question.setChapter(chapter);
+        var index = 0;
+        for(var answer : question.getAnswers()){
+            var answerId = answer.getId();
+            answer = mapper.map(request.getAnswers().get(index++), Answer.class);
+            answer.setId(answerId);
         }
-
-        var question = mapRequestToQuestion(request);
-        question.setId(questionId);
         questionRepository.save(question);
 
     }
