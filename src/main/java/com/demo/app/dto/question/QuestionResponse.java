@@ -17,11 +17,11 @@ public class QuestionResponse {
 
     private String topicText;
 
-    private byte[] topicImage;
+    private String topicImage;
 
     private String level;
 
-    private String createdDate;
+    private String createdAt;
 
     private ChapterResponse chapter;
 

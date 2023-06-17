@@ -24,7 +24,6 @@ import java.util.List;
 @RequestMapping(path = "/api/v1/student-test")
 @RequiredArgsConstructor
 @Tag(name = "Student-Test", description = "Manage Student's Test and Marking")
-@CrossOrigin(allowedHeaders = "*", origins = "*")
 public class StudentTestController {
 
     private final StudentTestService studentTestService;

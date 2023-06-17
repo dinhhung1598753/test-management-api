@@ -24,7 +24,6 @@ import java.util.List;
 @RequestMapping(path = "/api/v1/teacher")
 @AllArgsConstructor
 @Tag(name = "Teacher")
-@CrossOrigin(allowedHeaders = "*", origins = "*")
 public class TeacherController {
 
     private final String EXAMPLE_INFORMATION_NOT_FOUND = """

@@ -7,8 +7,6 @@ import com.demo.app.dto.testset.TestSetResponse;
 import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.model.*;
 import com.demo.app.repository.TestRepository;
-import com.demo.app.repository.TestSetQuestionAnswerRepository;
-import com.demo.app.repository.TestSetQuestionRepository;
 import com.demo.app.repository.TestSetRepository;
 import com.demo.app.service.TestSetService;
 import jakarta.transaction.Transactional;
@@ -26,73 +24,80 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TestSetServiceImpl implements TestSetService {
 
-    private static final int TEST_NO_ROOT_NUMBER = 100;
-
     private final ModelMapper mapper;
 
     private final TestRepository testRepository;
 
     private final TestSetRepository testSetRepository;
 
-    private final TestSetQuestionRepository testSetQuestionRepository;
-
-    private final TestSetQuestionAnswerRepository testSetQuestionAnswerRepository;
-
     @Override
     @Transactional
     public void createTestSetFromTest(int testId, TestSetRequest request) {
-        var test = testRepository.findById(testId).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Test with id: %d not found !", testId), HttpStatus.NOT_FOUND));
-        var questionNo = 1;
-        for (var testNo = 1; testNo <= request.getTestSetQuantity(); ++testNo) {
-            var testNoRootNumber = TEST_NO_ROOT_NUMBER;
-            if (testSetRepository.existsByTestAndTestNoAndEnabledTrue(test, testNo + testNoRootNumber)){
-                testNoRootNumber = ((testNoRootNumber / 100) + 1) * testNoRootNumber;
+        var test = testRepository.findById(testId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Test with id: %d not found !", testId),
+                        HttpStatus.NOT_FOUND));
+        var testSetQuantity = request.getTestSetQuantity();
+        var testSets = new ArrayList<TestSet>();
+        for (var digit = 1; digit <= testSetQuantity; ++digit) {
+            int root = 100, testNo = digit + root;
+            if (testSetRepository.existsByTestAndTestNoAndEnabledTrue(test, testNo)) {
+                root = (root / 100 + 1) * 100;
+                testNo = root + digit;
             }
-            var testSet = saveBlankTestSet(testNo + testNoRootNumber, test);
-            Collections.shuffle(test.getQuestions());
-
-            for (var question : test.getQuestions()) {
-                var testSetQuestion = saveBlankTestSetQuestion(questionNo, testSet, question);
-                saveAllTestSetQuestionAnswer(testSetQuestion, question);
-                questionNo++;
-            }
-            questionNo = 1;
-        }
-    }
-    private TestSet saveBlankTestSet(int testNo, Test test) {
-        var testSet = TestSet.builder()
-                .testNo(testNo)
-                .test(test)
-                .build();
-        return testSetRepository.save(testSet);
-    }
-    private TestSetQuestion saveBlankTestSetQuestion(int questionNo, TestSet testSet, Question question) {
-        var testSetQuestion = TestSetQuestion.builder()
-                .questionNo(questionNo)
-                .question(question)
-                .testSet(testSet)
-                .build();
-        return testSetQuestionRepository.save(testSetQuestion);
-    }
-    private void saveAllTestSetQuestionAnswer(TestSetQuestion testSetQuestion, Question question) {
-        int answerNo = 0;
-        var testSetQuestionAnswers = new ArrayList<TestSetQuestionAnswer>();
-        Collections.shuffle(question.getAnswers());
-        for (var answer : question.getAnswers()) {
-            answerNo++;
-            var testSetQuestionAnswer = TestSetQuestionAnswer.builder()
-                    .answerNo(answerNo)
-                    .testSetQuestion(testSetQuestion)
-                    .answer(answer)
+            var testSet = TestSet.builder()
+                    .testNo(testNo)
+                    .test(test)
                     .build();
-            testSetQuestionAnswers.add(testSetQuestionAnswer);
+            testSet.setTestSetQuestions(assignQuestionsNumber(testSet, test.getQuestions()));
+            testSets.add(testSet);
         }
-        testSetQuestionAnswerRepository.saveAll(testSetQuestionAnswers);
+        testSetRepository.saveAll(testSets);
     }
+
+
+    private List<TestSetQuestion> assignQuestionsNumber(TestSet testset, List<Question> questions) {
+        var testSetQuestions = new ArrayList<TestSetQuestion>();
+        var questionNo = 1;
+        Collections.shuffle(questions);
+        for (var question : questions) {
+            var testSetQuestion = new TestSetQuestion();
+            testSetQuestion.setTestSet(testset);
+            testSetQuestion.setQuestion(question);
+            testSetQuestion.setQuestionNo(questionNo++);
+            testSetQuestion.setTestSetQuestionAnswers(assignAnswersNumber(testSetQuestion, question.getAnswers()));
+            testSetQuestion.setBinaryAnswer(binaryAnswer(testSetQuestion.getTestSetQuestionAnswers()));
+            testSetQuestions.add(testSetQuestion);
+        }
+        return testSetQuestions;
+    }
+
+    private List<TestSetQuestionAnswer> assignAnswersNumber(TestSetQuestion testSetQuestion, List<Answer> answers) {
+        var testSetAnswers = new ArrayList<TestSetQuestionAnswer>();
+        var answerNo = 1;
+        Collections.shuffle(answers);
+        for (var answer : answers) {
+            var testSetAnswer = new TestSetQuestionAnswer();
+            testSetAnswer.setAnswer(answer);
+            testSetAnswer.setAnswerNo(answerNo++);
+            testSetAnswer.setTestSetQuestion(testSetQuestion);
+            testSetAnswers.add(testSetAnswer);
+        }
+        return testSetAnswers;
+    }
+
+    private String binaryAnswer(List<TestSetQuestionAnswer> testSetAnswers) {
+        var stringBuilder = new StringBuilder();
+        testSetAnswers.forEach(testSetAnswer -> {
+            var isCorrected = testSetAnswer.getAnswer().getIsCorrected();
+            stringBuilder.append(isCorrected ? "1" : "0");
+        });
+        return stringBuilder.toString();
+    }
+
 
     @Override
-    public List<TestSetResponse> getAllTestSet(){
+    public List<TestSetResponse> getAllTestSet() {
         var testsets = testSetRepository.findByEnabledIsTrue();
         return testsets.stream().map(testSet -> {
             var test = testSet.getTest();
@@ -108,20 +113,27 @@ public class TestSetServiceImpl implements TestSetService {
     }
 
     @Override
-    public TestSetDetailResponse getTestSetDetailResponse(int testSetId){
-        var testSet = testSetRepository.findById(testSetId).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Test set with id %d not found !", testSetId),HttpStatus.NOT_FOUND));
+    public TestSetDetailResponse getTestSetDetail(int testSetId) {
+        var testSet = testSetRepository.findById(testSetId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Test set with id %d not found !", testSetId),
+                        HttpStatus.NOT_FOUND));
         var questionResponses = new ArrayList<TestSetQuestionResponse>();
-        testSet.getTestSetQuestions().forEach(testSetQuestion -> {
-            var questionResponse = mapper.map(testSetQuestion, TestSetQuestionResponse.class);
-            var answers = testSetQuestion.getTestSetQuestionAnswers();
+        testSet.getTestSetQuestions()
+                .forEach(testSetQuestion -> {
+                    var questionResponse = mapper.map(testSetQuestion, TestSetQuestionResponse.class);
+                    var question = testSetQuestion.getQuestion();
+                    var answers = testSetQuestion.getTestSetQuestionAnswers();
 
-            for (var i = 0; i < answers.size(); i++){
-                String content = answers.get(i).getAnswer().getContent();
-                questionResponse.getAnswers().get(i).setContent(content);
-            }
-            questionResponses.add(questionResponse);
-        });
+                    questionResponse.setLevel(question.getLevel().toString());
+                    questionResponse.setTopicText(question.getTopicText());
+                    questionResponse.setTopicImage(question.getTopicImage());
+                    for (var i = 0; i < answers.size(); i++) {
+                        String content = answers.get(i).getAnswer().getContent();
+                        questionResponse.getAnswers().get(i).setContent(content);
+                    }
+                    questionResponses.add(questionResponse);
+                });
 
         return TestSetDetailResponse.builder()
                 .duration(testSet.getTest().getDuration())

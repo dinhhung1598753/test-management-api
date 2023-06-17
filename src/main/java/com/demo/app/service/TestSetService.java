@@ -13,5 +13,5 @@ public interface TestSetService {
 
     List<TestSetResponse> getAllTestSet();
 
-    TestSetDetailResponse getTestSetDetailResponse(int testSetId);
+    TestSetDetailResponse getTestSetDetail(int testSetId);
 }

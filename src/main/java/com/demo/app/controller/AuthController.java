@@ -24,7 +24,6 @@ import java.io.IOException;
 @RestController
 @RequestMapping(path = "/api/v1/auth")
 @RequiredArgsConstructor
-@CrossOrigin(allowedHeaders = "*", origins = "*")
 @Tag(name = "Authentication", description = "Login and Register User's account")
 public class AuthController {
 

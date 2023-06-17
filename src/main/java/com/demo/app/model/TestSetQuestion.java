@@ -18,6 +18,9 @@ public class TestSetQuestion extends BaseEntity {
     @Column(name = "question_no")
     private int questionNo;
 
+    @Column(name = "binary_answer")
+    private String binaryAnswer;
+
     @ManyToOne
     private TestSet testSet;
 
@@ -29,5 +32,6 @@ public class TestSetQuestion extends BaseEntity {
 
     @OneToMany(mappedBy = "testSetQuestion", cascade = CascadeType.ALL)
     private List<TestSetQuestionAnswer> testSetQuestionAnswers;
+
 
 }

@@ -29,7 +29,6 @@ import java.util.List;
 @RequestMapping(path = "/api/v1/student")
 @Tag(name = "Student", description = "Student APIs Management")
 @AllArgsConstructor
-@CrossOrigin(allowedHeaders = "*", origins = "*")
 public class StudentController {
     private final String EXAMPLE_LIST_STUDENT_RESPONSES = """
             [

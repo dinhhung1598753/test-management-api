@@ -3,7 +3,9 @@ package com.demo.app.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
@@ -24,6 +26,7 @@ public abstract class BaseEntity implements Serializable {
     @EqualsAndHashCode.Include
     private Integer id;
 
+    @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -31,6 +34,7 @@ public abstract class BaseEntity implements Serializable {
     @Column(name = "created_by")
     private String createdBy;
 
+    @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
@@ -40,15 +44,5 @@ public abstract class BaseEntity implements Serializable {
 
     @Column(name = "is_enabled")
     private Boolean enabled = true;
-
-    @PrePersist
-    private void prePersist(){
-        createdAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    private void preUpdate(){
-        updatedAt = LocalDateTime.now();
-    }
 
 }

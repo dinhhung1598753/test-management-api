@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "/api/v1/test-set")
 @Tag(name = "Test-Set", description = "TestSet API management")
 @RequiredArgsConstructor
-@CrossOrigin(allowedHeaders = "*", origins = "*")
 public class TestSetController {
 
     private final TestSetService testSetService;
@@ -38,6 +37,6 @@ public class TestSetController {
     public ResponseEntity<?> getTestSetDetail(@PathVariable(name = "id") int testSetId){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(testSetService.getTestSetDetailResponse(testSetId));
+                .body(testSetService.getTestSetDetail(testSetId));
     }
 }

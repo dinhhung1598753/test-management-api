@@ -34,7 +34,7 @@ public class SecurityConfig {
     private final LogoutHandler logoutHandler;
 
     private static final String[] AUTH_WHITELIST = {
-            "api/v1/auth/**", "/verify-email",
+            "api/v*/auth/**", "/verify-email",
             "/v3/api-docs/**", "/v3/api-docs.yaml",
             "/swagger-ui/**", "/swagger-ui.html",
             "/documentation", "/api/v1/student/export",
@@ -42,22 +42,9 @@ public class SecurityConfig {
     };
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
-    }
-
-    @Bean
-    public AuthenticationProvider daoAuthenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(passwordEncoder.passwordEncode());
-        provider.setUserDetailsService(userService);
-        return provider;
-    }
-
-    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors().and().csrf().disable()
+                .csrf().disable()
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers(AUTH_WHITELIST).permitAll();
                     auth.requestMatchers("/api/v*/teacher/**", "/api/v*/student/**").hasRole("ADMIN");
@@ -76,8 +63,22 @@ public class SecurityConfig {
                 .addLogoutHandler(logoutHandler)
                 .logoutSuccessHandler(((request, response, authentication) -> SecurityContextHolder.clearContext()))
         ;
-
         return http.build();
     }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public AuthenticationProvider daoAuthenticationProvider() {
+        var provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder.passwordEncode());
+        provider.setUserDetailsService(userService);
+        return provider;
+    }
+
+
 
 }

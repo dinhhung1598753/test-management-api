@@ -22,7 +22,6 @@ import java.io.IOException;
 @RequestMapping(path = "/api/v1/test")
 @Tag(name = "Test", description = "Test API management")
 @RequiredArgsConstructor
-@CrossOrigin(allowedHeaders = "*", origins = "*")
 public class TestController {
 
     private final TestService testService;

@@ -99,19 +99,15 @@ public class StudentServiceImpl implements StudentService {
         user.setPassword(passwordEncoder.passwordEncode().encode(request.getPassword()));
         user.setRoles(roles);
         user.getStudent().setUser(user);
-        user.setEnabled(true);
         userRepository.save(user);
     }
 
 
     @Override
     public List<StudentResponse> getAllStudents() throws EntityNotFoundException {
-        List<Student> students = studentRepository.findByEnabled(true);
-        if (students.size() == 0) {
-            throw new EntityNotFoundException("Not found any students", HttpStatus.NOT_FOUND);
-        }
+        var students = studentRepository.findByEnabled(true);
         return students.stream().map(student -> {
-            StudentResponse response = mapper.map(student, StudentResponse.class);
+            var response = mapper.map(student, StudentResponse.class);
             response.setUsername(student.getUser().getUsername());
             response.setEmail(student.getUser().getEmail());
             return response;
@@ -123,15 +119,13 @@ public class StudentServiceImpl implements StudentService {
     public void updateStudent(int studentId, StudentUpdateRequest request) throws EntityNotFoundException, FieldExistedException {
         Student existStudent = studentRepository.findById(studentId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Student with id: %s not found !", studentId), HttpStatus.NOT_FOUND));
-        if (!existStudent.getPhoneNumber().equals(request.getPhoneNumber())) {
+        if (!existStudent.getPhoneNumber().equals(request.getPhoneNumber()))
             checkIfPhoneNumberExists(request.getPhoneNumber());
-        }
-        if (!existStudent.getUser().getEmail().equals(request.getEmail())) {
+        if (!existStudent.getUser().getEmail().equals(request.getEmail()))
             checkIfEmailExists(request.getEmail());
-        }
-        if (!existStudent.getCode().equals(request.getCode())) {
+        if (!existStudent.getCode().equals(request.getCode()))
             checkIfCodeExists(request.getCode());
-        }
+
         var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         existStudent.setFullname(request.getFullName());
         existStudent.setPhoneNumber(request.getPhoneNumber());
@@ -152,8 +146,6 @@ public class StudentServiceImpl implements StudentService {
         existStudent.getUser().setEnabled(false);
         studentRepository.save(existStudent);
     }
-
-
 
     private void checkIfUsernameExists(String username) throws FieldExistedException {
         if (userRepository.existsByUsername(username)) {
