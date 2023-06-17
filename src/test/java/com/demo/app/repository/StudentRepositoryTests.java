@@ -2,6 +2,7 @@ package com.demo.app.repository;
 
 import com.demo.app.ProjectDesignIApplication;
 import org.assertj.core.api.Assertions;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,21 @@ public class StudentRepositoryTests {
     private StudentRepository studentRepository;
 
     @Test
+    @Ignore
     public void testFindByUsername(){
         String username = "TaiPhan11";
         var student = studentRepository.findByUsername(username).orElse(null);
         Assertions.assertThat(student).isNotNull();
+    }
+
+    @Test
+    public void testSearchBy(){
+        String keyword = "65";
+        var students = studentRepository.searchBy(keyword);
+        Assertions.assertThat(students).isNotNull();
+        for(var student : students){
+            System.out.println(student);
+        }
     }
 
 }

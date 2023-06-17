@@ -70,7 +70,8 @@ public class ModelMapperConfig {
                     default -> null;
                 });
         mapper.createTypeMap(Boolean.class, String.class)
-                .setConverter(context -> context.getSource() ? "true" : "false");
+                .setConverter(context -> context.getSource() == null
+                        ? null
+                        : context.getSource() ? "true" : "false");
     }
-
 }

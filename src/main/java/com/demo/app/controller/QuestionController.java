@@ -44,6 +44,7 @@ public class QuestionController {
 
 
     @PutMapping(path = "/update/{id}")
+    @CrossOrigin(allowedHeaders = "*", origins = "*")
     public ResponseEntity<?> updateQuestion(@PathVariable(name = "id") int questionId, @RequestBody QuestionRequest request) {
         questionService.updateQuestion(questionId, request);
         return ResponseEntity

@@ -21,6 +21,8 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
@@ -112,6 +114,12 @@ public class StudentServiceImpl implements StudentService {
             response.setEmail(student.getUser().getEmail());
             return response;
         }).collect(Collectors.toList());
+    }
+
+    @GetMapping(path = "/search")
+    public List<StudentResponse> searchStudentsBy(@RequestParam("keyword") String keyword){
+        //var students = studentRepository.searchBy()
+        return null;
     }
 
     @Override

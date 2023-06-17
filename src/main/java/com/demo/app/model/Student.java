@@ -23,5 +23,10 @@ public class Student extends Person {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<StudentTest> studentTests;
 
-
+    @Override
+    public String toString() {
+        return "Student{" +
+                "id=" + super.getId() +
+                '}';
+    }
 }

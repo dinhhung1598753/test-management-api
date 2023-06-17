@@ -51,7 +51,6 @@ public class QuestionServiceImpl implements QuestionService {
                         String.format("Chapter with id %d not found !", request.getChapterId()),
                         HttpStatus.NOT_FOUND
                 ));
-
         var question = mapper.map(request, Question.class);
         question.setAnswers(
                 request.getAnswers()
@@ -102,6 +101,7 @@ public class QuestionServiceImpl implements QuestionService {
                     String.format("Not found any question with id: %d !", questionId),
                     HttpStatus.NOT_FOUND);
         }
+
         var question = mapRequestToQuestion(request);
         question.setId(questionId);
         questionRepository.save(question);
