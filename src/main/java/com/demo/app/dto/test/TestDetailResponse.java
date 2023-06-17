@@ -14,8 +14,6 @@ import java.util.List;
 @NoArgsConstructor
 public class TestDetailResponse {
 
-    private List<QuestionResponse> questionResponses;
-
     private String subjectTitle;
 
     private String subjectCode;
@@ -25,5 +23,7 @@ public class TestDetailResponse {
     private String testDay;
 
     private int duration;
+
+    private List<QuestionResponse> questionResponses;
 
 }

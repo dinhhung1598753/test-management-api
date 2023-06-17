@@ -12,6 +12,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AnswerResponse {
 
+    private int id;
+
     private String content;
 
     @JsonProperty("isCorrected")

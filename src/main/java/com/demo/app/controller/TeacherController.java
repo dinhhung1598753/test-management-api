@@ -27,10 +27,10 @@ import java.util.List;
 public class TeacherController {
 
     private final String EXAMPLE_INFORMATION_NOT_FOUND = """
-        {
-            "message" : "information not found"
-        }
-    """;
+                {
+                    "message" : "information not found"
+                }
+            """;
 
     //private final String EXAMPLE_STUDENT_INFORMATION_CREATE_AND_UPDATE = "";
 
@@ -149,21 +149,15 @@ public class TeacherController {
                             content = @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(
-                                            implementation = ResponseMessage.class
-                                    ),
+                                            implementation = ResponseMessage.class),
                                     examples = @ExampleObject(
                                             description = "Information is incorrect",
-                                            value = EXAMPLE_INFORMATION_NOT_FOUND
-                                    )
-                            )
-                    )
-            }
-    )
+                                            value = EXAMPLE_INFORMATION_NOT_FOUND)))})
     @PutMapping(path = "/update/{id}")
     public ResponseEntity<?> updateTeacher(@Parameter(
             description = "This is ID of teacher need to be updated",
             example = "1"
-    ) @PathVariable("id") int teacherId, @RequestBody @Valid TeacherUpdateRequest request){
+    ) @PathVariable("id") int teacherId, @RequestBody @Valid TeacherUpdateRequest request) {
         teacherService.updateTeacher(teacherId, request);
         String message = String.format("Teacher with id = %d updated successfully !", teacherId);
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.OK);
@@ -176,8 +170,7 @@ public class TeacherController {
             responses = {
                     @ApiResponse(
                             responseCode = "204",
-                            description = "Delete successfully"
-                    ),
+                            description = "Delete successfully"),
                     @ApiResponse(
                             responseCode = "404",
                             description = "Information not found",
@@ -188,32 +181,24 @@ public class TeacherController {
                                     ),
                                     examples = @ExampleObject(
                                             description = "Information is incorrect",
-                                            value = EXAMPLE_INFORMATION_NOT_FOUND
-                                    )
-                            )
-                    ),
+                                            value = EXAMPLE_INFORMATION_NOT_FOUND))),
                     @ApiResponse(
                             responseCode = "401",
                             description = "Unauthorized",
                             content = @Content(
                                     schema = @Schema(
-                                            implementation = String.class
-                                    ),
+                                            implementation = String.class),
                                     examples = @ExampleObject(
                                             description = "Unauthorized",
-                                            value = "Error: Unauthorized"
-                                    )
-                            )
-                    )
-            }
+                                            value = "Error: Unauthorized")))}
     )
     @DeleteMapping(path = "/disable/{id}")
-    public ResponseEntity<?> disableTeacher(@Parameter(
-            description = "Student ID need to be deleted",
-            example = "1"
-    ) @PathVariable("id") int teacherId){
+    public ResponseEntity<?> disableTeacher(
+            @Parameter(description = "Student ID need to be deleted", example = "1")
+            @PathVariable("id") int teacherId) {
         teacherService.disableTeacher(teacherId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent()
+                .build();
     }
 
 }

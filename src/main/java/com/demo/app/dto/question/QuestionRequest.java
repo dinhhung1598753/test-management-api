@@ -16,10 +16,7 @@ import java.util.List;
 @Builder
 public class QuestionRequest {
 
-    @NotBlank(message = "Please enter subject's code !")
-    private String subjectCode;
-
-    private int chapterNo;
+    private int chapterId;
 
     @NotBlank(message = "Please enter question's topic !")
     private String topicText;

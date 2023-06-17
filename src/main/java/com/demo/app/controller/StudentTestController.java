@@ -64,8 +64,8 @@ public class StudentTestController {
     }
 
     @PostMapping(path = "/marking")
-    public ResponseEntity<?> markingStudentTest() {
-
+    public ResponseEntity<?> markingStudentTest() throws IOException {
+        studentTestService.markingOfflineAnswer();
         return null;
     }
 }

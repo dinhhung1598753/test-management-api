@@ -19,9 +19,6 @@ public class Test extends BaseEntity {
     @Column(name = "test_day")
     private LocalDate testDay;
 
-    @Column(name = "total_point")
-    private double totalPoint = 100.0d;
-
     @Column(name = "question_quantity")
     private int questionQuantity;
 
