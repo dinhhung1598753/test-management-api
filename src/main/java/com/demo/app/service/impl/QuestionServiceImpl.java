@@ -6,6 +6,7 @@ import com.demo.app.dto.question.QuestionResponse;
 import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.model.Answer;
 import com.demo.app.model.Question;
+import com.demo.app.repository.AnswerRepository;
 import com.demo.app.repository.ChapterRepository;
 import com.demo.app.repository.QuestionRepository;
 import com.demo.app.repository.SubjectRepository;
@@ -30,6 +31,8 @@ public class QuestionServiceImpl implements QuestionService {
     private final QuestionRepository questionRepository;
 
     private final ChapterRepository chapterRepository;
+
+    private final AnswerRepository answerRepository;
 
     private final ModelMapper mapper;
 
@@ -104,16 +107,20 @@ public class QuestionServiceImpl implements QuestionService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Not found any question with id: %d !", questionId),
                         HttpStatus.NOT_FOUND));
+
         question.setLevel(Question.Level.valueOf(request.getLevel()));
         question.setTopicText(request.getTopicText());
         question.setTopicImage(request.getTopicImage());
         question.setChapter(chapter);
-        var index = 0;
-        for(var answer : question.getAnswers()){
+
+        var requestAnswer = request.getAnswers().iterator();
+        question.getAnswers().forEach(answer -> {
             var answerId = answer.getId();
-            answer = mapper.map(request.getAnswers().get(index++), Answer.class);
+            answer = mapper.map(requestAnswer.next(), Answer.class);
+            answer.setQuestion(question);
             answer.setId(answerId);
-        }
+            answerRepository.save(answer);
+        });
         questionRepository.save(question);
 
     }
