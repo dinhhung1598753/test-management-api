@@ -1,7 +1,7 @@
 package com.demo.app.config.jwt;
 
 import com.demo.app.repository.TokenRepository;
-import com.demo.app.service.impl.UserServiceImpl;
+import com.demo.app.service.impl.UserDetailsServiceImpl;
 import com.demo.app.util.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,7 +23,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
 
-    private final UserServiceImpl userDetailsService;
+    private final UserDetailsServiceImpl userDetailsService;
 
     private final TokenRepository tokenRepository;
     @Override

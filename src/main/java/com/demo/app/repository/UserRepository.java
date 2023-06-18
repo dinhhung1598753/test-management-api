@@ -21,4 +21,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Boolean existsByEmailOrUsername(String email, String username);
 
     List<User> findByEnabledFalseAndCreatedAtBefore(LocalDateTime waitedTime);
+
 }

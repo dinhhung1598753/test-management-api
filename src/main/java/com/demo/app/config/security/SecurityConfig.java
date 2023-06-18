@@ -1,7 +1,7 @@
 package com.demo.app.config.security;
 
 import com.demo.app.config.jwt.JwtAuthFilter;
-import com.demo.app.service.impl.UserServiceImpl;
+import com.demo.app.service.impl.UserDetailsServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +25,7 @@ public class SecurityConfig {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final UserServiceImpl userService;
+    private final UserDetailsServiceImpl userService;
 
     private final AuthenticationEntryPoint entryPoint;
 

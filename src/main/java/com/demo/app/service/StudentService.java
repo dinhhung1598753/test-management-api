@@ -2,6 +2,7 @@ package com.demo.app.service;
 
 import com.demo.app.dto.student.StudentRequest;
 import com.demo.app.dto.student.StudentResponse;
+import com.demo.app.dto.student.StudentSearchRequest;
 import com.demo.app.dto.student.StudentUpdateRequest;
 import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.exception.FieldExistedException;
@@ -20,6 +21,8 @@ public interface StudentService {
     void saveStudent(StudentRequest request) throws FieldExistedException;
 
     List<StudentResponse> getAllStudents();
+
+    List<StudentResponse> searchByFilter(StudentSearchRequest request);
 
     void updateStudent(int studentId, StudentUpdateRequest request) throws EntityNotFoundException;
 

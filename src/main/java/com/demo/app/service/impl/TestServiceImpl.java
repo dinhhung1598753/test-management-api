@@ -79,7 +79,10 @@ public class TestServiceImpl implements TestService {
     @Transactional
     public void createTestByChooseQuestions(TestQuestionRequest request) {
         var questions = questionRepository.findAllById(request.getQuestionIds());
-        var subject = (!questions.isEmpty()) ? questions.get(0).getChapter().getSubject() : null;
+        if (questions.isEmpty()){
+            throw new EntityNotFoundException("Not found any question to add to test !", HttpStatus.NOT_FOUND);
+        }
+        var subject =questions.get(0).getChapter().getSubject();
         var test = Test.builder()
                 .testDay(LocalDate.parse(request.getTestDay(), FORMATTER))
                 .questionQuantity(questions.size())
@@ -108,7 +111,9 @@ public class TestServiceImpl implements TestService {
     @Override
     public TestDetailResponse getTestDetail(int testId) {
         var test = testRepository.findById(testId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Test with id : %d not found !", testId), HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Test with id : %d not found !", testId),
+                        HttpStatus.NOT_FOUND));
         var subject = test.getSubject();
         System.out.println(subject.getId());
         var questionResponses = test.getQuestions()
@@ -129,7 +134,9 @@ public class TestServiceImpl implements TestService {
     @Transactional
     public void updateTest(int testId, TestDetailRequest request) {
         var test = testRepository.findById(testId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find any chapter with id %d", testId), HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Cannot find any chapter with id %d", testId),
+                        HttpStatus.NOT_FOUND));
         var questions = request.getQuestionResponses()
                 .stream()
                 .map(questionResponse -> mapper.map(questionResponse, Question.class))
@@ -143,7 +150,9 @@ public class TestServiceImpl implements TestService {
     @Override
     public void disableTest(int testId) {
         var test = testRepository.findById(testId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find any chapter with id %d", testId), HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Cannot find any chapter with id %d", testId),
+                        HttpStatus.NOT_FOUND));
         test.setEnabled(false);
         testRepository.save(test);
     }

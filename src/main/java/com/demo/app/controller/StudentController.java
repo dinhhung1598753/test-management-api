@@ -2,6 +2,7 @@ package com.demo.app.controller;
 
 import com.demo.app.dto.message.ResponseMessage;
 import com.demo.app.dto.student.StudentRequest;
+import com.demo.app.dto.student.StudentSearchRequest;
 import com.demo.app.dto.student.StudentUpdateRequest;
 import com.demo.app.exception.FileInputException;
 import com.demo.app.service.StudentService;
@@ -80,6 +81,13 @@ public class StudentController {
                 "phoneNumber":"0987654321",
                 "code":"20201234",
                 "course" : 65
+            }
+            """;
+    private final String EXAMPLE_STUDENT_SEARCH_BY_FILTER = """
+            {
+                "field" : "fullname"
+                "operator" : "LIKE"
+                "value" : "kien"
             }
             """;
     private final String EXAMPLE_NO_DATA_IN_DB = """
@@ -175,8 +183,17 @@ public class StudentController {
             })
     @GetMapping(path = "/list")
     public ResponseEntity<?> getAllStudents() {
-        var studentResponses = studentService.getAllStudents();
-        return ResponseEntity.status(HttpStatus.OK).body(studentResponses);
+        var response = studentService.getAllStudents();
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
+
+    @GetMapping(path = "/search")
+    public ResponseEntity<?> getAllStudentsByFilter(@RequestBody @Valid StudentSearchRequest request){
+        var response = studentService.searchByFilter(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(response);
     }
 
     @Operation(
@@ -252,7 +269,7 @@ public class StudentController {
             })
     @DeleteMapping(path = "/disable/{id}")
     public ResponseEntity<?> disableStudent(
-            @Parameter(description = "This is ID of student need to be deleted", example = "1") @PathVariable(name = "id") int studentId){
+            @Parameter(description = "This is ID of student need to be deleted", example = "1") @PathVariable(name = "id") int studentId) {
         studentService.disableStudent(studentId);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)

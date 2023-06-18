@@ -28,14 +28,5 @@ public class StudentRepositoryTests {
         Assertions.assertThat(student).isNotNull();
     }
 
-    @Test
-    public void testSearchBy(){
-        String keyword = "65";
-        var students = studentRepository.searchBy(keyword);
-        Assertions.assertThat(students).isNotNull();
-        for(var student : students){
-            System.out.println(student);
-        }
-    }
 
 }

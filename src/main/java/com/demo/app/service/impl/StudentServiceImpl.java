@@ -3,6 +3,7 @@ package com.demo.app.service.impl;
 import com.demo.app.config.security.PasswordEncoder;
 import com.demo.app.dto.student.StudentRequest;
 import com.demo.app.dto.student.StudentResponse;
+import com.demo.app.dto.student.StudentSearchRequest;
 import com.demo.app.dto.student.StudentUpdateRequest;
 import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.exception.FieldExistedException;
@@ -15,14 +16,14 @@ import com.demo.app.repository.RoleRepository;
 import com.demo.app.repository.StudentRepository;
 import com.demo.app.repository.UserRepository;
 import com.demo.app.service.StudentService;
+import com.demo.app.specification.SearchFilter;
+import com.demo.app.specification.StudentSpecification;
 import com.demo.app.util.ExcelUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
@@ -46,7 +47,6 @@ public class StudentServiceImpl implements StudentService {
     private final PasswordEncoder passwordEncoder;
 
     private final ModelMapper mapper;
-
 
 
     @Override
@@ -85,7 +85,6 @@ public class StudentServiceImpl implements StudentService {
         }
     }
 
-
     @Override
     @Transactional
     public void saveStudent(StudentRequest request) throws FieldExistedException {
@@ -94,7 +93,7 @@ public class StudentServiceImpl implements StudentService {
         checkIfPhoneNumberExists(request.getPhoneNumber());
         checkIfCodeExists(request.getCode());
 
-        List<Role> roles = roleRepository.findAllByRoleNameIn(
+        var roles = roleRepository.findAllByRoleNameIn(
                 Arrays.asList(Role.RoleType.ROLE_USER, Role.RoleType.ROLE_STUDENT)
         );
         User user = mapper.map(request, User.class);
@@ -104,23 +103,20 @@ public class StudentServiceImpl implements StudentService {
         userRepository.save(user);
     }
 
-
     @Override
     public List<StudentResponse> getAllStudents() throws EntityNotFoundException {
         var students = studentRepository.findByEnabled(true);
-        return students.stream().map(student -> {
-            var response = mapper.map(student, StudentResponse.class);
-            response.setUsername(student.getUser().getUsername());
-            response.setEmail(student.getUser().getEmail());
-            return response;
-        }).collect(Collectors.toList());
+        return mapStudentToResponse(students);
     }
 
-    @GetMapping(path = "/search")
-    public List<StudentResponse> searchStudentsBy(@RequestParam("keyword") String keyword){
-        //var students = studentRepository.searchBy()
-        return null;
+    @Override
+    public List<StudentResponse> searchByFilter(StudentSearchRequest request){
+        var filter = mapper.map(request, SearchFilter.class);
+        System.out.println(filter);
+        var students = studentRepository.findAll(StudentSpecification.withFilters(filter));
+        return mapStudentToResponse(students);
     }
+
 
     @Override
     @Transactional
@@ -177,6 +173,15 @@ public class StudentServiceImpl implements StudentService {
         if (studentRepository.existsByCode(code)) {
             throw new FieldExistedException("Code already taken!", HttpStatus.CONFLICT);
         }
+    }
+
+    private List<StudentResponse> mapStudentToResponse(List<Student> students){
+        return students.stream().map(student -> {
+            var response = mapper.map(student, StudentResponse.class);
+            response.setUsername(student.getUser().getUsername());
+            response.setEmail(student.getUser().getEmail());
+            return response;
+        }).collect(Collectors.toList());
     }
 
 }

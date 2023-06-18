@@ -43,11 +43,13 @@ public class ExamClassServiceImpl implements ExamClassService {
         var test = testRepository.findById(request.getTestId())
                 .orElseThrow(() -> new EntityNotFoundException(String.format("test with id %d not found !", request.getTestId()), HttpStatus.NOT_FOUND));
         var examClass = mapper.map(request, ExamClass.class);
+
         examClass.setId(null);
         examClass.setStudents(students);
         examClass.setTeacher(teacher);
         examClass.setTest(test);
         examClass.setSubject(test.getSubject());
+        examClass.setEnabled(true);
         examClassRepository.save(examClass);
     }
 
