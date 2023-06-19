@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
+@CrossOrigin(allowedHeaders = "*", origins = "*")
 @RequestMapping(path = "/api/v1/student")
 @Tag(name = "Student", description = "Student APIs Management")
 @AllArgsConstructor
