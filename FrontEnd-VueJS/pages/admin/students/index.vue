@@ -1,3 +1,0 @@
-<template>
-  <student-table />
-</template>

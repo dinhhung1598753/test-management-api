@@ -1,3 +1,0 @@
-<template>
-  <result-detail />
-</template>

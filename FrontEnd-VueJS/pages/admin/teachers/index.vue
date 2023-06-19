@@ -1,3 +1,0 @@
-<template>
-  <teacher-table />
-</template>
