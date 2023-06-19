@@ -53,6 +53,7 @@ public class QuestionController {
     }
 
     @DeleteMapping(path = "/disable/{id}")
+    @CrossOrigin(allowedHeaders = "*", origins = "*")
     public ResponseEntity<?> disableQuestion(@PathVariable(name = "id") int questionId) {
         questionService.disableQuestion(questionId);
         return ResponseEntity
