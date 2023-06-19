@@ -15,7 +15,7 @@ import com.demo.app.repository.RoleRepository;
 import com.demo.app.repository.TokenRepository;
 import com.demo.app.repository.UserRepository;
 import com.demo.app.service.AuthService;
-import com.demo.app.util.JwtUtils;
+import com.demo.app.util.jwt.JwtUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -114,7 +114,7 @@ public class AuthServiceImpl implements AuthService {
         ));
 
         var user = userRepository.findByUsernameAndEnabledIsTrue(request.getUsername()).orElseThrow(
-                () -> new EntityNotFoundException("Username not found !", HttpStatus.BAD_REQUEST));
+                () -> new EntityNotFoundException("Username not found !", HttpStatus.NOT_FOUND));
         var jwtToken = jwtUtils.generateToken(user);
         var refreshToken = jwtUtils.generateRefreshToken(user);
         revokeAllUserTokens(user);

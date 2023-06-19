@@ -24,10 +24,9 @@ public class FileStorageServiceImpl implements FileStorageService {
     @Override
     public String createClassDirectory(String classCode) throws IOException {
         var path = uploadPath + "/" + classCode;
-        Path of = Path.of(path);
-        if (!Files.exists(of)) {
+        var of = Path.of(path);
+        if (!Files.exists(of))
             Files.createDirectories(of);
-        }
         return path;
     }
 
@@ -51,5 +50,6 @@ public class FileStorageServiceImpl implements FileStorageService {
                 throw new FileInputException("File format must be .jpg, .jpeg or .png", HttpStatus.BAD_REQUEST);
             }
         }
+
     }
 }

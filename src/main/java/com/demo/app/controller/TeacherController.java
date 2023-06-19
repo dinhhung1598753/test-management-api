@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(allowedHeaders = "*", origins = "*")
 @RequestMapping(path = "/api/v1/teacher")
 @AllArgsConstructor
 @Tag(name = "Teacher")

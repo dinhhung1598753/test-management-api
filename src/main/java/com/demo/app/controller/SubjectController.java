@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(allowedHeaders = "*", origins = "*")
 @RequestMapping(path = "/api/v1/subject")
 @RequiredArgsConstructor
 public class SubjectController {

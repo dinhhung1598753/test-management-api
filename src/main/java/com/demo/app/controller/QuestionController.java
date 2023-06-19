@@ -1,7 +1,7 @@
 package com.demo.app.controller;
 
 import com.demo.app.dto.message.ResponseMessage;
-import com.demo.app.dto.question.QuestionRequest;
+import com.demo.app.dto.question.SingleQuestionRequest;
 import com.demo.app.service.QuestionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class QuestionController {
     private final QuestionService questionService;
 
     @PostMapping(path = "/add")
-    public ResponseEntity<?> addQuestion(@RequestBody final QuestionRequest request){
+    public ResponseEntity<?> addQuestion(@RequestBody final SingleQuestionRequest request){
         questionService.addQuestion(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -28,7 +28,7 @@ public class QuestionController {
     }
 
     @PostMapping(path = "/adds")
-    public ResponseEntity<?> addAllQuestions(@RequestBody final List<QuestionRequest> requests){
+    public ResponseEntity<?> addAllQuestions(@RequestBody final List<SingleQuestionRequest> requests){
         questionService.addAllQuestions(requests);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -44,8 +44,7 @@ public class QuestionController {
 
 
     @PutMapping(path = "/update/{id}")
-    @CrossOrigin(allowedHeaders = "*", origins = "*")
-    public ResponseEntity<?> updateQuestion(@PathVariable(name = "id") int questionId, @RequestBody QuestionRequest request) {
+    public ResponseEntity<?> updateQuestion(@PathVariable(name = "id") int questionId, @RequestBody SingleQuestionRequest request) {
         questionService.updateQuestion(questionId, request);
         return ResponseEntity
                 .status(HttpStatus.OK)

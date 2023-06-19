@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@CrossOrigin(allowedHeaders = "*", origins = "*")
 @RequestMapping(path = "/api/v1/student")
 @Tag(name = "Student", description = "Student APIs Management")
 @AllArgsConstructor
@@ -84,14 +83,7 @@ public class StudentController {
                 "course" : 65
             }
             """;
-    private final String EXAMPLE_STUDENT_SEARCH_BY_FILTER = """
-            {
-                "field" : "fullname"
-                "operator" : "LIKE"
-                "value" : "kien"
-            }
-            """;
-    private final String EXAMPLE_NO_DATA_IN_DB = """
+private final String EXAMPLE_NO_DATA_IN_DB = """
             {
                 "message" : "no information in database"
             }
@@ -109,16 +101,15 @@ public class StudentController {
     private final StudentService studentService;
 
     @PostMapping(path = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> importExcelFile(@RequestPart final MultipartFile file) throws FileInputException {
-        studentService.saveStudentsExcelFile(file);
-        String message = "Uploaded the file successfully: " + file.getOriginalFilename();
+    public ResponseEntity<?> importExcelFile(@RequestPart final MultipartFile file) throws FileInputException, IOException {
+        studentService.importStudentExcel(file);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new ResponseMessage(message));
+                .body(new ResponseMessage("Uploaded the file successfully: " + file.getOriginalFilename()));
     }
 
     @GetMapping(path = "/export")
-    public ResponseEntity<?> exportExcelFile() throws IOException {
+    public ResponseEntity<?> exportExcelFile() {
         String filename = "Students" + System.currentTimeMillis() + ".xlsx";
         var file = new InputStreamResource(studentService.exportStudentsExcel());
         return ResponseEntity.ok()

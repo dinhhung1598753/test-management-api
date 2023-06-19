@@ -1,0 +1,148 @@
+.subject-info {
+  .info-header {
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--hust-color);
+    padding: 20px;
+  }
+}
+
+.info-subject-form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 20px 30px;
+  position: relative;
+  background-color: #ffffff;
+  border-radius: 15px;
+  margin-top: 20px;
+
+  .info-subject-header {
+    width: 100%;
+    margin-bottom: 30px;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--hust-color);
+  }
+
+  .ant-form-item {
+    width: 45%;
+    margin-bottom: 40px;
+
+    .ant-picker {
+      width: 100%;
+      height: 45px;
+    }
+
+    .ant-select-selector {
+      height: 45px;
+      position: relative;
+
+      .ant-select-selection-item,
+      .ant-select-selection-placeholder {
+        position: absolute;
+        top: 6px;
+      }
+    }
+
+    .ant-row {
+      position: relative;
+      display: block;
+    }
+
+    .ant-input {
+      height: 45px;
+      padding-left: 18px;
+    }
+
+    .ant-input-password {
+      height: 45px;
+    }
+
+    label::after {
+      content: "*" !important;
+      color: #ff4d4f;
+    }
+
+    label::before {
+      content: "" !important;
+    }
+
+    #info-subject-form_password {
+      height: 35px !important;
+    }
+
+    .ant-form-item-label {
+      position: absolute;
+      top: -15px;
+      z-index: 999;
+      left: 15px;
+      background-color: #fff;
+      height: 25px;
+
+      label {
+        height: 20px;
+        margin: 0px;
+        // color: #ABABAB;
+      }
+    }
+  }
+
+  .btn-info {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+    background-color: #ffffff;
+
+    span {
+      font-size: 20px;
+    }
+  }
+
+  .btn-info:active {
+    background-color: #ffffff;
+  }
+
+  .chapter-add {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    .chapter-add-item {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .chapter-item {
+      display: grid;
+      grid-template-columns: 1fr 5fr;
+      column-gap: 50px;
+      position: relative;
+      width: 92%;
+    }
+
+    .minus-chapter-item {
+      position: absolute;
+      right: 0px;
+      top: 8px;
+    }
+
+    .a-chapter-add-header {
+      display: flex;
+      margin-bottom: 30px;
+    }
+
+    .ant-form-item {
+      width: 100%;
+    }
+
+    .chapter-add-header-title {
+      font-size: 24px;
+      margin-right: 20px;
+    }
+  }
+
+}

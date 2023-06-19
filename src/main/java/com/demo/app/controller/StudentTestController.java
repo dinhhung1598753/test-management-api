@@ -3,6 +3,7 @@ package com.demo.app.controller;
 import com.demo.app.dto.message.ResponseMessage;
 import com.demo.app.dto.student_test.Filename;
 import com.demo.app.dto.student_test.TestImageResponse;
+import com.demo.app.exception.FileInputException;
 import com.demo.app.exception.InvalidRoleException;
 import com.demo.app.service.FileStorageService;
 import com.demo.app.service.StudentTestService;
@@ -17,8 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/api/v1/student-test")
@@ -35,15 +36,13 @@ public class StudentTestController {
                     MediaType.MULTIPART_FORM_DATA_VALUE}
     )
     public ResponseEntity<?> uploadStudentTestImages(@RequestParam(name = "exam-class") String classCode,
-                                                     @RequestPart(name = "files") List<MultipartFile> files) throws IOException {
+                                                     @RequestPart(name = "files") List<MultipartFile> files) throws FileInputException, IOException {
         fileStorageService.checkIfFileIsImageFormat(files);
         var path = fileStorageService.createClassDirectory(classCode);
-        var imageFilenames = new ArrayList<Filename>();
-        for (var file : files) {
-            var filename = new Filename();
-            filename.setFilename(fileStorageService.upload(classCode, file));
-            imageFilenames.add(filename);
-        }
+        var imageFilenames = files.stream()
+                .map(file -> Filename.builder()
+                        .filename(fileStorageService.upload(classCode, file)).build())
+                .collect(Collectors.toList());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(TestImageResponse.builder()
                         .responseMessage(new ResponseMessage("All files uploaded successfully !"))
@@ -52,11 +51,10 @@ public class StudentTestController {
                         .build());
     }
 
-
     @GetMapping(path = "/testing")
     @PreAuthorize("hasAnyRole('STUDENT')")
-    public ResponseEntity<?> getRandomTestForStudent(@RequestParam String classCode, Principal principal){
-        if (principal == null){
+    public ResponseEntity<?> getRandomTestForStudent(@RequestParam String classCode, Principal principal) {
+        if (principal == null) {
             throw new InvalidRoleException("You're not logged in !", HttpStatus.UNAUTHORIZED);
         }
         studentTestService.matchRandomTestForStudent(classCode, principal);

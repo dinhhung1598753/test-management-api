@@ -10,15 +10,16 @@ import com.demo.app.exception.FileInputException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 
 public interface StudentService {
 
-    void saveStudentsExcelFile(MultipartFile file) throws FileInputException, FieldExistedException;
-
     ByteArrayInputStream exportStudentsExcel() throws FileInputException;
 
     void saveStudent(StudentRequest request) throws FieldExistedException;
+
+    void importStudentExcel(MultipartFile file) throws FieldExistedException, IOException;
 
     List<StudentResponse> getAllStudents();
 

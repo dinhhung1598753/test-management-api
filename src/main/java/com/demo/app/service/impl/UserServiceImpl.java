@@ -24,7 +24,9 @@ public class UserServiceImpl implements UserService {
         List<User> users = userRepository.findAll();
         return users.stream().map(user -> {
             var response = mapper.map(user, UserResponse.class);
-            var roles = user.getRoles().stream().map(role -> role.getRoleName().name()).collect(Collectors.toList());
+            var roles = user.getRoles().stream()
+                    .map(role -> role.getRoleName().name())
+                    .collect(Collectors.toList());
             response.setRoles(roles);
             return response;
         }).collect(Collectors.toList());

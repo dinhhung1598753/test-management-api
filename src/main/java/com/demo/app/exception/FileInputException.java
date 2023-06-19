@@ -3,10 +3,8 @@ package com.demo.app.exception;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-import java.io.IOException;
-
 @Getter
-public class FileInputException extends IOException {
+public class FileInputException extends RuntimeException {
 
     private final HttpStatus status;
 

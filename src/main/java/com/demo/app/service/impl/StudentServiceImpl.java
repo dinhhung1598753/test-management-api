@@ -16,9 +16,9 @@ import com.demo.app.repository.RoleRepository;
 import com.demo.app.repository.StudentRepository;
 import com.demo.app.repository.UserRepository;
 import com.demo.app.service.StudentService;
-import com.demo.app.specification.SearchFilter;
 import com.demo.app.specification.EntitySpecification;
-import com.demo.app.util.ExcelUtils;
+import com.demo.app.specification.SearchFilter;
+import com.demo.app.util.excel.ExcelUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -30,7 +30,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,33 +47,6 @@ public class StudentServiceImpl implements StudentService {
 
     private final ModelMapper mapper;
 
-
-    @Override
-    @Transactional
-    public void saveStudentsExcelFile(MultipartFile file) throws FileInputException, FieldExistedException {
-        if (!ExcelUtils.hasExcelFormat(file)) {
-            throw new FileInputException("Please upload an excel file!", HttpStatus.BAD_REQUEST);
-        }
-        try {
-            var userStudents = ExcelUtils.excelFileToUserStudents(file);
-            var roles = roleRepository.findAllByRoleNameIn(Arrays.asList(Role.RoleType.ROLE_USER, Role.RoleType.ROLE_STUDENT));
-            userStudents.forEach((user, student) -> {
-                if (userRepository.existsByEmailOrUsername(user.getEmail(), user.getUsername()) ||
-                        studentRepository.existsByPhoneNumber(student.getPhoneNumber()) ||
-                        studentRepository.existsByCode(student.getCode())) {
-                    throw new FieldExistedException("Some field in excel file already existed !", HttpStatus.CONFLICT);
-                }
-                user.setRoles(roles);
-                String encodePassword = passwordEncoder.passwordEncode().encode(user.getPassword());
-                user.setPassword(encodePassword);
-                user.setStudent(student);
-            });
-            userRepository.saveAll(userStudents.keySet());
-        } catch (IOException ex) {
-            throw new FileInputException("Could not read the file !", HttpStatus.EXPECTATION_FAILED);
-        }
-    }
-
     @Override
     public ByteArrayInputStream exportStudentsExcel() throws FileInputException {
         try {
@@ -87,21 +59,40 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional
+    public void importStudentExcel(MultipartFile file) throws FieldExistedException, IOException {
+        if (!ExcelUtils.hasExcelFormat(file)){
+            throw new FileInputException(
+                    "There are something wrong with file, please check file format is .xlsx !",
+                    HttpStatus.CONFLICT);
+        }
+        var requests = ExcelUtils.convertExcelToDataTransferObject(file, StudentRequest.class);
+        var users = requests.parallelStream()
+                .map(this::mapRequestToUser)
+                .collect(Collectors.toList());
+        userRepository.saveAll(users);
+    }
+
+    @Override
+    @Transactional
     public void saveStudent(StudentRequest request) throws FieldExistedException {
+        userRepository.save(mapRequestToUser(request));
+    }
+
+    private User mapRequestToUser(StudentRequest request){
         checkIfUsernameExists(request.getUsername());
         checkIfEmailExists(request.getEmail());
         checkIfPhoneNumberExists(request.getPhoneNumber());
         checkIfCodeExists(request.getCode());
-
         var roles = roleRepository.findAllByRoleNameIn(
-                Arrays.asList(Role.RoleType.ROLE_USER, Role.RoleType.ROLE_STUDENT)
+                List.of(Role.RoleType.ROLE_USER, Role.RoleType.ROLE_STUDENT)
         );
         User user = mapper.map(request, User.class);
         user.setPassword(passwordEncoder.passwordEncode().encode(request.getPassword()));
         user.setRoles(roles);
         user.getStudent().setUser(user);
-        userRepository.save(user);
+        return user;
     }
+
 
     @Override
     public List<StudentResponse> getAllStudents() throws EntityNotFoundException {

@@ -7,12 +7,14 @@ import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class StudentRequest {
 
     @NotBlank(message = "Please enter username !")

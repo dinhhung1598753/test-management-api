@@ -1,7 +1,7 @@
 package com.demo.app.service.impl;
 
 import com.demo.app.dto.chapter.ChapterResponse;
-import com.demo.app.dto.question.QuestionRequest;
+import com.demo.app.dto.question.SingleQuestionRequest;
 import com.demo.app.dto.question.QuestionResponse;
 import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.model.Answer;
@@ -37,20 +37,20 @@ public class QuestionServiceImpl implements QuestionService {
     private final ModelMapper mapper;
 
     @Override
-    public void addQuestion(QuestionRequest request) throws EntityNotFoundException {
+    public void addQuestion(SingleQuestionRequest request) throws EntityNotFoundException {
         questionRepository.save(mapRequestToQuestion(request));
     }
 
     @Override
     @Transactional
-    public void addAllQuestions(List<QuestionRequest> requests) throws EntityNotFoundException {
+    public void addAllQuestions(List<SingleQuestionRequest> requests) throws EntityNotFoundException {
         var questions = requests.parallelStream()
                 .map(this::mapRequestToQuestion)
                 .collect(Collectors.toList());
         questionRepository.saveAll(questions);
     }
 
-    private Question mapRequestToQuestion(QuestionRequest request) {
+    private Question mapRequestToQuestion(SingleQuestionRequest request) {
         var chapter = chapterRepository.findById(request.getChapterId())
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Chapter with id %d not found !", request.getChapterId()),
@@ -96,7 +96,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     @Transactional
-    public void updateQuestion(int questionId, QuestionRequest request) {
+    public void updateQuestion(int questionId, SingleQuestionRequest request) {
         var question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Not found any question with id: %d !", questionId),
