@@ -31,7 +31,7 @@ public class Question extends BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     private Chapter chapter;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Answer> answers;
 
     public enum Level {

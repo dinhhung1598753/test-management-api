@@ -17,7 +17,7 @@ import com.demo.app.repository.StudentRepository;
 import com.demo.app.repository.UserRepository;
 import com.demo.app.service.StudentService;
 import com.demo.app.specification.SearchFilter;
-import com.demo.app.specification.StudentSpecification;
+import com.demo.app.specification.EntitySpecification;
 import com.demo.app.util.ExcelUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -110,10 +110,9 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<StudentResponse> searchByFilter(StudentSearchRequest request){
+    public List<StudentResponse> searchByFilter(StudentSearchRequest request) {
         var filter = mapper.map(request, SearchFilter.class);
-        System.out.println(filter);
-        var students = studentRepository.findAll(StudentSpecification.withFilters(filter));
+        var students = studentRepository.findAll(new EntitySpecification<Student>().withFilters(filter));
         return mapStudentToResponse(students);
     }
 
@@ -176,7 +175,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     private List<StudentResponse> mapStudentToResponse(List<Student> students){
-        return students.stream().map(student -> {
+        return students.parallelStream().map(student -> {
             var response = mapper.map(student, StudentResponse.class);
             response.setUsername(student.getUser().getUsername());
             response.setEmail(student.getUser().getEmail());

@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,57 +34,64 @@ public class TestSetServiceImpl implements TestSetService {
 
     @Override
     @Transactional
-    public void createTestSetFromTest(int testId, TestSetRequest request) {
+    public void createTestSetFromTest(int testId, TestSetRequest request) throws InterruptedException {
         var test = testRepository.findById(testId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Test with id: %d not found !", testId),
                         HttpStatus.NOT_FOUND));
         var testSetQuantity = request.getTestSetQuantity();
-        var testSets = new ArrayList<TestSet>();
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         for (var digit = 1; digit <= testSetQuantity; ++digit) {
-            int root = 100, testNo = digit + root;
-            if (testSetRepository.existsByTestAndTestNoAndEnabledTrue(test, testNo)) {
-                root = (root / 100 + 1) * 100;
-                testNo = root + digit;
-            }
-            var testSet = TestSet.builder()
-                    .testNo(testNo)
-                    .test(test)
-                    .build();
-            testSet.setTestSetQuestions(assignQuestionsNumber(testSet, test.getQuestions()));
-            testSets.add(testSet);
+            int finalDigit = digit;
+            executor.execute(() -> {
+                int root = 100, testNo = finalDigit + root;
+                while (testSetRepository.existsByTestAndTestNoAndEnabledTrue(test, testNo)) {
+                    root = (root / 100 + 1) * 100;
+                    testNo = root + finalDigit;
+                }
+                var testSet = TestSet.builder().testNo(testNo).test(test)
+                        .build();
+                var testSetQuestions = assignQuestionsNumber(testSet, test.getQuestions());
+                testSet.setTestSetQuestions(testSetQuestions);
+                testSetRepository.save(testSet);
+
+            });
         }
-        testSetRepository.saveAll(testSets);
+
+        Thread.sleep(5000);
     }
 
 
     private List<TestSetQuestion> assignQuestionsNumber(TestSet testset, List<Question> questions) {
-        var testSetQuestions = new ArrayList<TestSetQuestion>();
-        var questionNo = 1;
         Collections.shuffle(questions);
-        for (var question : questions) {
-            var testSetQuestion = new TestSetQuestion();
-            testSetQuestion.setTestSet(testset);
-            testSetQuestion.setQuestion(question);
+        var testSetQuestions = questions.stream()
+                .map(question -> {
+                    var testSetQuestion = TestSetQuestion.builder()
+                            .testSet(testset)
+                            .question(question)
+                            .build();
+                    testSetQuestion.setTestSetQuestionAnswers(assignAnswersNumber(testSetQuestion, question.getAnswers()));
+                    testSetQuestion.setBinaryAnswer(binaryAnswer(testSetQuestion.getTestSetQuestionAnswers()));
+                    return testSetQuestion;
+                })
+                .collect(Collectors.toList());
+        var questionNo = 1;
+        for (var testSetQuestion : testSetQuestions)
             testSetQuestion.setQuestionNo(questionNo++);
-            testSetQuestion.setTestSetQuestionAnswers(assignAnswersNumber(testSetQuestion, question.getAnswers()));
-            testSetQuestion.setBinaryAnswer(binaryAnswer(testSetQuestion.getTestSetQuestionAnswers()));
-            testSetQuestions.add(testSetQuestion);
-        }
         return testSetQuestions;
     }
 
     private List<TestSetQuestionAnswer> assignAnswersNumber(TestSetQuestion testSetQuestion, List<Answer> answers) {
-        var testSetAnswers = new ArrayList<TestSetQuestionAnswer>();
-        var answerNo = 1;
         Collections.shuffle(answers);
-        for (var answer : answers) {
-            var testSetAnswer = new TestSetQuestionAnswer();
-            testSetAnswer.setAnswer(answer);
+        var testSetAnswers = answers.parallelStream()
+                .map(answer -> TestSetQuestionAnswer.builder()
+                        .answer(answer)
+                        .testSetQuestion(testSetQuestion)
+                        .build())
+                .collect(Collectors.toList());
+        var answerNo = 1;
+        for (var testSetAnswer : testSetAnswers)
             testSetAnswer.setAnswerNo(answerNo++);
-            testSetAnswer.setTestSetQuestion(testSetQuestion);
-            testSetAnswers.add(testSetAnswer);
-        }
         return testSetAnswers;
     }
 
@@ -99,10 +108,10 @@ public class TestSetServiceImpl implements TestSetService {
     @Override
     public List<TestSetResponse> getAllTestSet() {
         var testsets = testSetRepository.findByEnabledIsTrue();
-        return testsets.stream().map(testSet -> {
+        return testsets.parallelStream().map(testSet -> {
+            var testSetResponse = mapper.map(testSet, TestSetResponse.class);
             var test = testSet.getTest();
             var subject = test.getSubject();
-            var testSetResponse = mapper.map(testSet, TestSetResponse.class);
 
             testSetResponse.setTestDay(test.getTestDay().toString());
             testSetResponse.setQuestionQuantity(test.getQuestionQuantity());

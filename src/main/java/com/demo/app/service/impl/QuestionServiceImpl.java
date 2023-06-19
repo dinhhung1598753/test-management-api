@@ -17,7 +17,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,8 +43,9 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     @Transactional
     public void addAllQuestions(List<QuestionRequest> requests) throws EntityNotFoundException {
-        var questions = new ArrayList<Question>();
-        requests.forEach(request -> questions.add(mapRequestToQuestion(request)));
+        var questions = requests.parallelStream()
+                .map(this::mapRequestToQuestion)
+                .collect(Collectors.toList());
         questionRepository.saveAll(questions);
     }
 
@@ -56,16 +56,13 @@ public class QuestionServiceImpl implements QuestionService {
                         HttpStatus.NOT_FOUND
                 ));
         var question = mapper.map(request, Question.class);
-        question.setAnswers(
-                request.getAnswers()
-                        .stream()
-                        .map(answerRequest -> {
-                            var answer = mapper.map(answerRequest, Answer.class);
-                            answer.setQuestion(question);
-                            return answer;
-                        })
-                        .collect(Collectors.toList()));
         question.setChapter(chapter);
+        question.setAnswers(request.getAnswers().parallelStream()
+                .map(answerRequest -> {
+                    var answer = mapper.map(answerRequest, Answer.class);
+                    answer.setQuestion(question);
+                    return answer;})
+                .collect(Collectors.toList()));
         return question;
     }
 

@@ -19,7 +19,8 @@ public class TestSetController {
     private final TestSetService testSetService;
 
     @PostMapping(path = "/test-set/{test-id}/create")
-    public ResponseEntity<?> createTestSetFromTest(@PathVariable(name = "test-id") int testId, @RequestBody @Valid final TestSetRequest request){
+    public ResponseEntity<?> createTestSetFromTest(@PathVariable(name = "test-id") int testId,
+                                                   @RequestBody @Valid final TestSetRequest request) throws InterruptedException {
         testSetService.createTestSetFromTest(testId, request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)

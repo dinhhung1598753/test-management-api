@@ -190,7 +190,7 @@ public class StudentController {
     }
 
     @GetMapping(path = "/search")
-    public ResponseEntity<?> getAllStudentsByFilter(@RequestBody @Valid StudentSearchRequest request){
+    public ResponseEntity<?> getAllStudentsByFilter(@RequestBody @Valid StudentSearchRequest request)  {
         var response = studentService.searchByFilter(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(response);

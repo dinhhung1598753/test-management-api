@@ -40,7 +40,7 @@ public class StudentTestServiceImpl implements StudentTestService {
     private final TestSetQuestionRepository testSetQuestionRepository;
 
     @Override
-    public void matchRandomTestForStudent(String classCode, Principal principal){
+    public void matchRandomTestForStudent(String classCode, Principal principal) {
         var student = studentRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new InvalidRoleException(
                         "You don't have role to do this action!",
@@ -50,7 +50,7 @@ public class StudentTestServiceImpl implements StudentTestService {
                         String.format("Class with code %s not found !", classCode),
                         HttpStatus.NOT_FOUND));
         var students = examClass.getStudents();
-        if (!students.contains(student)){
+        if (!students.contains(student)) {
             throw new UserNotEnrolledException(
                     String.format("You are not in class %s", examClass.getRoomName()),
                     HttpStatus.FORBIDDEN);
@@ -62,7 +62,8 @@ public class StudentTestServiceImpl implements StudentTestService {
                 .build();
         studentTestRepository.save(studentTest);
     }
-    private TestSet getRandomTestSet(List<TestSet> testSets){
+
+    private TestSet getRandomTestSet(List<TestSet> testSets) {
         var random = new Random();
         var size = testSets.size();
         return testSets.get(random.nextInt(size));
@@ -70,7 +71,7 @@ public class StudentTestServiceImpl implements StudentTestService {
 
     @Override
     @Transactional
-    public void markingOfflineAnswer() throws IOException{
+    public void markingOfflineAnswer() throws IOException {
         var offlineExam = objectMapper.readValue(
                 new File(OFFLINE_EXAM_JSON_PATH),
                 OfflineExam.class);
@@ -110,9 +111,9 @@ public class StudentTestServiceImpl implements StudentTestService {
         studentTestRepository.save(studentTest);
     }
 
-    private int markStudentTest(List<OfflineAnswer> offlineAnswers, Map<Integer, String> correctedAnswers){
+    private int markStudentTest(List<OfflineAnswer> offlineAnswers, Map<Integer, String> correctedAnswers) {
         var mark = 0;
-        for (var offlineAnswer : offlineAnswers){
+        for (var offlineAnswer : offlineAnswers) {
             String corrected = correctedAnswers.get(offlineAnswer.getQuestionNo());
             if (corrected.equals(offlineAnswer.getSelected()))
                 mark++;

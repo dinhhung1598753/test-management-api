@@ -62,10 +62,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public List<TeacherResponse> getAllTeacher(){
         List<Teacher> teachers = teacherRepository.findByEnabled(true);
-        if (teachers.size() == 0) {
-            throw new EntityNotFoundException("Not found any teacher !", HttpStatus.NOT_FOUND);
-        }
-        return teachers.stream().map(teacher -> {
+        return teachers.parallelStream().map(teacher -> {
             var response = mapper.map(teacher, TeacherResponse.class);
             response.setUsername(teacher.getUser().getUsername());
             response.setEmail(teacher.getUser().getEmail());

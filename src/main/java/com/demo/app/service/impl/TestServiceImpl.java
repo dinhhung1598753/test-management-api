@@ -39,7 +39,9 @@ public class TestServiceImpl implements TestService {
     @Transactional
     public TestDetailResponse createTestRandomQuestion(TestRequest request) throws EntityNotFoundException {
         var subject = subjectRepository.findByCode(request.getSubjectCode())
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Code: %s not found !", request.getSubjectCode()), HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Code: %s not found !", request.getSubjectCode()),
+                        HttpStatus.NOT_FOUND));
         final int FIRST_RESULTS = 0;
         var pageable = PageRequest.of(FIRST_RESULTS, request.getQuestionQuantity());
         var questions = questionRepository.findQuestionBySubjectChapterOrder(
@@ -47,7 +49,7 @@ public class TestServiceImpl implements TestService {
                 request.getChapterOrders(),
                 pageable
         );
-        var questionResponses = questions.stream()
+        var questionResponses = questions.stream().parallel()
                 .map(question -> {
                     var response = mapper.map(question, QuestionResponse.class);
                     response.setSubjectTitle(subject.getTitle());
@@ -59,10 +61,9 @@ public class TestServiceImpl implements TestService {
                 .testDay(LocalDate.parse(request.getTestDay(), FORMATTER))
                 .questionQuantity(request.getQuestionQuantity())
                 .duration(request.getDuration())
+                .questions(questions.stream().parallel().toList())
+                .subject(subject)
                 .build();
-
-        test.setQuestions(questions.stream().toList());
-        test.setSubject(subject);
         testRepository.save(test);
 
         return TestDetailResponse.builder()
@@ -79,10 +80,10 @@ public class TestServiceImpl implements TestService {
     @Transactional
     public void createTestByChooseQuestions(TestQuestionRequest request) {
         var questions = questionRepository.findAllById(request.getQuestionIds());
-        if (questions.isEmpty()){
+        if (questions.isEmpty()) {
             throw new EntityNotFoundException("Not found any question to add to test !", HttpStatus.NOT_FOUND);
         }
-        var subject =questions.get(0).getChapter().getSubject();
+        var subject = questions.get(0).getChapter().getSubject();
         var test = Test.builder()
                 .testDay(LocalDate.parse(request.getTestDay(), FORMATTER))
                 .questionQuantity(questions.size())
@@ -97,7 +98,7 @@ public class TestServiceImpl implements TestService {
     @Transactional
     public List<TestResponse> getAllTests() {
         var tests = testRepository.findByEnabledIsTrue();
-        return tests.stream()
+        return tests.parallelStream()
                 .map(test -> {
                     var testResponse = mapper.map(test, TestResponse.class);
                     var subject = test.getSubject();

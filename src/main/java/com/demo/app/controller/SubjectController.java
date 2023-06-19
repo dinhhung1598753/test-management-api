@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path = "/api/v1/subject")
 @RequiredArgsConstructor
@@ -50,6 +52,13 @@ public class SubjectController {
     public ResponseEntity<?> addSubjectChapter(@PathVariable(name = "code") String code, @RequestBody @Valid final ChapterRequest request){
         subjectService.addSubjectChapter(code, request);
         return new ResponseEntity<>(new ResponseMessage("Add subject's chapter successfully !"), HttpStatus.CREATED);
+    }
+
+    @PostMapping(path = "/{code}/chapters/add")
+    public ResponseEntity<?> addSubjectChapters(@PathVariable(name = "code") String code, @RequestBody @Valid final List<ChapterRequest> request){
+        subjectService.addSubjectChapters(code, request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseMessage("Add subject's chapters successfully !"));
     }
 
     @PutMapping(path = "/chapter/update/{id}")

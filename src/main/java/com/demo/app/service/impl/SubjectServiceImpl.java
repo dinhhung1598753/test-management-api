@@ -119,14 +119,19 @@ public class SubjectServiceImpl implements SubjectService {
    }
 
 
+   @Override
    @Transactional
    public void addSubjectChapters(String code, List<ChapterRequest> request) {
         var subject = subjectRepository.findByCode(code)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find any chapter with code %s", code), HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(
+                        "Cannot find any chapter with code %s", code),
+                        HttpStatus.NOT_FOUND));
         var chapters = new HashSet<Chapter>();
         request.forEach(chapterRequest -> {
             if (chapterRepository.existsBySubjectIdAndOrderAndEnabledTrue(subject.getId(), chapterRequest.getOrder())){
-                throw new FieldExistedException("This chapter already existed in subject !", HttpStatus.BAD_REQUEST);
+                throw new FieldExistedException(
+                        "This chapter already existed in subject !",
+                        HttpStatus.BAD_REQUEST);
             }
             var chapter = mapper.map(chapterRequest, Chapter.class);
             chapter.setSubject(subject);
