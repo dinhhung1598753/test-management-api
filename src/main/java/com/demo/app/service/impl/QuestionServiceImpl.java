@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.HashSet;
 import java.util.List;
@@ -124,6 +125,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     @Transactional
+    @CrossOrigin(allowedHeaders = "*", origins = "*")
     public void disableQuestion(int questionId) {
         var question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new EntityNotFoundException(

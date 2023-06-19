@@ -31,18 +31,19 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    private final AuthenticationManager manager;
-
     private final ModelMapper mapper;
 
-    private final PasswordEncoder passwordEncoder;
-
     private final JwtUtils jwtUtils;
+
+    private final AuthenticationManager manager;
+
+    private final PasswordEncoder passwordEncoder;
 
     private final RoleRepository roleRepository;
 
@@ -77,6 +78,9 @@ public class AuthServiceImpl implements AuthService {
                 .email(user.getEmail())
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
+                .roles(roles.parallelStream()
+                        .map(role -> role.getRoleName().name())
+                        .collect(Collectors.toList()))
                 .build();
     }
 
@@ -115,11 +119,15 @@ public class AuthServiceImpl implements AuthService {
         var refreshToken = jwtUtils.generateRefreshToken(user);
         revokeAllUserTokens(user);
         saveUserToken(user, jwtToken);
+        var roles = user.getRoles();
         return AuthenticationResponse.builder()
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
+                .roles(roles.parallelStream()
+                        .map(role -> role.getRoleName().name())
+                        .collect(Collectors.toList()))
                 .build();
     }
 

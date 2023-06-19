@@ -22,6 +22,7 @@ public class TestSetController {
     public ResponseEntity<?> createTestSetFromTest(@PathVariable(name = "test-id") int testId,
                                                    @RequestBody @Valid final TestSetRequest request) throws InterruptedException {
         testSetService.createTestSetFromTest(testId, request);
+        Thread.sleep(5000);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ResponseMessage(String.format("Created Set of test with id %d successfully !", testId)));

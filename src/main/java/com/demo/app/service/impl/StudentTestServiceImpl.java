@@ -20,12 +20,15 @@ import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class StudentTestServiceImpl implements StudentTestService {
 
     private static final String OFFLINE_EXAM_JSON_PATH = "data.json";
+
+    private static final String STUDENT_CODE_HEADER = "20";
 
     private final ObjectMapper objectMapper;
 
@@ -75,6 +78,7 @@ public class StudentTestServiceImpl implements StudentTestService {
         var offlineExam = objectMapper.readValue(
                 new File(OFFLINE_EXAM_JSON_PATH),
                 OfflineExam.class);
+
         var examClass = examClassRepository.findByCode(offlineExam.getClassCode())
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Class %s not found !", offlineExam.getClassCode()),
@@ -83,13 +87,17 @@ public class StudentTestServiceImpl implements StudentTestService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Test %s not found !", offlineExam.getTestNo()),
                         HttpStatus.NOT_FOUND));
-        String studentCode = "20" + offlineExam.getStudentCode();
+        String studentCode = STUDENT_CODE_HEADER + offlineExam.getStudentCode();
         var student = studentRepository.findByCode(studentCode)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Student %s not found", offlineExam.getStudentCode()),
                         HttpStatus.NOT_FOUND));
+
         var questionAnswers = new HashMap<Integer, String>();
-        testset.getTestSetQuestions().forEach(question -> questionAnswers.put(question.getQuestionNo(), question.getBinaryAnswer()));
+        testset.getTestSetQuestions()
+                .forEach(question ->
+                        questionAnswers.put(question.getQuestionNo(), question.getBinaryAnswer())
+                );
         var mark = markStudentTest(offlineExam.getAnswers(), questionAnswers);
         var studentTest = StudentTest.builder()
                 .student(student)
@@ -97,28 +105,30 @@ public class StudentTestServiceImpl implements StudentTestService {
                 .mark(mark)
                 .grade((double) mark / questionAnswers.size())
                 .build();
-        var studentTestDetails = new ArrayList<StudentTestDetail>();
-        offlineExam.getAnswers().forEach(offlineAnswer -> {
-            var testSetQuestion = testSetQuestionRepository.findByTestSetAndQuestionNo(testset, offlineAnswer.getQuestionNo());
-            var studentTestDetail = StudentTestDetail.builder()
-                    .studentTest(studentTest)
-                    .selectedAnswer(offlineAnswer.getSelected())
-                    .testSetQuestion(testSetQuestion)
-                    .build();
-            studentTestDetails.add(studentTestDetail);
-        });
+
+        var studentTestDetails = offlineExam.getAnswers()
+                .parallelStream()
+                .map(offlineAnswer -> {
+                    var testSetQuestion = testSetQuestionRepository.findByTestSetAndQuestionNo(
+                            testset,
+                            offlineAnswer.getQuestionNo());
+                    return StudentTestDetail.builder()
+                            .studentTest(studentTest)
+                            .selectedAnswer(offlineAnswer.getSelected())
+                            .testSetQuestion(testSetQuestion)
+                            .build();
+                }).collect(Collectors.toList());
         studentTest.setStudentTestDetails(studentTestDetails);
         studentTestRepository.save(studentTest);
     }
 
     private int markStudentTest(List<OfflineAnswer> offlineAnswers, Map<Integer, String> correctedAnswers) {
-        var mark = 0;
-        for (var offlineAnswer : offlineAnswers) {
-            String corrected = correctedAnswers.get(offlineAnswer.getQuestionNo());
-            if (corrected.equals(offlineAnswer.getSelected()))
-                mark++;
-        }
-        return mark;
+        return (int) offlineAnswers.parallelStream().
+                filter(offlineAnswer -> {
+                    String corrected = correctedAnswers.get(offlineAnswer.getQuestionNo());
+                    return corrected.equals(offlineAnswer.getSelected());
+                })
+                .count();
     }
 
 }

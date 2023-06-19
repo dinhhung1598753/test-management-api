@@ -15,10 +15,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
@@ -34,13 +32,13 @@ public class TestSetServiceImpl implements TestSetService {
 
     @Override
     @Transactional
-    public void createTestSetFromTest(int testId, TestSetRequest request) throws InterruptedException {
+    public void createTestSetFromTest(int testId, TestSetRequest request) {
         var test = testRepository.findById(testId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Test with id: %d not found !", testId),
                         HttpStatus.NOT_FOUND));
         var testSetQuantity = request.getTestSetQuantity();
-        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        var executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         for (var digit = 1; digit <= testSetQuantity; ++digit) {
             int finalDigit = digit;
             executor.execute(() -> {
@@ -54,11 +52,9 @@ public class TestSetServiceImpl implements TestSetService {
                 var testSetQuestions = assignQuestionsNumber(testSet, test.getQuestions());
                 testSet.setTestSetQuestions(testSetQuestions);
                 testSetRepository.save(testSet);
-
             });
         }
-
-        Thread.sleep(5000);
+        executor.shutdown();
     }
 
 
@@ -104,21 +100,21 @@ public class TestSetServiceImpl implements TestSetService {
         return stringBuilder.toString();
     }
 
-
     @Override
     public List<TestSetResponse> getAllTestSet() {
         var testsets = testSetRepository.findByEnabledIsTrue();
-        return testsets.parallelStream().map(testSet -> {
-            var testSetResponse = mapper.map(testSet, TestSetResponse.class);
-            var test = testSet.getTest();
-            var subject = test.getSubject();
+        return testsets.stream()
+                .map(testSet -> {
+                    var testSetResponse = mapper.map(testSet, TestSetResponse.class);
+                    var test = testSet.getTest();
+                    var subject = test.getSubject();
 
-            testSetResponse.setTestDay(test.getTestDay().toString());
-            testSetResponse.setQuestionQuantity(test.getQuestionQuantity());
-            testSetResponse.setSubjectTitle(subject.getTitle());
-            testSetResponse.setSubjectCode(subject.getCode());
-            return testSetResponse;
-        }).collect(Collectors.toList());
+                    testSetResponse.setTestDay(test.getTestDay().toString());
+                    testSetResponse.setQuestionQuantity(test.getQuestionQuantity());
+                    testSetResponse.setSubjectTitle(subject.getTitle());
+                    testSetResponse.setSubjectCode(subject.getCode());
+                    return testSetResponse;
+                }).collect(Collectors.toList());
     }
 
     @Override
@@ -127,13 +123,13 @@ public class TestSetServiceImpl implements TestSetService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Test set with id %d not found !", testSetId),
                         HttpStatus.NOT_FOUND));
-        var questionResponses = new ArrayList<TestSetQuestionResponse>();
-        testSet.getTestSetQuestions()
-                .forEach(testSetQuestion -> {
+
+        var questionResponses = testSet.getTestSetQuestions()
+                .stream()
+                .map(testSetQuestion -> {
                     var questionResponse = mapper.map(testSetQuestion, TestSetQuestionResponse.class);
                     var question = testSetQuestion.getQuestion();
                     var answers = testSetQuestion.getTestSetQuestionAnswers();
-
                     questionResponse.setLevel(question.getLevel().toString());
                     questionResponse.setTopicText(question.getTopicText());
                     questionResponse.setTopicImage(question.getTopicImage());
@@ -141,9 +137,9 @@ public class TestSetServiceImpl implements TestSetService {
                         String content = answers.get(i).getAnswer().getContent();
                         questionResponse.getAnswers().get(i).setContent(content);
                     }
-                    questionResponses.add(questionResponse);
-                });
-
+                    return questionResponse;
+                })
+                .collect(Collectors.toList());
         return TestSetDetailResponse.builder()
                 .duration(testSet.getTest().getDuration())
                 .questions(questionResponses)
