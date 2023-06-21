@@ -48,7 +48,9 @@ public class TeacherServiceImpl implements TeacherService {
         checkIfPhoneNumberExists(request.getPhoneNumber());
         checkIfCodeExists(request.getCode());
 
-        var roles = roleRepository.findAllByRoleNameIn(Arrays.asList(Role.RoleType.ROLE_USER, Role.RoleType.ROLE_TEACHER));
+        var roles = roleRepository.findAllByRoleNameIn(Arrays.asList(
+                Role.RoleType.ROLE_USER,
+                Role.RoleType.ROLE_TEACHER));
         var user = mapper.map(request, User.class);
         String encodePassword = passwordEncoder.passwordEncode().encode(request.getPassword());
 
@@ -60,19 +62,21 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<TeacherResponse> getAllTeacher(){
+    public List<TeacherResponse> getAllTeacher() {
         List<Teacher> teachers = teacherRepository.findByEnabled(true);
-        return teachers.parallelStream().map(teacher -> {
-            var response = mapper.map(teacher, TeacherResponse.class);
-            response.setUsername(teacher.getUser().getUsername());
-            response.setEmail(teacher.getUser().getEmail());
-            return response;
-        }).collect(Collectors.toList());
+        return teachers.parallelStream()
+                .map(teacher -> {
+                    var response = mapper.map(teacher, TeacherResponse.class);
+                    var user = teacher.getUser();
+                    response.setUsername(user.getUsername());
+                    response.setEmail(user.getEmail());
+                    return response;
+                }).collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public void updateTeacher(int teacherId, TeacherUpdateRequest request) throws EntityNotFoundException, FieldExistedException{
+    public void updateTeacher(int teacherId, TeacherUpdateRequest request) throws EntityNotFoundException, FieldExistedException {
         var teacher = teacherRepository.findById(teacherId).
                 orElseThrow(() -> new EntityNotFoundException(String.format("Teacher with id %d not found !", teacherId), HttpStatus.NOT_FOUND));
         if (!teacher.getPhoneNumber().equals(request.getPhoneNumber())) {
@@ -95,7 +99,7 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public void disableTeacher(int teacherId) throws EntityNotFoundException{
+    public void disableTeacher(int teacherId) throws EntityNotFoundException {
         var existTeacher = teacherRepository.findById(teacherId).
                 orElseThrow(() -> new EntityNotFoundException(String.format("Not found any teacher with id = %d", teacherId), HttpStatus.NOT_FOUND));
         existTeacher.getUser().setEnabled(false);

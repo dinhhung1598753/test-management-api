@@ -1,5 +1,6 @@
 package com.demo.app.dto.student;
 
+import com.demo.app.marker.Excelable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,15 +10,15 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudentResponse {
+public class StudentResponse implements Excelable {
 
-    private int id;
+    private Integer id;
 
     private String username;
 
     private String fullName;
 
-    private int course;
+    private Integer course;
 
     private String birthday;
 

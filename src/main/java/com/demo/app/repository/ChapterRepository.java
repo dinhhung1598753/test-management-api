@@ -13,8 +13,6 @@ public interface ChapterRepository extends JpaRepository<Chapter, Integer> {
 
     List<Chapter> findBySubjectIdAndEnabledTrue(int subjectId);
 
-    int countBySubjectId(int subjectId);
-
     Boolean existsBySubjectIdAndOrderAndEnabledTrue(int subjectId, int order);
 
     Optional<Chapter> findBySubjectAndOrder(Subject subject, int order);

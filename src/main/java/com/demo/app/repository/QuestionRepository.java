@@ -1,5 +1,6 @@
 package com.demo.app.repository;
 
+import com.demo.app.model.Chapter;
 import com.demo.app.model.Question;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,5 +25,9 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
     Page<Question> findQuestionBySubjectChapterOrder(@Param("code") String code, @Param("chapterOrders") List<Integer> chapterOrders, Pageable pageable);
 
     int countByChapterId(int chapterId);
+
+    int countByChapterIn(List<Chapter> chapters);
+
+    List<Question> findByChapterIn(List<Chapter> chapters);
 
 }

@@ -1,0 +1,72 @@
+{
+  "subjectCode": "IT4110",
+  "chapterNo": 1,
+  "questions": [
+    {
+      "topicText": "abc",
+      "level": "easy",
+      "answers": [
+        {
+          "content": "1",
+          "isCorrected": "true"
+        },
+        {
+          "content": "2",
+          "isCorrected": "false"
+        },
+        {
+          "content": "c",
+          "isCorrected": "false"
+        },
+        {
+          "content": "d",
+          "isCorrected": "false"
+        }
+      ]
+    },
+    {
+      "topicText": "abc",
+      "level": "medium",
+      "answers": [
+        {
+          "content": "1",
+          "isCorrected": "true"
+        },
+        {
+          "content": "2",
+          "isCorrected": "true"
+        },
+        {
+          "content": "c",
+          "isCorrected": "false"
+        },
+        {
+          "content": "d",
+          "isCorrected": "false"
+        }
+      ]
+    },
+    {
+      "topicText": "abc",
+      "level": "hard",
+      "answers": [
+        {
+          "content": "1",
+          "isCorrected": "true"
+        },
+        {
+          "content": "2",
+          "isCorrected": "false"
+        },
+        {
+          "content": "c",
+          "isCorrected": "true"
+        },
+        {
+          "content": "d",
+          "isCorrected": "false"
+        }
+      ]
+    }
+  ]
+}

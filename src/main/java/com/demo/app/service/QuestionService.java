@@ -1,20 +1,19 @@
 package com.demo.app.service;
 
 
-import com.demo.app.dto.question.SingleQuestionRequest;
+import com.demo.app.dto.question.MultipleQuestionRequest;
 import com.demo.app.dto.question.QuestionResponse;
-import com.demo.app.exception.EntityNotFoundException;
+import com.demo.app.dto.question.SingleQuestionRequest;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
 
 public interface QuestionService {
 
-
-    void addQuestion(SingleQuestionRequest request);
+    void saveQuestion(SingleQuestionRequest request);
 
     @Transactional
-    void addAllQuestions(List<SingleQuestionRequest> requests) throws EntityNotFoundException;
+    void saveAllQuestions(MultipleQuestionRequest request);
 
     @Transactional
     List<QuestionResponse> getAllQuestionsBySubjectCode(String code);

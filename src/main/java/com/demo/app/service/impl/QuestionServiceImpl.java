@@ -1,6 +1,7 @@
 package com.demo.app.service.impl;
 
 import com.demo.app.dto.chapter.ChapterResponse;
+import com.demo.app.dto.question.MultipleQuestionRequest;
 import com.demo.app.dto.question.SingleQuestionRequest;
 import com.demo.app.dto.question.QuestionResponse;
 import com.demo.app.exception.EntityNotFoundException;
@@ -16,9 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,17 +36,9 @@ public class QuestionServiceImpl implements QuestionService {
     private final ModelMapper mapper;
 
     @Override
-    public void addQuestion(SingleQuestionRequest request) throws EntityNotFoundException {
-        questionRepository.save(mapRequestToQuestion(request));
-    }
+    public void saveQuestion(SingleQuestionRequest request) throws EntityNotFoundException {
 
-    @Override
-    @Transactional
-    public void addAllQuestions(List<SingleQuestionRequest> requests) throws EntityNotFoundException {
-        var questions = requests.parallelStream()
-                .map(this::mapRequestToQuestion)
-                .collect(Collectors.toList());
-        questionRepository.saveAll(questions);
+        questionRepository.save(mapRequestToQuestion(request));
     }
 
     private Question mapRequestToQuestion(SingleQuestionRequest request) {
@@ -62,9 +53,39 @@ public class QuestionServiceImpl implements QuestionService {
                 .map(answerRequest -> {
                     var answer = mapper.map(answerRequest, Answer.class);
                     answer.setQuestion(question);
-                    return answer;})
-                .collect(Collectors.toList()));
+                    return answer;
+                }).collect(Collectors.toList()));
         return question;
+    }
+
+    @Override
+    @Transactional
+    public void saveAllQuestions(MultipleQuestionRequest request) {
+        var subject = subjectRepository.findByCode(request.getSubjectCode())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Subject %s not found !", request.getSubjectCode()),
+                        HttpStatus.NOT_FOUND
+                ));
+        var chapter = chapterRepository.findBySubjectAndOrder(subject, request.getChapterNo())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Chapter No %d not found !", request.getChapterNo()),
+                        HttpStatus.NOT_FOUND
+                ));
+        var questions = request.getQuestions()
+                .parallelStream()
+                .map(questionRequest -> {
+                    var question = mapper.map(questionRequest, Question.class);
+                    question.setChapter(chapter);
+                    question.setAnswers(questionRequest.getAnswers()
+                            .parallelStream()
+                            .map(answerRequest -> {
+                                var answer = mapper.map(answerRequest, Answer.class);
+                                answer.setQuestion(question);
+                                return answer;
+                            }).collect(Collectors.toList()));
+                    return question;
+                }).collect(Collectors.toList());
+        questionRepository.saveAll(questions);
     }
 
     @Override
@@ -74,15 +95,8 @@ public class QuestionServiceImpl implements QuestionService {
                 () -> new EntityNotFoundException(
                         String.format("Subject with code: %s not found !", code),
                         HttpStatus.NOT_FOUND));
-        var questions = new HashSet<Question>();
-        subject.getChapters().forEach(chapter -> {
-            for (var question : chapter.getQuestions()) {
-                if (question.getEnabled()) {
-                    questions.add(question);
-                }
-            }
-        });
-        return questions.stream()
+        var questions = questionRepository.findByChapterIn(subject.getChapters());
+        return questions.parallelStream()
                 .map(question -> {
                     var chapter = question.getChapter();
                     var questionResponse = mapper.map(question, QuestionResponse.class);
@@ -90,8 +104,7 @@ public class QuestionServiceImpl implements QuestionService {
                     questionResponse.setSubjectCode(subject.getCode());
                     questionResponse.setSubjectTitle(subject.getTitle());
                     return questionResponse;
-                })
-                .collect(Collectors.toList());
+                }).collect(Collectors.toList());
     }
 
     @Override
@@ -125,7 +138,6 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     @Transactional
-    @CrossOrigin(allowedHeaders = "*", origins = "*")
     public void disableQuestion(int questionId) {
         var question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new EntityNotFoundException(

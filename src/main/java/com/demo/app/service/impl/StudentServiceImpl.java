@@ -47,14 +47,12 @@ public class StudentServiceImpl implements StudentService {
 
     private final ModelMapper mapper;
 
+
     @Override
-    public ByteArrayInputStream exportStudentsExcel() throws FileInputException {
-        try {
-            var students = studentRepository.findAll();
-            return ExcelUtils.studentsToExcelFile(students);
-        } catch (IOException ex) {
-            throw new FileInputException("Could not write the file !", HttpStatus.EXPECTATION_FAILED);
-        }
+    public ByteArrayInputStream exportStudentsToExcel() throws IOException {
+        var students = studentRepository.findByEnabled(true);
+        var responses = mapStudentToResponse(students);
+        return ExcelUtils.convertContentsToExcel(responses);
     }
 
     @Override

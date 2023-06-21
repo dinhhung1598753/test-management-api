@@ -46,23 +46,15 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public List<SubjectResponse> getAllSubjects() throws EntityNotFoundException{
         List<Subject> subjects = subjectRepository.findByEnabledIsTrue();
-        if (subjects.size() == 0){
-            throw new EntityNotFoundException("Not found any subject !", HttpStatus.NOT_FOUND);
-        }
-        return subjects.stream().map((subject -> {
-            var subjectResponse = mapper.map(subject, SubjectResponse.class);
-            subjectResponse.setChapterQuantity(chapterRepository.countBySubjectId(subject.getId()));
-            var chapterIds = subject.getChapters()
-                    .stream()
-                    .map(Chapter::getId)
-                    .toList();
-            var countQuestionByChapter = 0;
-            for (var chapterId : chapterIds){
-                countQuestionByChapter += questionRepository.countByChapterId(chapterId);
-            }
-            subjectResponse.setQuestionQuantity(countQuestionByChapter);
-            return subjectResponse;
-        })).collect(Collectors.toList());
+        return subjects.stream()
+                .map(subject -> {
+                    var response = mapper.map(subject, SubjectResponse.class);
+                    var chapters = subject.getChapters();
+                    response.setChapterQuantity(chapters.size());
+                    response.setQuestionQuantity(questionRepository.countByChapterIn(chapters));
+                    return response;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -153,7 +145,9 @@ public class SubjectServiceImpl implements SubjectService {
    @Override
    public void disableChapter(int chapterId){
        var chapter = chapterRepository.findById(chapterId).orElseThrow(
-               () -> new EntityNotFoundException(String.format("Cannot find any chapter with id %d", chapterId), HttpStatus.NOT_FOUND));
+               () -> new EntityNotFoundException(
+                       String.format("Cannot find any chapter with id %d", chapterId),
+                       HttpStatus.NOT_FOUND));
        chapter.setEnabled(false);
        chapterRepository.save(chapter);
    }

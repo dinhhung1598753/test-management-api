@@ -119,15 +119,16 @@ public class AuthServiceImpl implements AuthService {
         var refreshToken = jwtUtils.generateRefreshToken(user);
         revokeAllUserTokens(user);
         saveUserToken(user, jwtToken);
-        var roles = user.getRoles();
+        var roles = user.getRoles()
+                .parallelStream()
+                .map(role -> role.getRoleName().name())
+                .collect(Collectors.toList());
         return AuthenticationResponse.builder()
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
-                .roles(roles.parallelStream()
-                        .map(role -> role.getRoleName().name())
-                        .collect(Collectors.toList()))
+                .roles(roles)
                 .build();
     }
 

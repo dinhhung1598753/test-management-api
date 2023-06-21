@@ -1,6 +1,7 @@
 package com.demo.app.controller;
 
 import com.demo.app.dto.message.ResponseMessage;
+import com.demo.app.dto.question.MultipleQuestionRequest;
 import com.demo.app.dto.question.SingleQuestionRequest;
 import com.demo.app.service.QuestionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -8,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/v1/question")
@@ -21,15 +20,15 @@ public class QuestionController {
 
     @PostMapping(path = "/add")
     public ResponseEntity<?> addQuestion(@RequestBody final SingleQuestionRequest request){
-        questionService.addQuestion(request);
+        questionService.saveQuestion(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ResponseMessage("Add question successfully !"));
     }
 
     @PostMapping(path = "/adds")
-    public ResponseEntity<?> addAllQuestions(@RequestBody final List<SingleQuestionRequest> requests){
-        questionService.addAllQuestions(requests);
+    public ResponseEntity<?> addAllQuestions(@RequestBody final MultipleQuestionRequest request){
+        questionService.saveAllQuestions(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ResponseMessage("Add all questions successfully"));

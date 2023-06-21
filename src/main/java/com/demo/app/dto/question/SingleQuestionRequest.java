@@ -24,8 +24,9 @@ public class SingleQuestionRequest {
     @NotBlank(message = "Please enter question's level !")
     private String level;
 
+    private String topicImage;
+
     @JsonProperty("answers")
     private List<AnswerRequest> answers;
 
-    private String topicImage;
 }

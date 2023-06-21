@@ -6,7 +6,6 @@ import com.demo.app.dto.student.StudentSearchRequest;
 import com.demo.app.dto.student.StudentUpdateRequest;
 import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.exception.FieldExistedException;
-import com.demo.app.exception.FileInputException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
@@ -15,9 +14,9 @@ import java.util.List;
 
 public interface StudentService {
 
-    ByteArrayInputStream exportStudentsExcel() throws FileInputException;
-
     void saveStudent(StudentRequest request) throws FieldExistedException;
+
+    ByteArrayInputStream exportStudentsToExcel() throws IOException, IllegalAccessException;
 
     void importStudentExcel(MultipartFile file) throws FieldExistedException, IOException;
 

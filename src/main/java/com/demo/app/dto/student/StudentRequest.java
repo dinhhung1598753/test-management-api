@@ -1,5 +1,6 @@
 package com.demo.app.dto.student;
 
+import com.demo.app.marker.Excelable;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -15,7 +16,7 @@ import org.hibernate.validator.constraints.Length;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class StudentRequest {
+public class StudentRequest implements Excelable {
 
     @NotBlank(message = "Please enter username !")
     private String username;

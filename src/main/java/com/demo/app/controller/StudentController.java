@@ -109,9 +109,9 @@ private final String EXAMPLE_NO_DATA_IN_DB = """
     }
 
     @GetMapping(path = "/export")
-    public ResponseEntity<?> exportExcelFile() {
+    public ResponseEntity<?> exportExcelFile() throws IOException, IllegalAccessException {
         String filename = "Students" + System.currentTimeMillis() + ".xlsx";
-        var file = new InputStreamResource(studentService.exportStudentsExcel());
+        var file = new InputStreamResource(studentService.exportStudentsToExcel());
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
                 .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
@@ -176,8 +176,7 @@ private final String EXAMPLE_NO_DATA_IN_DB = """
     @GetMapping(path = "/list")
     public ResponseEntity<?> getAllStudents() {
         var response = studentService.getAllStudents();
-        return ResponseEntity
-                .status(HttpStatus.OK)
+        return ResponseEntity.status(HttpStatus.OK)
                 .body(response);
     }
 
