@@ -70,7 +70,7 @@ public class AppExceptionHandler {
 
     @ExceptionHandler(UserNotEnrolledException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ErrorResponse handleUserNotEnrolledException(InvalidVerificationTokenException ex){
+    public ErrorResponse handleUserNotEnrolledException(UserNotEnrolledException ex){
         HttpStatus status = ex.getStatus();
         return new ErrorResponse(status, ex.getMessage());
     }

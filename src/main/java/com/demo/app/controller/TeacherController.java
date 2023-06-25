@@ -14,10 +14,16 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -77,6 +83,23 @@ public class TeacherController {
         String message = String.format("Teacher %s have been saved successfully !", request.getFullName());
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.CREATED);
 
+    }
+
+    @PostMapping(path = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> importTeacherExcel(@RequestPart final MultipartFile file) throws IOException {
+        teacherService.importTeacherExcel(file);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseMessage("Uploaded the file successfully: " + file.getOriginalFilename()));
+    }
+
+    @GetMapping(path = "/export")
+    public ResponseEntity<?> exportTeacherExcel() throws IOException {
+        String filename = "Teachers" + LocalDateTime.now() + ".xlsx";
+        var file = new InputStreamResource(teacherService.exportTeachersToExcel());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+                .body(file);
     }
 
     @Operation(

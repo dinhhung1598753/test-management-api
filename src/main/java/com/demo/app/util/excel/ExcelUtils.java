@@ -30,8 +30,8 @@ public class ExcelUtils {
 
     private static final int FIRST_SHEET = 0;
 
-    public static boolean hasExcelFormat(MultipartFile file) {
-        return Objects.equals(file.getContentType(), TYPE);
+    public static boolean notHaveExcelFormat(MultipartFile file) {
+        return !Objects.equals(file.getContentType(), TYPE);
     }
 
     /**
@@ -47,11 +47,10 @@ public class ExcelUtils {
                     try {
                         return mapper.readValue(json, classType);
                     } catch (JsonProcessingException e) {
-                        throw new FileInputException("This excel not true with it template !", HttpStatus.CONFLICT);
+                        throw new FileInputException("This excel not right with it template !", HttpStatus.CONFLICT);
                     }
                 }).collect(Collectors.toList());
     }
-
     private static List<Map<String, String>> getExcelContents(MultipartFile file) throws IOException {
         try (InputStream inputStream = file.getInputStream();
              Workbook workbook = WorkbookFactory.create(inputStream)) {
@@ -76,7 +75,6 @@ public class ExcelUtils {
                     }).collect(Collectors.toList());
         }
     }
-
     private static List<String> convertContentsToJson(List<Map<String, String>> contents) {
         return contents.parallelStream()
                 .map(content -> {
@@ -96,19 +94,15 @@ public class ExcelUtils {
     private static Supplier<Stream<Row>> getRowStreamSupplier(Iterable<Row> rows) {
         return () -> getStream(rows);
     }
-
     private static <T> Stream<T> getStream(Iterable<T> iterable) {
         return StreamSupport.stream(iterable.spliterator(), true);
     }
-
     private static Supplier<Stream<Integer>> cellIteratorSupplier(int end) {
         return () -> numberStream(end);
     }
-
     private static Stream<Integer> numberStream(int end) {
         return IntStream.range(0, end).boxed();
     }
-
 
     /**
      * Write any Excel file from object that can excelable
@@ -148,7 +142,7 @@ public class ExcelUtils {
     }
 
     private static <T extends Excelable> List<Map<String, String>> convertObjectsToContents(List<T> objects) {
-        return objects.stream()
+        return objects.parallelStream()
                 .map(object -> Arrays.stream(object.getClass().getDeclaredFields())
                         .parallel()
                         .peek(field -> field.setAccessible(true))

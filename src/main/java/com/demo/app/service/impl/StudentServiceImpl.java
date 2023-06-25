@@ -47,18 +47,10 @@ public class StudentServiceImpl implements StudentService {
 
     private final ModelMapper mapper;
 
-
-    @Override
-    public ByteArrayInputStream exportStudentsToExcel() throws IOException {
-        var students = studentRepository.findByEnabled(true);
-        var responses = mapStudentToResponse(students);
-        return ExcelUtils.convertContentsToExcel(responses);
-    }
-
     @Override
     @Transactional
     public void importStudentExcel(MultipartFile file) throws FieldExistedException, IOException {
-        if (!ExcelUtils.hasExcelFormat(file)){
+        if (ExcelUtils.notHaveExcelFormat(file)){
             throw new FileInputException(
                     "There are something wrong with file, please check file format is .xlsx !",
                     HttpStatus.CONFLICT);
@@ -91,6 +83,12 @@ public class StudentServiceImpl implements StudentService {
         return user;
     }
 
+    @Override
+    public ByteArrayInputStream exportStudentsToExcel() throws IOException {
+        var students = studentRepository.findByEnabled(true);
+        var responses = mapStudentToResponse(students);
+        return ExcelUtils.convertContentsToExcel(responses);
+    }
 
     @Override
     public List<StudentResponse> getAllStudents() throws EntityNotFoundException {
@@ -105,6 +103,14 @@ public class StudentServiceImpl implements StudentService {
         return mapStudentToResponse(students);
     }
 
+    private List<StudentResponse> mapStudentToResponse(List<Student> students){
+        return students.parallelStream().map(student -> {
+            var response = mapper.map(student, StudentResponse.class);
+            response.setUsername(student.getUser().getUsername());
+            response.setEmail(student.getUser().getEmail());
+            return response;
+        }).collect(Collectors.toList());
+    }
 
     @Override
     @Transactional
@@ -133,7 +139,9 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public void disableStudent(int studentId) throws EntityNotFoundException {
         var existStudent = studentRepository.findById(studentId).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Not found any student with id = %d !", studentId), HttpStatus.NOT_FOUND)
+                () -> new EntityNotFoundException(
+                        String.format("Not found any student with id = %d !", studentId),
+                        HttpStatus.NOT_FOUND)
         );
         existStudent.getUser().setEnabled(false);
         studentRepository.save(existStudent);
@@ -162,14 +170,4 @@ public class StudentServiceImpl implements StudentService {
             throw new FieldExistedException("Code already taken!", HttpStatus.CONFLICT);
         }
     }
-
-    private List<StudentResponse> mapStudentToResponse(List<Student> students){
-        return students.parallelStream().map(student -> {
-            var response = mapper.map(student, StudentResponse.class);
-            response.setUsername(student.getUser().getUsername());
-            response.setEmail(student.getUser().getEmail());
-            return response;
-        }).collect(Collectors.toList());
-    }
-
 }

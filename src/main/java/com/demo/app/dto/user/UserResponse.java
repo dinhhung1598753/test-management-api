@@ -12,6 +12,7 @@ import java.util.List;
 public class UserResponse {
 
     private Integer id;
+
     private String email;
 
     private String username;

@@ -12,13 +12,17 @@ import com.demo.app.repository.ChapterRepository;
 import com.demo.app.repository.QuestionRepository;
 import com.demo.app.repository.SubjectRepository;
 import com.demo.app.service.QuestionService;
+import com.demo.app.service.S3Service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,12 +37,24 @@ public class QuestionServiceImpl implements QuestionService {
 
     private final AnswerRepository answerRepository;
 
+    private final S3Service s3service;
+
+
     private final ModelMapper mapper;
 
     @Override
-    public void saveQuestion(SingleQuestionRequest request) throws EntityNotFoundException {
+    @Transactional
+    public void saveQuestion(SingleQuestionRequest request, MultipartFile file) throws EntityNotFoundException, IOException {
+        var question = questionRepository.save(mapRequestToQuestion(request));
+        if (file != null){
+            uploadQuestionTopicImage(question.getId(), file);
+        }
+    }
 
-        questionRepository.save(mapRequestToQuestion(request));
+    private void uploadQuestionTopicImage(Integer questionId, MultipartFile file) throws IOException {
+        String imageId = UUID.randomUUID().toString();
+        var key = String.format("question/%s/%s", questionId, imageId);
+        s3service.uploadFile(key, file);
     }
 
     private Question mapRequestToQuestion(SingleQuestionRequest request) {

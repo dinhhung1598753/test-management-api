@@ -6,6 +6,7 @@ import com.demo.app.dto.teacher.TeacherResponse;
 import com.demo.app.dto.teacher.TeacherUpdateRequest;
 import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.exception.FieldExistedException;
+import com.demo.app.exception.FileInputException;
 import com.demo.app.model.Gender;
 import com.demo.app.model.Role;
 import com.demo.app.model.Teacher;
@@ -14,12 +15,16 @@ import com.demo.app.repository.RoleRepository;
 import com.demo.app.repository.TeacherRepository;
 import com.demo.app.repository.UserRepository;
 import com.demo.app.service.TeacherService;
+import com.demo.app.util.excel.ExcelUtils;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -43,6 +48,24 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     @Transactional
     public void saveTeacher(TeacherRequest request) throws FieldExistedException {
+        userRepository.save(mapRequestToUser(request));
+    }
+
+    @Override
+    public void importTeacherExcel(MultipartFile file) throws IOException {
+        if (ExcelUtils.notHaveExcelFormat(file)){
+            throw new FileInputException(
+                    "There are something wrong with file, please check file format is .xlsx !",
+                    HttpStatus.CONFLICT);
+        }
+        var requests = ExcelUtils.convertExcelToDataTransferObject(file, TeacherRequest.class);
+        var users = requests.parallelStream()
+                .map(this::mapRequestToUser)
+                .collect(Collectors.toList());
+        userRepository.saveAll(users);
+    }
+
+    private User mapRequestToUser(TeacherRequest request){
         checkIfUsernameExists(request.getUsername());
         checkIfEmailExists(request.getEmail());
         checkIfPhoneNumberExists(request.getPhoneNumber());
@@ -58,12 +81,23 @@ public class TeacherServiceImpl implements TeacherService {
         user.setRoles(roles);
         user.setEnabled(true);
         user.getTeacher().setUser(user);
-        userRepository.save(user);
+        return user;
     }
 
     @Override
     public List<TeacherResponse> getAllTeacher() {
         List<Teacher> teachers = teacherRepository.findByEnabled(true);
+        return mapTeacherToResponse(teachers);
+    }
+
+    @Override
+    public ByteArrayInputStream exportTeachersToExcel() throws IOException {
+        var teachers = teacherRepository.findByEnabled(true);
+        var responses = mapTeacherToResponse(teachers);
+        return ExcelUtils.convertContentsToExcel(responses);
+    }
+
+    private List<TeacherResponse> mapTeacherToResponse(List<Teacher> teachers){
         return teachers.parallelStream()
                 .map(teacher -> {
                     var response = mapper.map(teacher, TeacherResponse.class);
@@ -78,7 +112,9 @@ public class TeacherServiceImpl implements TeacherService {
     @Transactional
     public void updateTeacher(int teacherId, TeacherUpdateRequest request) throws EntityNotFoundException, FieldExistedException {
         var teacher = teacherRepository.findById(teacherId).
-                orElseThrow(() -> new EntityNotFoundException(String.format("Teacher with id %d not found !", teacherId), HttpStatus.NOT_FOUND));
+                orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Teacher with id %d not found !", teacherId),
+                        HttpStatus.NOT_FOUND));
         if (!teacher.getPhoneNumber().equals(request.getPhoneNumber())) {
             checkIfPhoneNumberExists(request.getPhoneNumber());
         }

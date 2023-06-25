@@ -113,8 +113,10 @@ public class AuthServiceImpl implements AuthService {
                 request.getPassword()
         ));
 
-        var user = userRepository.findByUsernameAndEnabledIsTrue(request.getUsername()).orElseThrow(
-                () -> new EntityNotFoundException("Username not found !", HttpStatus.NOT_FOUND));
+        var user = userRepository.findByUsernameAndEnabledIsTrue(request.getUsername())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Username not found !",
+                        HttpStatus.NOT_FOUND));
         var jwtToken = jwtUtils.generateToken(user);
         var refreshToken = jwtUtils.generateRefreshToken(user);
         revokeAllUserTokens(user);

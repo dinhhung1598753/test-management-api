@@ -4,11 +4,16 @@ import com.demo.app.dto.message.ResponseMessage;
 import com.demo.app.dto.question.MultipleQuestionRequest;
 import com.demo.app.dto.question.SingleQuestionRequest;
 import com.demo.app.service.QuestionService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping(path = "/api/v1/question")
@@ -18,9 +23,13 @@ public class QuestionController {
 
     private final QuestionService questionService;
 
-    @PostMapping(path = "/add")
-    public ResponseEntity<?> addQuestion(@RequestBody final SingleQuestionRequest request){
-        questionService.saveQuestion(request);
+    private final ObjectMapper mapper;
+
+    @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> addQuestion(@RequestPart String jsonRequest,
+                                         @RequestPart(required = false) MultipartFile file) throws IOException {
+        var request = mapper.readValue(jsonRequest, SingleQuestionRequest.class);
+        questionService.saveQuestion(request, file);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ResponseMessage("Add question successfully !"));

@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -110,7 +111,7 @@ private final String EXAMPLE_NO_DATA_IN_DB = """
 
     @GetMapping(path = "/export")
     public ResponseEntity<?> exportExcelFile() throws IOException, IllegalAccessException {
-        String filename = "Students" + System.currentTimeMillis() + ".xlsx";
+        String filename = "Students" + LocalDateTime.now() + ".xlsx";
         var file = new InputStreamResource(studentService.exportStudentsToExcel());
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
