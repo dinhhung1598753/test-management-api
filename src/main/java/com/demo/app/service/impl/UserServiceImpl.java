@@ -17,7 +17,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,7 +32,6 @@ public class UserServiceImpl implements UserService {
 
     private final ModelMapper mapper;
 
-    private static final String ANONYMOUS_USER = "anonymousUser";
 
     @Override
     public List<UserResponse> getUsers() {
@@ -52,7 +50,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public Object getUserProfile(Authentication auth) throws UserNotEnrolledException{
-        if (auth.getName().equalsIgnoreCase(ANONYMOUS_USER)){
+        if (auth.getName().equals("anonymousUser")){
             throw new UserNotEnrolledException("Cannot found user !", HttpStatus.FORBIDDEN);
         }
         var roles = auth.getAuthorities()
@@ -86,6 +84,7 @@ public class UserServiceImpl implements UserService {
         response.setEmail(student.getUser().getEmail());
         return response;
     }
+
     private TeacherResponse getTeacherProfile(String username){
         var teacher = teacherRepository.findByUsername(username).get();
         var response = mapper.map(teacher, TeacherResponse.class);
@@ -93,4 +92,5 @@ public class UserServiceImpl implements UserService {
         response.setEmail(teacher.getUser().getEmail());
         return response;
     }
+
 }

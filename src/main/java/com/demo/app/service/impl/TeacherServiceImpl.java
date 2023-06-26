@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -110,11 +111,25 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     @Transactional
-    public void updateTeacher(int teacherId, TeacherUpdateRequest request) throws EntityNotFoundException, FieldExistedException {
+    public void updateTeacherById(int teacherId, TeacherUpdateRequest request) throws EntityNotFoundException, FieldExistedException {
         var teacher = teacherRepository.findById(teacherId).
                 orElseThrow(() -> new EntityNotFoundException(
                         String.format("Teacher with id %d not found !", teacherId),
                         HttpStatus.NOT_FOUND));
+        updateTeacher(teacher, request);
+    }
+
+    @Override
+    @Transactional
+    public void updateTeacherProfile(Principal principal, TeacherUpdateRequest request)  throws EntityNotFoundException, FieldExistedException{
+        var teacher = teacherRepository.findByUsername(principal.getName())
+                        .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Teacher %s not found !", principal.getName()),
+                        HttpStatus.NOT_FOUND));
+        updateTeacher(teacher, request);
+    }
+
+    private void updateTeacher(Teacher teacher, TeacherUpdateRequest request){
         if (!teacher.getPhoneNumber().equals(request.getPhoneNumber())) {
             checkIfPhoneNumberExists(request.getPhoneNumber());
         }
@@ -124,22 +139,17 @@ public class TeacherServiceImpl implements TeacherService {
         if (!teacher.getCode().equals(request.getCode())) {
             checkIfCodeExists(request.getCode());
         }
-        var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        teacher.setBirthday(LocalDate.parse(request.getBirthday(), formatter));
+
         teacher.setCode(request.getCode());
         teacher.setPhoneNumber(request.getPhoneNumber());
         teacher.setFullname(request.getFullName());
         teacher.getUser().setEmail(request.getEmail());
+        teacher.setBirthday(LocalDate.parse(
+                request.getBirthday(),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        ));
         teacher.setGender(Gender.valueOf(request.getGender()));
         teacherRepository.save(teacher);
-    }
-
-    @Override
-    public void disableTeacher(int teacherId) throws EntityNotFoundException {
-        var existTeacher = teacherRepository.findById(teacherId).
-                orElseThrow(() -> new EntityNotFoundException(String.format("Not found any teacher with id = %d", teacherId), HttpStatus.NOT_FOUND));
-        existTeacher.getUser().setEnabled(false);
-        teacherRepository.save(existTeacher);
     }
 
     private void checkIfUsernameExists(String username) throws FieldExistedException {
@@ -164,5 +174,15 @@ public class TeacherServiceImpl implements TeacherService {
         if (teacherRepository.existsByCode(code)) {
             throw new FieldExistedException("Code already taken!", HttpStatus.CONFLICT);
         }
+    }
+
+    @Override
+    public void disableTeacher(int teacherId) throws EntityNotFoundException {
+        var existTeacher = teacherRepository.findById(teacherId)
+                        .orElseThrow(() -> new EntityNotFoundException(
+                                String.format("Not found any teacher with id = %d", teacherId),
+                                HttpStatus.NOT_FOUND));
+        existTeacher.getUser().setEnabled(false);
+        teacherRepository.save(existTeacher);
     }
 }

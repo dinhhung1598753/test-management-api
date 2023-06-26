@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 
 public interface StudentService {
@@ -24,7 +25,9 @@ public interface StudentService {
 
     List<StudentResponse> searchByFilter(StudentSearchRequest request);
 
-    void updateStudent(int studentId, StudentUpdateRequest request) throws EntityNotFoundException;
+    void updateStudentById(int studentId, StudentUpdateRequest request) throws EntityNotFoundException;
+
+    void updateStudentProfile(Principal principal, StudentUpdateRequest request) throws EntityNotFoundException, FieldExistedException;
 
     void disableStudent(int studentId) throws EntityNotFoundException;
 

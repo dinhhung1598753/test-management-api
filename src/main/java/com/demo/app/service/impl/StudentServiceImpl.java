@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -114,26 +115,42 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional
-    public void updateStudent(int studentId, StudentUpdateRequest request) throws EntityNotFoundException, FieldExistedException {
-        Student existStudent = studentRepository.findById(studentId)
+    public void updateStudentById(int studentId, StudentUpdateRequest request) throws EntityNotFoundException, FieldExistedException {
+        var existStudent = studentRepository.findById(studentId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Student with id: %s not found !", studentId), HttpStatus.NOT_FOUND));
-        if (!existStudent.getPhoneNumber().equals(request.getPhoneNumber()))
+        updateStudent(existStudent, request);
+    }
+
+    @Override
+    @Transactional
+    public void updateStudentProfile(Principal principal, StudentUpdateRequest request) throws EntityNotFoundException, FieldExistedException {
+        var student = studentRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Student with username: %s not found !", principal.getName()),
+                        HttpStatus.NOT_FOUND));
+        updateStudent(student, request);
+    }
+
+    private void updateStudent(Student student, StudentUpdateRequest request){
+        if (!student.getPhoneNumber().equals(request.getPhoneNumber()))
             checkIfPhoneNumberExists(request.getPhoneNumber());
-        if (!existStudent.getUser().getEmail().equals(request.getEmail()))
+        if (!student.getUser().getEmail().equals(request.getEmail()))
             checkIfEmailExists(request.getEmail());
-        if (!existStudent.getCode().equals(request.getCode()))
+        if (!student.getCode().equals(request.getCode()))
             checkIfCodeExists(request.getCode());
 
-        var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        existStudent.setFullname(request.getFullName());
-        existStudent.setPhoneNumber(request.getPhoneNumber());
-        existStudent.setCode(request.getCode());
-        existStudent.getUser().setEmail(request.getEmail());
-        existStudent.setCourse(request.getCourse());
-        existStudent.setBirthday(LocalDate.parse(request.getBirthday(), formatter));
-        existStudent.setGender(Gender.valueOf(request.getGender()));
+        student.setFullname(request.getFullName());
+        student.setPhoneNumber(request.getPhoneNumber());
+        student.setCode(request.getCode());
+        student.getUser().setEmail(request.getEmail());
+        student.setCourse(request.getCourse());
+        student.setBirthday(LocalDate.parse(
+                request.getBirthday(),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        ));
+        student.setGender(Gender.valueOf(request.getGender()));
 
-        studentRepository.save(existStudent);
+        studentRepository.save(student);
     }
 
     @Override

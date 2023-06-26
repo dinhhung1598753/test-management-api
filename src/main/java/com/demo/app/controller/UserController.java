@@ -17,20 +17,17 @@ public class UserController {
 
     @GetMapping("/list")
     public ResponseEntity<?> getUsers(){
-        return ResponseEntity.status(HttpStatus.OK).body(userService.getUsers());
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(userService.getUsers());
     }
 
     @GetMapping("/profile")
     public ResponseEntity<?> userProfile(){
         var auth = SecurityContextHolder.getContext().getAuthentication();
-        var profile = userService.getUserProfile(auth);
-        return ResponseEntity.status(HttpStatus.OK).body(profile);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(userService.getUserProfile(auth));
     }
 
-//    @PutMapping(path = "/update")
-//    public ResponseEntity<?> updateProfile(@RequestBody final ){
-//        var authentication = SecurityContextHolder.getContext().getAuthentication();
-//
-//        return null;
-//    }
 }

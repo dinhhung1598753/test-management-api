@@ -5,6 +5,7 @@ import com.demo.app.dto.student.StudentRequest;
 import com.demo.app.dto.student.StudentSearchRequest;
 import com.demo.app.dto.student.StudentUpdateRequest;
 import com.demo.app.exception.FileInputException;
+import com.demo.app.exception.InvalidRoleException;
 import com.demo.app.service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -20,10 +21,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -226,9 +229,20 @@ private final String EXAMPLE_NO_DATA_IN_DB = """
     public ResponseEntity<?> updateStudent(
             @Parameter(name = "id", description = "This is the ID student need to be updated", example = "1") @PathVariable(name = "id") int studentId,
             @RequestBody @Valid StudentUpdateRequest request) {
-        studentService.updateStudent(studentId, request);
+        studentService.updateStudentById(studentId, request);
         String message = String.format("Student with id = %d updated successfully !", studentId);
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/update/profile")
+    @PreAuthorize("hasAnyRole('STUDENT')")
+    public ResponseEntity<?> updateStudentProfile(@RequestBody @Valid StudentUpdateRequest request, Principal principal){
+        if (principal == null || principal.getName().equalsIgnoreCase("anonymousUser")){
+            throw new InvalidRoleException("You're not logged in !", HttpStatus.UNAUTHORIZED);
+        }
+        studentService.updateStudentProfile(principal, request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseMessage("Profile updated successfully !"));
     }
 
     @Operation(

@@ -47,14 +47,16 @@ public class QuestionServiceImpl implements QuestionService {
     public void saveQuestion(SingleQuestionRequest request, MultipartFile file) throws EntityNotFoundException, IOException {
         var question = questionRepository.save(mapRequestToQuestion(request));
         if (file != null){
-            uploadQuestionTopicImage(question.getId(), file);
+            String imageUrl = uploadQuestionTopicImage(question.getId(), file);
+            question.setTopicImage(imageUrl);
+            questionRepository.save(question);
         }
     }
 
-    private void uploadQuestionTopicImage(Integer questionId, MultipartFile file) throws IOException {
+    private String uploadQuestionTopicImage(Integer questionId, MultipartFile file) throws IOException {
         String imageId = UUID.randomUUID().toString();
         var key = String.format("question/%s/%s", questionId, imageId);
-        s3service.uploadFile(key, file);
+        return s3service.uploadFile(key, file);
     }
 
     private Question mapRequestToQuestion(SingleQuestionRequest request) {

@@ -23,11 +23,12 @@ public class S3ServiceImpl implements S3Service {
 
 
     @Override
-    public void uploadFile(String keyName, MultipartFile file) throws IOException {
+    public String uploadFile(String keyName, MultipartFile file) throws IOException {
         var metadata = new ObjectMetadata();
         metadata.setContentLength(file.getSize());
         s3Client.putObject(bucketName, keyName, file.getInputStream(), metadata);
         s3Client.setObjectAcl(bucketName, keyName, CannedAccessControlList.BucketOwnerFullControl);
+        return s3Client.getUrl(bucketName, keyName).toString();
     }
 
     @Override

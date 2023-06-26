@@ -4,6 +4,7 @@ import com.demo.app.dto.message.ResponseMessage;
 import com.demo.app.dto.teacher.TeacherRequest;
 import com.demo.app.dto.teacher.TeacherUpdateRequest;
 import com.demo.app.exception.FieldExistedException;
+import com.demo.app.exception.InvalidRoleException;
 import com.demo.app.service.TeacherService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,10 +20,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -181,9 +184,20 @@ public class TeacherController {
             description = "This is ID of teacher need to be updated",
             example = "1"
     ) @PathVariable("id") int teacherId, @RequestBody @Valid TeacherUpdateRequest request) {
-        teacherService.updateTeacher(teacherId, request);
+        teacherService.updateTeacherById(teacherId, request);
         String message = String.format("Teacher with id = %d updated successfully !", teacherId);
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/update/profile")
+    @PreAuthorize("hasAnyRole('TEACHER')")
+    public ResponseEntity<?> updateStudentProfile(@RequestBody @Valid TeacherUpdateRequest request, Principal principal){
+        if (principal == null || principal.getName().equalsIgnoreCase("anonymousUser")){
+            throw new InvalidRoleException("You're not logged in !", HttpStatus.UNAUTHORIZED);
+        }
+        teacherService.updateTeacherProfile(principal, request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseMessage("Profile updated successfully !"));
     }
 
     @Operation(
