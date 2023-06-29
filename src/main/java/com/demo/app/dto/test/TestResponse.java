@@ -20,6 +20,8 @@ public class TestResponse {
 
     private String testDay;
 
+    private String testTime;
+
     private String subjectCode;
 
     private String subjectTitle;

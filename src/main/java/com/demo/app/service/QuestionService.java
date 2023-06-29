@@ -20,7 +20,7 @@ public interface QuestionService {
     @Transactional
     List<QuestionResponse> getAllQuestionsBySubjectCode(String code);
 
-    void updateQuestion(int questionId, SingleQuestionRequest request);
+    void updateQuestion(int questionId, SingleQuestionRequest request, MultipartFile file) throws IOException;
 
     @Transactional
     void disableQuestion(int questionId);

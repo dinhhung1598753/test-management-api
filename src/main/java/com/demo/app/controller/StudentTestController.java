@@ -4,7 +4,6 @@ import com.demo.app.dto.message.ResponseMessage;
 import com.demo.app.dto.student_test.Filename;
 import com.demo.app.dto.student_test.TestImageResponse;
 import com.demo.app.exception.FileInputException;
-import com.demo.app.exception.InvalidRoleException;
 import com.demo.app.service.FileStorageService;
 import com.demo.app.service.StudentTestService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -51,15 +50,14 @@ public class StudentTestController {
                         .build());
     }
 
-    @GetMapping(path = "/testing")
+    @GetMapping(path = "/attempt")
     @PreAuthorize("hasAnyRole('STUDENT')")
-    public ResponseEntity<?> getRandomTestForStudent(@RequestParam String classCode, Principal principal) {
-        if (principal == null) {
-            throw new InvalidRoleException("You're not logged in !", HttpStatus.UNAUTHORIZED);
-        }
+    public ResponseEntity<?> attemptTest(@RequestParam String classCode, Principal principal) {
         studentTestService.matchRandomTestForStudent(classCode, principal);
-        return null;
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
+
+
 
     @PostMapping(path = "/marking")
     public ResponseEntity<?> markingStudentTest() throws IOException {

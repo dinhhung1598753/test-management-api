@@ -13,6 +13,8 @@ public class TestSetResponse {
 
     private int testNo;
 
+    private int duration;
+
     private String subjectTitle;
 
     private String subjectCode;

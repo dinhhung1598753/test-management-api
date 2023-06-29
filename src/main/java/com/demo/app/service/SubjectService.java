@@ -2,6 +2,7 @@ package com.demo.app.service;
 
 import com.demo.app.dto.chapter.ChapterRequest;
 import com.demo.app.dto.chapter.ChapterResponse;
+import com.demo.app.dto.subject.SubjectChaptersResponse;
 import com.demo.app.dto.subject.SubjectRequest;
 import com.demo.app.dto.subject.SubjectResponse;
 import com.demo.app.exception.EntityNotFoundException;
@@ -14,6 +15,8 @@ public interface SubjectService {
     void addSubject(SubjectRequest request) throws FieldExistedException;
 
     List<SubjectResponse> getAllSubjects() throws EntityNotFoundException;
+
+    List<SubjectChaptersResponse> getAllSubjectsWithChapters();
 
     void updateSubject(int subjectId, SubjectRequest request) throws EntityNotFoundException;
 

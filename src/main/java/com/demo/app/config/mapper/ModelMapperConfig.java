@@ -8,7 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 @Configuration
 public class ModelMapperConfig {
@@ -18,6 +20,7 @@ public class ModelMapperConfig {
         var mapper = new ModelMapper();
         mapper.getConfiguration().setSkipNullEnabled(true);
         convertLocalDate(mapper);
+        convertLocalTime(mapper);
         convertGender(mapper);
         convertLevel(mapper);
         convertBoolean(mapper);
@@ -42,6 +45,25 @@ public class ModelMapperConfig {
         mapper.createTypeMap(String.class, LocalDate.class);
         mapper.addConverter(converter);
         mapper.getTypeMap(String.class, LocalDate.class)
+                .setProvider(localDateProvider);
+    }
+    private void convertLocalTime(ModelMapper mapper) {
+        var localDateProvider = new AbstractProvider<LocalTime>() {
+            @Override
+            protected LocalTime get() {
+                return LocalTime.now();
+            }
+        };
+        var converter = new AbstractConverter<String, LocalTime>() {
+            @Override
+            protected LocalTime convert(String source) {
+                var formatter = DateTimeFormatter.ofPattern("hh:mm:ss a", Locale.US);
+                return LocalTime.parse(source, formatter);
+            }
+        };
+        mapper.createTypeMap(String.class, LocalTime.class);
+        mapper.addConverter(converter);
+        mapper.getTypeMap(String.class, LocalTime.class)
                 .setProvider(localDateProvider);
     }
 

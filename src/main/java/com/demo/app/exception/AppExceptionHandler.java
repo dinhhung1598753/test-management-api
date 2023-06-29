@@ -69,7 +69,7 @@ public class AppExceptionHandler {
     }
 
     @ExceptionHandler(UserNotEnrolledException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponse handleUserNotEnrolledException(UserNotEnrolledException ex){
         HttpStatus status = ex.getStatus();
         return new ErrorResponse(status, ex.getMessage());

@@ -11,6 +11,7 @@ import com.demo.app.repository.AnswerRepository;
 import com.demo.app.repository.ChapterRepository;
 import com.demo.app.repository.QuestionRepository;
 import com.demo.app.repository.SubjectRepository;
+import com.demo.app.service.FileStorageService;
 import com.demo.app.service.QuestionService;
 import com.demo.app.service.S3Service;
 import jakarta.transaction.Transactional;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -37,8 +39,9 @@ public class QuestionServiceImpl implements QuestionService {
 
     private final AnswerRepository answerRepository;
 
-    private final S3Service s3service;
+    private final FileStorageService fileStorageService;
 
+    private final S3Service s3service;
 
     private final ModelMapper mapper;
 
@@ -46,14 +49,13 @@ public class QuestionServiceImpl implements QuestionService {
     @Transactional
     public void saveQuestion(SingleQuestionRequest request, MultipartFile file) throws EntityNotFoundException, IOException {
         var question = questionRepository.save(mapRequestToQuestion(request));
-        if (file != null){
-            String imageUrl = uploadQuestionTopicImage(question.getId(), file);
-            question.setTopicImage(imageUrl);
+        if (file != null) {
+            setQuestionImageUrl(question, file);
             questionRepository.save(question);
         }
     }
 
-    private String uploadQuestionTopicImage(Integer questionId, MultipartFile file) throws IOException {
+    private String uploadQuestionTopicImageToS3(Integer questionId, MultipartFile file) throws IOException {
         String imageId = UUID.randomUUID().toString();
         var key = String.format("question/%s/%s", questionId, imageId);
         return s3service.uploadFile(key, file);
@@ -127,7 +129,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     @Transactional
-    public void updateQuestion(int questionId, SingleQuestionRequest request) {
+    public void updateQuestion(int questionId, SingleQuestionRequest request, MultipartFile file) throws IOException {
         var question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Not found any question with id: %d !", questionId),
@@ -139,7 +141,6 @@ public class QuestionServiceImpl implements QuestionService {
 
         question.setLevel(Question.Level.valueOf(request.getLevel()));
         question.setTopicText(request.getTopicText());
-        question.setTopicImage(request.getTopicImage());
         question.setChapter(chapter);
 
         var requestAnswer = request.getAnswers().iterator();
@@ -150,8 +151,16 @@ public class QuestionServiceImpl implements QuestionService {
             answer.setId(answerId);
             answerRepository.save(answer);
         });
+        if (file != null) {
+            setQuestionImageUrl(question, file);
+        }
         questionRepository.save(question);
+    }
 
+    private void setQuestionImageUrl(Question question, MultipartFile file) throws IOException {
+        fileStorageService.checkIfFileIsImageFormat(Collections.singletonList(file));
+        String imageUrl = uploadQuestionTopicImageToS3(question.getId(), file);
+        question.setTopicImage(imageUrl);
     }
 
     @Override

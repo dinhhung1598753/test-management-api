@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Entity
@@ -18,6 +19,9 @@ public class Test extends BaseEntity {
 
     @Column(name = "test_day")
     private LocalDate testDay;
+
+    @Column(name = "test_time")
+    private LocalTime testTime;
 
     @Column(name = "question_quantity")
     private int questionQuantity;

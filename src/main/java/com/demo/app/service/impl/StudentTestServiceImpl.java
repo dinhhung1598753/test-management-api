@@ -8,6 +8,7 @@ import com.demo.app.exception.UserNotEnrolledException;
 import com.demo.app.model.StudentTest;
 import com.demo.app.model.StudentTestDetail;
 import com.demo.app.model.TestSet;
+import com.demo.app.model.TestSetQuestion;
 import com.demo.app.repository.*;
 import com.demo.app.service.StudentTestService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -59,9 +60,10 @@ public class StudentTestServiceImpl implements StudentTestService {
                     HttpStatus.FORBIDDEN);
         }
         var testSets = examClass.getTest().getTestSets();
+        var testSet = getRandomTestSet(testSets);
         var studentTest = StudentTest.builder()
                 .student(student)
-                .testSet(getRandomTestSet(testSets))
+                .testSet(testSet)
                 .build();
         studentTestRepository.save(studentTest);
     }
@@ -78,7 +80,6 @@ public class StudentTestServiceImpl implements StudentTestService {
         var offlineExam = objectMapper.readValue(
                 new File(OFFLINE_EXAM_JSON_PATH),
                 OfflineExam.class);
-
         var examClass = examClassRepository.findByCode(offlineExam.getClassCode())
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Class %s not found !", offlineExam.getClassCode()),
@@ -92,12 +93,12 @@ public class StudentTestServiceImpl implements StudentTestService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Student %s not found", offlineExam.getStudentCode()),
                         HttpStatus.NOT_FOUND));
-
-        var questionAnswers = new HashMap<Integer, String>();
-        testset.getTestSetQuestions()
-                .forEach(question ->
-                        questionAnswers.put(question.getQuestionNo(), question.getBinaryAnswer())
-                );
+        var questionAnswers = testset.getTestSetQuestions()
+                .stream()
+                .collect(Collectors.toMap(
+                        TestSetQuestion::getQuestionNo,
+                        TestSetQuestion::getBinaryAnswer
+                ));
         var mark = markStudentTest(offlineExam.getAnswers(), questionAnswers);
         var studentTest = StudentTest.builder()
                 .student(student)
@@ -105,26 +106,29 @@ public class StudentTestServiceImpl implements StudentTestService {
                 .mark(mark)
                 .grade((double) mark / questionAnswers.size())
                 .build();
-
         var studentTestDetails = offlineExam.getAnswers()
                 .parallelStream()
                 .map(offlineAnswer -> {
-                    var testSetQuestion = testSetQuestionRepository.findByTestSetAndQuestionNo(
-                            testset,
-                            offlineAnswer.getQuestionNo());
+                    var testSetQuestion = testSetQuestionRepository.findByTestSetAndQuestionNo(testset, offlineAnswer.getQuestionNo());
                     return StudentTestDetail.builder()
                             .studentTest(studentTest)
                             .selectedAnswer(offlineAnswer.getSelected())
                             .testSetQuestion(testSetQuestion)
+                            .isCorrected(offlineAnswer.isCorrected())
                             .build();
                 }).collect(Collectors.toList());
+
         studentTest.setStudentTestDetails(studentTestDetails);
         studentTestRepository.save(studentTest);
     }
 
     private int markStudentTest(List<OfflineAnswer> offlineAnswers, Map<Integer, String> correctedAnswers) {
-        return (int) offlineAnswers.parallelStream().
-                filter(offlineAnswer -> {
+        return (int) offlineAnswers.parallelStream()
+                .peek(offlineAnswer -> {
+                    String corrected = correctedAnswers.get(offlineAnswer.getQuestionNo());
+                    offlineAnswer.setCorrected(corrected.equals(offlineAnswer.getSelected()));
+                })
+                .filter(offlineAnswer -> {
                     String corrected = correctedAnswers.get(offlineAnswer.getQuestionNo());
                     return corrected.equals(offlineAnswer.getSelected());
                 })

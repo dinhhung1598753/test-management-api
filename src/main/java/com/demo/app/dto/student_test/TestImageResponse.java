@@ -18,5 +18,4 @@ public class TestImageResponse {
 
     private List<Filename> imageFilenames;
 
-
 }

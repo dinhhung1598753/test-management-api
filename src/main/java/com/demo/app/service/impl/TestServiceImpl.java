@@ -17,15 +17,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class TestServiceImpl implements TestService {
 
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("hh:mm:ss a", Locale.US);
 
     private final QuestionRepository questionRepository;
 
@@ -58,7 +62,8 @@ public class TestServiceImpl implements TestService {
                 })
                 .collect(Collectors.toList());
         var test = Test.builder()
-                .testDay(LocalDate.parse(request.getTestDay(), FORMATTER))
+                .testDay(LocalDate.parse(request.getTestDay(), DATE_FORMATTER))
+                .testTime(LocalTime.parse(request.getTestTime(), TIME_FORMATTER))
                 .questionQuantity(request.getQuestionQuantity())
                 .duration(request.getDuration())
                 .questions(questions.stream().parallel().toList())
@@ -85,7 +90,8 @@ public class TestServiceImpl implements TestService {
         }
         var subject = questions.get(0).getChapter().getSubject();
         var test = Test.builder()
-                .testDay(LocalDate.parse(request.getTestDay(), FORMATTER))
+                .testDay(LocalDate.parse(request.getTestDay(), DATE_FORMATTER))
+                .testTime(LocalTime.parse(request.getTestTime(), TIME_FORMATTER))
                 .questionQuantity(questions.size())
                 .duration(request.getDuration())
                 .build();
@@ -143,7 +149,7 @@ public class TestServiceImpl implements TestService {
                 .map(questionResponse -> mapper.map(questionResponse, Question.class))
                 .collect(Collectors.toList());
         test.setQuestions(questions);
-        test.setTestDay(LocalDate.parse(request.getTestDay(), FORMATTER));
+        test.setTestDay(LocalDate.parse(request.getTestDay(), DATE_FORMATTER));
         test.setDuration(request.getDuration());
         testRepository.save(test);
     }

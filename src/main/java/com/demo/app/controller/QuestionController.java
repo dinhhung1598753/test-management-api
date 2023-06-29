@@ -52,8 +52,11 @@ public class QuestionController {
 
 
     @PutMapping(path = "/update/{id}")
-    public ResponseEntity<?> updateQuestion(@PathVariable(name = "id") int questionId, @RequestBody SingleQuestionRequest request) {
-        questionService.updateQuestion(questionId, request);
+    public ResponseEntity<?> updateQuestion(@PathVariable(name = "id") int questionId,
+                                            @RequestPart String jsonRequest,
+                                            @RequestPart(required = false) MultipartFile file) throws IOException {
+        var request = mapper.readValue(jsonRequest, SingleQuestionRequest.class);
+        questionService.updateQuestion(questionId, request, file);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ResponseMessage("Update question successfully !"));

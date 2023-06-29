@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -72,12 +71,10 @@ public class TeacherServiceImpl implements TeacherService {
         checkIfPhoneNumberExists(request.getPhoneNumber());
         checkIfCodeExists(request.getCode());
 
-        var roles = roleRepository.findAllByRoleNameIn(Arrays.asList(
-                Role.RoleType.ROLE_USER,
-                Role.RoleType.ROLE_TEACHER));
+        var roles = roleRepository.findAllByRoleNameIn(List.of(Role.RoleType.ROLE_TEACHER));
         var user = mapper.map(request, User.class);
-        String encodePassword = passwordEncoder.passwordEncode().encode(request.getPassword());
-
+        String encodePassword = passwordEncoder.passwordEncode()
+                .encode(request.getPassword());
         user.setPassword(encodePassword);
         user.setRoles(roles);
         user.setEnabled(true);
@@ -111,7 +108,8 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     @Transactional
-    public void updateTeacherById(int teacherId, TeacherUpdateRequest request) throws EntityNotFoundException, FieldExistedException {
+    public void updateTeacherById(int teacherId, TeacherUpdateRequest request)
+            throws EntityNotFoundException, FieldExistedException {
         var teacher = teacherRepository.findById(teacherId).
                 orElseThrow(() -> new EntityNotFoundException(
                         String.format("Teacher with id %d not found !", teacherId),
@@ -121,7 +119,8 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     @Transactional
-    public void updateTeacherProfile(Principal principal, TeacherUpdateRequest request)  throws EntityNotFoundException, FieldExistedException{
+    public void updateTeacherProfile(Principal principal, TeacherUpdateRequest request)
+            throws EntityNotFoundException, FieldExistedException{
         var teacher = teacherRepository.findByUsername(principal.getName())
                         .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Teacher %s not found !", principal.getName()),
@@ -185,4 +184,5 @@ public class TeacherServiceImpl implements TeacherService {
         existTeacher.getUser().setEnabled(false);
         teacherRepository.save(existTeacher);
     }
+
 }

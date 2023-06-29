@@ -52,27 +52,24 @@ public class AuthServiceImpl implements AuthService {
     private final TokenRepository tokenRepository;
 
     private final ApplicationEventPublisher publisher;
+
     @Override
     @Transactional
     public AuthenticationResponse register(RegisterRequest registerRequest, HttpServletRequest request) {
-        if(userRepository.existsByEmailAndEnabledTrue(registerRequest.getEmail()) ||
-                userRepository.existsByUsername(registerRequest.getUsername())){
+        if (userRepository.existsByEmailAndEnabledTrue(registerRequest.getEmail()) ||
+                userRepository.existsByUsername(registerRequest.getUsername())) {
             throw new FieldExistedException("Email or Username already taken!", HttpStatus.CONFLICT);
         }
-
-        var roles = Collections.singletonList(roleRepository.findByRoleName(Role.RoleType.ROLE_USER).get());
+        var roles = Collections.singletonList(roleRepository.findByRoleName(Role.RoleType.ROLE_STUDENT).get());
         var user = mapper.map(registerRequest, User.class);
         user.setRoles(roles);
         user.setPassword(encode(registerRequest.getPassword()));
         user.setEnabled(false);
         var savedUser = userRepository.save(user);
-
-        publisher.publishEvent(new RegisterCompleteEvent(savedUser, verificationEmailUrl(request)));
-
+        sendVerificationEmail(savedUser, request);
         var jwtToken = jwtUtils.generateToken(user);
         var refreshToken = jwtUtils.generateRefreshToken(user);
-        saveUserToken(savedUser,jwtToken);
-
+        saveUserToken(savedUser, jwtToken);
         return AuthenticationResponse.builder()
                 .username(user.getUsername())
                 .email(user.getEmail())
@@ -84,17 +81,20 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
+    private void sendVerificationEmail(User user, HttpServletRequest request) {
+        publisher.publishEvent(new RegisterCompleteEvent(user, verificationEmailUrl(request)));
+    }
+
     private String verificationEmailUrl(HttpServletRequest request) {
-        return "http://" +request.getServerName()+":"
-                +request.getServerPort()+request.getContextPath();
+        return "http://" + request.getServerName() + ":"
+                + request.getServerPort() + request.getContextPath();
     }
 
     @Override
     @Transactional
-    public void activateUserAccount(String verifyToken) throws InvalidVerificationTokenException{
-        var token = tokenRepository.findByTokenAndExpiredFalse(verifyToken).orElseThrow(
-                () -> new EntityNotFoundException("Invalid token !", HttpStatus.UNAUTHORIZED)
-        );
+    public void activateUserAccount(String verifyToken) throws InvalidVerificationTokenException {
+        var token = tokenRepository.findByTokenAndExpiredFalse(verifyToken)
+                .orElseThrow(() -> new EntityNotFoundException("Invalid token !", HttpStatus.UNAUTHORIZED));
         token.getUser().setEnabled(true);
         token.setRevoked(true);
         token.setExpired(true);
@@ -134,7 +134,7 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
-    private void saveUserToken(User user, String jwtToken){
+    private void saveUserToken(User user, String jwtToken) {
         var token = Token.builder()
                 .token(jwtToken)
                 .type(Token.TokenType.BEARER)
@@ -143,9 +143,9 @@ public class AuthServiceImpl implements AuthService {
         tokenRepository.save(token);
     }
 
-    private void revokeAllUserTokens(User user){
+    private void revokeAllUserTokens(User user) {
         var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
-        if (validUserTokens.isEmpty()){
+        if (validUserTokens.isEmpty()) {
             return;
         }
         validUserTokens.forEach(token -> {
@@ -158,15 +158,15 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if(authHeader == null || !authHeader.startsWith("Bearer ")){
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return;
         }
         final String refreshToken = authHeader.substring(7);
         final String username = jwtUtils.extractUsername(refreshToken);
-        if(username != null){
+        if (username != null) {
             var user = userRepository.findByUsername(username).orElseThrow(
                     () -> new EntityNotFoundException("User not found !", HttpStatus.BAD_REQUEST));
-            if(jwtUtils.isTokenValid(refreshToken, user)){
+            if (jwtUtils.isTokenValid(refreshToken, user)) {
                 var accessToken = jwtUtils.generateToken(user);
                 revokeAllUserTokens(user);
                 saveUserToken(user, accessToken);

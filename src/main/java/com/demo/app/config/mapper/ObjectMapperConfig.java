@@ -10,7 +10,9 @@ public class ObjectMapperConfig {
 
     @Bean
     public ObjectMapper objectMapper(){
-        return new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        var mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        return mapper;
     }
 
 }

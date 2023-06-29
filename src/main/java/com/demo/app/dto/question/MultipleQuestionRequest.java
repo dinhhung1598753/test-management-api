@@ -30,10 +30,10 @@ public class MultipleQuestionRequest {
     @AllArgsConstructor
     public static class QuestionRequest{
 
+        @NotBlank(message = "Please enter question's topic !")
         private String topicText;
 
-        private String topicImage;
-
+        @NotBlank(message = "Please enter question's level !")
         private String level;
 
         @JsonProperty("answers")

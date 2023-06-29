@@ -15,4 +15,6 @@ public class OfflineAnswer {
 
     private String selected;
 
+    private boolean isCorrected;
+
 }

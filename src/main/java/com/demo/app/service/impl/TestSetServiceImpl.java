@@ -104,17 +104,7 @@ public class TestSetServiceImpl implements TestSetService {
     public List<TestSetResponse> getAllTestSet() {
         var testsets = testSetRepository.findByEnabledIsTrue();
         return testsets.stream()
-                .map(testSet -> {
-                    var testSetResponse = mapper.map(testSet, TestSetResponse.class);
-                    var test = testSet.getTest();
-                    var subject = test.getSubject();
-
-                    testSetResponse.setTestDay(test.getTestDay().toString());
-                    testSetResponse.setQuestionQuantity(test.getQuestionQuantity());
-                    testSetResponse.setSubjectTitle(subject.getTitle());
-                    testSetResponse.setSubjectCode(subject.getCode());
-                    return testSetResponse;
-                }).collect(Collectors.toList());
+                .map(this::mapTestSetToResponse).collect(Collectors.toList());
     }
 
     @Override
@@ -141,9 +131,22 @@ public class TestSetServiceImpl implements TestSetService {
                 })
                 .collect(Collectors.toList());
         return TestSetDetailResponse.builder()
-                .duration(testSet.getTest().getDuration())
                 .questions(questionResponses)
+                .testSet(mapTestSetToResponse(testSet))
                 .build();
+    }
+
+    private TestSetResponse mapTestSetToResponse(TestSet testSet){
+        var testSetResponse = mapper.map(testSet, TestSetResponse.class);
+        var test = testSet.getTest();
+        var subject = test.getSubject();
+
+        testSetResponse.setTestDay(test.getTestDay().toString());
+        testSetResponse.setDuration(test.getDuration());
+        testSetResponse.setQuestionQuantity(test.getQuestionQuantity());
+        testSetResponse.setSubjectTitle(subject.getTitle());
+        testSetResponse.setSubjectCode(subject.getCode());
+        return testSetResponse;
     }
 
 }
