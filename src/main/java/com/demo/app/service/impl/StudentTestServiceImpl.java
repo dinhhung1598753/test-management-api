@@ -2,18 +2,17 @@ package com.demo.app.service.impl;
 
 import com.demo.app.dto.offline.OfflineAnswer;
 import com.demo.app.dto.offline.OfflineExam;
+import com.demo.app.dto.student_test.StudentTestDetailResponse;
 import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.exception.InvalidRoleException;
 import com.demo.app.exception.UserNotEnrolledException;
-import com.demo.app.model.StudentTest;
-import com.demo.app.model.StudentTestDetail;
-import com.demo.app.model.TestSet;
-import com.demo.app.model.TestSetQuestion;
+import com.demo.app.model.*;
 import com.demo.app.repository.*;
 import com.demo.app.service.StudentTestService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +32,8 @@ public class StudentTestServiceImpl implements StudentTestService {
 
     private final ObjectMapper objectMapper;
 
+    private final ModelMapper modelMapper;
+
     private final ExamClassRepository examClassRepository;
 
     private final StudentRepository studentRepository;
@@ -44,7 +45,7 @@ public class StudentTestServiceImpl implements StudentTestService {
     private final TestSetQuestionRepository testSetQuestionRepository;
 
     @Override
-    public void matchRandomTestForStudent(String classCode, Principal principal) {
+    public StudentTestDetailResponse attemptTest(String classCode, Principal principal) {
         var student = studentRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new InvalidRoleException(
                         "You don't have role to do this action!",
@@ -53,19 +54,42 @@ public class StudentTestServiceImpl implements StudentTestService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Class with code %s not found !", classCode),
                         HttpStatus.NOT_FOUND));
-        var students = examClass.getStudents();
-        if (!students.contains(student)) {
+        if (!examClass.getStudents().contains(student)) {
             throw new UserNotEnrolledException(
-                    String.format("You are not in class %s", examClass.getRoomName()),
+                    String.format("You are not in class %s", examClass.getCode()),
                     HttpStatus.FORBIDDEN);
         }
+
         var testSets = examClass.getTest().getTestSets();
         var testSet = getRandomTestSet(testSets);
         var studentTest = StudentTest.builder()
                 .student(student)
                 .testSet(testSet)
+                .state(State.IN_PROGRESS)
                 .build();
         studentTestRepository.save(studentTest);
+        return mapTestSetToResponse(testSet);
+    }
+
+    private StudentTestDetailResponse mapTestSetToResponse(TestSet testSet) {
+        var questions = testSet.getTestSetQuestions()
+                .parallelStream()
+                .map(testSetQuestion -> {
+                    var question = modelMapper.map(
+                            testSetQuestion.getQuestion(),
+                            StudentTestDetailResponse.StudentTestQuestion.class);
+                    question.setQuestionNo(testSetQuestion.getQuestionNo());
+                    var answers = question.getAnswers().iterator();
+                    testSetQuestion.getTestSetQuestionAnswers()
+                            .forEach(questionAnswer ->
+                                    answers.next().setAnswerNo(questionAnswer.getAnswerNo()));
+                    return question;
+                })
+                .toList();
+        return StudentTestDetailResponse.builder()
+                .testNo(testSet.getTestNo())
+                .questions(questions)
+                .build();
     }
 
     private TestSet getRandomTestSet(List<TestSet> testSets) {
@@ -109,7 +133,9 @@ public class StudentTestServiceImpl implements StudentTestService {
         var studentTestDetails = offlineExam.getAnswers()
                 .parallelStream()
                 .map(offlineAnswer -> {
-                    var testSetQuestion = testSetQuestionRepository.findByTestSetAndQuestionNo(testset, offlineAnswer.getQuestionNo());
+                    var testSetQuestion = testSetQuestionRepository.findByTestSetAndQuestionNo(
+                            testset,
+                            offlineAnswer.getQuestionNo());
                     return StudentTestDetail.builder()
                             .studentTest(studentTest)
                             .selectedAnswer(offlineAnswer.getSelected())

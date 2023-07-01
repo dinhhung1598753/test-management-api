@@ -25,6 +25,7 @@ import java.util.List;
 public class SubjectController {
 
     private final SubjectService subjectService;
+
     @Operation(
             description = "Add a new Subject by data sent from client",
             method = "POST",
@@ -33,10 +34,7 @@ public class SubjectController {
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = SubjectRequest.class, description = "Information need to create a Subject"),
-                            examples = @ExampleObject()
-
-                    )
-            ),
+                            examples = @ExampleObject())),
             responses = {
                     @ApiResponse(
                             responseCode = "201",
@@ -44,25 +42,20 @@ public class SubjectController {
                             content = @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = ResponseMessage.class, description = "Create a new subject"),
-                                    examples = @ExampleObject()
-                            )
-
-                    ),
+                                    examples = @ExampleObject())),
                     @ApiResponse(
                             responseCode = "400",
                             description = "Subject code is already taken",
                             content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = ResponseMessage.class)
-                            )
-                    )
-            }
-    )
+                                    schema = @Schema(implementation = ResponseMessage.class)))
+            })
     @PostMapping(path = "/add")
-    public ResponseEntity<?> addSubject(@RequestBody @Valid final SubjectRequest request){
+    public ResponseEntity<?> addSubject(@RequestBody @Valid final SubjectRequest request) {
         subjectService.addSubject(request);
         String message = "Add subject successfully !";
-        return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ResponseMessage(message));
     }
 
     @Operation(
@@ -75,19 +68,18 @@ public class SubjectController {
                             content = @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = List.class, description = "Create a new subject"),
-                                    examples = @ExampleObject()
-                            )
-                    )
-            }
-    )
+                                    examples = @ExampleObject()))
+            })
     @GetMapping(path = "/list")
-    public ResponseEntity<?> listSubject(){
-        return ResponseEntity.ok().body(subjectService.getAllSubjects());
+    public ResponseEntity<?> listSubject() {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(subjectService.getAllSubjects());
     }
 
     @GetMapping(path = "/chapters")
-    public ResponseEntity<?> listSubjectWithChapters(){
-        return ResponseEntity.status(HttpStatus.OK).body(subjectService.getAllSubjectsWithChapters());
+    public ResponseEntity<?> listSubjectWithChapters() {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(subjectService.getAllSubjectsWithChapters());
     }
 
     @Operation(
@@ -97,7 +89,8 @@ public class SubjectController {
                     description = "This is data sent by client",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = SubjectRequest.class, description = "Information need to update a Subject"),
+                            schema = @Schema(implementation = SubjectRequest.class,
+                                    description = "Information need to update a Subject"),
                             examples = @ExampleObject()
 
                     )
@@ -108,9 +101,9 @@ public class SubjectController {
                             description = "Updated successfully",
                             content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = ResponseMessage.class, description = "Updated successfully"),
-                                    examples = @ExampleObject()
-                            )
+                                    schema = @Schema(implementation = ResponseMessage.class,
+                                            description = "Updated successfully"),
+                                    examples = @ExampleObject())
                     ),
                     @ApiResponse(
                             responseCode = "404",
@@ -133,7 +126,7 @@ public class SubjectController {
             }
     )
     @PutMapping(path = "/update/{id}")
-    public ResponseEntity<?> updateSubject(@PathVariable(name = "id") int subjectId ,@RequestBody @Valid final SubjectRequest request){
+    public ResponseEntity<?> updateSubject(@PathVariable(name = "id") int subjectId, @RequestBody @Valid final SubjectRequest request) {
         subjectService.updateSubject(subjectId, request);
         return new ResponseEntity<>(new ResponseMessage("Update subject successfully !"), HttpStatus.OK);
     }
@@ -158,7 +151,7 @@ public class SubjectController {
             }
     )
     @DeleteMapping(path = "/disable/{id}")
-    public ResponseEntity<?> disableSubject(@Parameter @PathVariable(name = "id") int subjectId){
+    public ResponseEntity<?> disableSubject(@Parameter @PathVariable(name = "id") int subjectId) {
         subjectService.disableSubject(subjectId);
         return new ResponseEntity<>(new ResponseMessage("Update subject successfully !"), HttpStatus.NO_CONTENT);
     }

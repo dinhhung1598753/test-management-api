@@ -117,7 +117,7 @@ public class TestServiceImpl implements TestService {
 
     @Override
     public TestDetailResponse getTestDetail(int testId) {
-        var test = testRepository.findById(testId)
+        @SuppressWarnings("DefaultLocale") var test = testRepository.findById(testId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Test with id : %d not found !", testId),
                         HttpStatus.NOT_FOUND));
@@ -140,7 +140,7 @@ public class TestServiceImpl implements TestService {
     @Override
     @Transactional
     public void updateTest(int testId, TestDetailRequest request) {
-        var test = testRepository.findById(testId)
+        @SuppressWarnings("DefaultLocale") var test = testRepository.findById(testId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Cannot find any chapter with id %d", testId),
                         HttpStatus.NOT_FOUND));
@@ -156,7 +156,7 @@ public class TestServiceImpl implements TestService {
 
     @Override
     public void disableTest(int testId) {
-        var test = testRepository.findById(testId)
+        @SuppressWarnings("DefaultLocale") var test = testRepository.findById(testId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Cannot find any chapter with id %d", testId),
                         HttpStatus.NOT_FOUND));

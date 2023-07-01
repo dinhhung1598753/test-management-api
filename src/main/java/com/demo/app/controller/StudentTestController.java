@@ -53,11 +53,10 @@ public class StudentTestController {
     @GetMapping(path = "/attempt")
     @PreAuthorize("hasAnyRole('STUDENT')")
     public ResponseEntity<?> attemptTest(@RequestParam String classCode, Principal principal) {
-        studentTestService.matchRandomTestForStudent(classCode, principal);
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        var response = studentTestService.attemptTest(classCode, principal);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(response);
     }
-
-
 
     @PostMapping(path = "/marking")
     public ResponseEntity<?> markingStudentTest() throws IOException {

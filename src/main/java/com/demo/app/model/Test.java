@@ -29,7 +29,7 @@ public class Test extends BaseEntity {
     @Column(name = "duration")
     private int duration;
 
-    @OneToMany(mappedBy = "test", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "test", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<TestSet> testSets;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

@@ -32,11 +32,12 @@ public class StudentTest extends BaseEntity{
 
     /**
      * A Student's test have 2 state: In-Process and Finished
-     * - In-Process: Students can continue to take the test even if they log out and back in
+     * - In-Progress: Students can continue to take the test even if they log out and back in
      * - Finished: The test closed and show the mark/grade
      * */
     @Column(name = "state")
-    private String state;
+    @Enumerated(EnumType.STRING)
+    private State state;
 
     @ManyToOne
     private Student student;

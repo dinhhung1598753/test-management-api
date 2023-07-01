@@ -9,12 +9,15 @@ import com.demo.app.model.*;
 import com.demo.app.repository.TestRepository;
 import com.demo.app.repository.TestSetRepository;
 import com.demo.app.service.TestSetService;
+import com.demo.app.util.word.WordUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -33,7 +36,7 @@ public class TestSetServiceImpl implements TestSetService {
     @Override
     @Transactional
     public void createTestSetFromTest(int testId, TestSetRequest request) {
-        var test = testRepository.findById(testId)
+        @SuppressWarnings("DefaultLocale") var test = testRepository.findById(testId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Test with id: %d not found !", testId),
                         HttpStatus.NOT_FOUND));
@@ -104,29 +107,43 @@ public class TestSetServiceImpl implements TestSetService {
     public List<TestSetResponse> getAllTestSet() {
         var testsets = testSetRepository.findByEnabledIsTrue();
         return testsets.stream()
-                .map(this::mapTestSetToResponse).collect(Collectors.toList());
+                .map(this::mapTestSetToResponse)
+                .collect(Collectors.toList());
     }
+
 
     @Override
     public TestSetDetailResponse getTestSetDetail(int testSetId) {
-        var testSet = testSetRepository.findById(testSetId)
+        @SuppressWarnings("DefaultLocale") var testSet = testSetRepository.findById(testSetId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Test set with id %d not found !", testSetId),
                         HttpStatus.NOT_FOUND));
+        return mapTestSetToDetailResponse(testSet);
+    }
 
+    @Override
+    public ByteArrayInputStream exportTestSetToWord(int testSetId) throws IOException {
+        @SuppressWarnings("DefaultLocale") var testSet = testSetRepository.findById(testSetId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Test set with id %d not found !", testSetId),
+                        HttpStatus.NOT_FOUND));
+        var response = mapTestSetToDetailResponse(testSet);
+        return WordUtils.convertContentToWord(response);
+    }
+
+    private TestSetDetailResponse mapTestSetToDetailResponse(TestSet testSet){
         var questionResponses = testSet.getTestSetQuestions()
                 .stream()
                 .map(testSetQuestion -> {
                     var questionResponse = mapper.map(testSetQuestion, TestSetQuestionResponse.class);
                     var question = testSetQuestion.getQuestion();
-                    var answers = testSetQuestion.getTestSetQuestionAnswers();
+                    var answers = testSetQuestion.getTestSetQuestionAnswers()
+                            .iterator();
                     questionResponse.setLevel(question.getLevel().toString());
                     questionResponse.setTopicText(question.getTopicText());
                     questionResponse.setTopicImage(question.getTopicImage());
-                    for (var i = 0; i < answers.size(); i++) {
-                        String content = answers.get(i).getAnswer().getContent();
-                        questionResponse.getAnswers().get(i).setContent(content);
-                    }
+                    questionResponse.getAnswers().forEach(responseAnswer ->
+                            responseAnswer.setContent(answers.next().getAnswer().getContent()));
                     return questionResponse;
                 })
                 .collect(Collectors.toList());
@@ -136,7 +153,7 @@ public class TestSetServiceImpl implements TestSetService {
                 .build();
     }
 
-    private TestSetResponse mapTestSetToResponse(TestSet testSet){
+    private TestSetResponse mapTestSetToResponse(TestSet testSet) {
         var testSetResponse = mapper.map(testSet, TestSetResponse.class);
         var test = testSet.getTest();
         var subject = test.getSubject();

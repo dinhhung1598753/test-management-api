@@ -23,7 +23,7 @@ public class TestSet extends BaseEntity {
     @ManyToOne
     private Test test;
 
-    @OneToMany(mappedBy = "testSet", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "testSet", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<TestSetQuestion> testSetQuestions;
 
     @OneToMany(mappedBy = "testSet", cascade = CascadeType.ALL)

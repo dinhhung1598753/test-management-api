@@ -5,6 +5,8 @@ import com.demo.app.dto.testset.TestSetRequest;
 import com.demo.app.dto.testset.TestSetResponse;
 import jakarta.transaction.Transactional;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 
 public interface TestSetService {
@@ -14,4 +16,6 @@ public interface TestSetService {
     List<TestSetResponse> getAllTestSet();
 
     TestSetDetailResponse getTestSetDetail(int testSetId);
+
+    ByteArrayInputStream exportTestSetToWord(int testSetId) throws IOException;
 }

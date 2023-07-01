@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "student", uniqueConstraints = {
@@ -28,5 +29,17 @@ public class Student extends Person {
         return "Student{" +
                 "id=" + super.getId() +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Student student)) return false;
+        return Objects.equals(super.getId(), student.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.getId());
     }
 }

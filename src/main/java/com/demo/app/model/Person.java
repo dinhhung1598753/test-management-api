@@ -10,7 +10,6 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @AttributeOverride(
         name = "enabled",
         column = @Column(name = "is_enabled", insertable = false, updatable = false)

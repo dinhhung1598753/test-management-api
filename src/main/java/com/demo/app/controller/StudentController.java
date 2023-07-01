@@ -115,11 +115,11 @@ private final String EXAMPLE_NO_DATA_IN_DB = """
     @GetMapping(path = "/export")
     public ResponseEntity<?> exportExcelFile() throws IOException, IllegalAccessException {
         String filename = "Students" + LocalDateTime.now() + ".xlsx";
-        var file = new InputStreamResource(studentService.exportStudentsToExcel());
+        var resource = new InputStreamResource(studentService.exportStudentsToExcel());
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
                 .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-                .body(file);
+                .body(resource);
     }
 
     @Operation(
@@ -230,7 +230,7 @@ private final String EXAMPLE_NO_DATA_IN_DB = """
             @Parameter(name = "id", description = "This is the ID student need to be updated", example = "1") @PathVariable(name = "id") int studentId,
             @RequestBody @Valid StudentUpdateRequest request) {
         studentService.updateStudentById(studentId, request);
-        String message = String.format("Student with id = %d updated successfully !", studentId);
+        @SuppressWarnings("DefaultLocale") var message = String.format("Student with id = %d updated successfully !", studentId);
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.OK);
     }
 
@@ -245,6 +245,7 @@ private final String EXAMPLE_NO_DATA_IN_DB = """
                 .body(new ResponseMessage("Profile updated successfully !"));
     }
 
+    @SuppressWarnings("DefaultLocale")
     @Operation(
             summary = "Disable student",
             description = "Soft delete student in Database",

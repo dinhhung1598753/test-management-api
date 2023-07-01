@@ -98,11 +98,11 @@ public class TeacherController {
     @GetMapping(path = "/export")
     public ResponseEntity<?> exportTeacherExcel() throws IOException {
         String filename = "Teachers" + LocalDateTime.now() + ".xlsx";
-        var file = new InputStreamResource(teacherService.exportTeachersToExcel());
+        var resource = new InputStreamResource(teacherService.exportTeachersToExcel());
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
                 .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-                .body(file);
+                .body(resource);
     }
 
     @Operation(
@@ -185,7 +185,7 @@ public class TeacherController {
             example = "1"
     ) @PathVariable("id") int teacherId, @RequestBody @Valid TeacherUpdateRequest request) {
         teacherService.updateTeacherById(teacherId, request);
-        String message = String.format("Teacher with id = %d updated successfully !", teacherId);
+        @SuppressWarnings("DefaultLocale") var message = String.format("Teacher with id = %d updated successfully !", teacherId);
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.OK);
     }
 
