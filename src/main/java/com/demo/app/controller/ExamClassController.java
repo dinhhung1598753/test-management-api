@@ -7,10 +7,13 @@ import com.demo.app.service.ExamClassService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.Principal;
 
 @RestController
@@ -43,6 +46,13 @@ public class ExamClassController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ResponseMessage(String.format("Join class %s successfully !", examClass.getRoomName())));
+    }
+
+    @PostMapping(path = "/import/students", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> importStudentExamClass(@RequestPart String classCode ,@RequestPart MultipartFile file) throws IOException {
+        examClassService.importClassStudents(classCode, file);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ResponseMessage("Import Students to class successfully !"));
     }
 
     @GetMapping(path = "/list")

@@ -22,6 +22,8 @@ public class TestDetailResponse {
 
     private String testDay;
 
+    private String testTime;
+
     private int duration;
 
     private List<QuestionResponse> questionResponses;

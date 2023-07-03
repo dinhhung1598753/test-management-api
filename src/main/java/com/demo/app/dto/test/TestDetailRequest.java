@@ -23,4 +23,6 @@ public class TestDetailRequest {
     private int questionQuantity;
 
     private int duration;
+
+    private String testTime;
 }

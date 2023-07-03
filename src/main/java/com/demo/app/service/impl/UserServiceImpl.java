@@ -32,7 +32,6 @@ public class UserServiceImpl implements UserService {
 
     private final ModelMapper mapper;
 
-
     @Override
     public List<UserResponse> getUsers() {
         var users = userRepository.findAll();

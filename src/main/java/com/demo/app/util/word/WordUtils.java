@@ -25,7 +25,7 @@ public class WordUtils {
             content.getQuestions().forEach(question -> {
                 XWPFRun run = paragraph.createRun();
                 run.setFontSize(14);
-                run.setText("Question " + question.getQuestionNo() + ": " + question.getTopicText());
+                run.setText("Câu " + question.getQuestionNo() + ": " + question.getTopicText());
                 run.addBreak();
                 question.getAnswers().forEach(answer -> {
                     run.setText(answerNoText.get(answer.getAnswerNo()) + "." + answer.getContent());

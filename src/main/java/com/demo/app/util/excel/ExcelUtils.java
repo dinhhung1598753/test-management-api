@@ -47,7 +47,7 @@ public class ExcelUtils {
                     try {
                         return mapper.readValue(json, classType);
                     } catch (JsonProcessingException e) {
-                        throw new FileInputException("This excel not right with it template !", HttpStatus.CONFLICT);
+                        throw new FileInputException("This excel not right with it template !" + e.getMessage(), HttpStatus.CONFLICT);
                     }
                 }).collect(Collectors.toList());
     }

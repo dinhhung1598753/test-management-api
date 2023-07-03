@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 
 @Configuration
 public class ModelMapperConfig {
@@ -57,7 +56,7 @@ public class ModelMapperConfig {
         var converter = new AbstractConverter<String, LocalTime>() {
             @Override
             protected LocalTime convert(String source) {
-                var formatter = DateTimeFormatter.ofPattern("hh:mm:ss a", Locale.US);
+                var formatter = DateTimeFormatter.ofPattern("HH:mm");
                 return LocalTime.parse(source, formatter);
             }
         };

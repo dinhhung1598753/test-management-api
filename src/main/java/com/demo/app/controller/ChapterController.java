@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/api/v1/")
+@RequestMapping(path = "/api/v1")
 @Tag(name = "Chapter")
 @RequiredArgsConstructor
 public class ChapterController {

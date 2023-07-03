@@ -25,5 +25,7 @@ public interface StudentRepository extends JpaRepository<Student, Integer>, JpaS
     @Query("select s from Student s join User u on s.user.id = u.id where u.username = :username")
     Optional<Student> findByUsername(String username);
 
+    List<Student> findByCodeIn(List<String> code);
+
 
 }
