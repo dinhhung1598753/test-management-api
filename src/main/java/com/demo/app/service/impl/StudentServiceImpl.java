@@ -74,7 +74,9 @@ public class StudentServiceImpl implements StudentService {
         checkIfEmailExists(request.getEmail());
         checkIfPhoneNumberExists(request.getPhoneNumber());
         checkIfCodeExists(request.getCode());
-        var roles = roleRepository.findAllByRoleNameIn(List.of(Role.RoleType.ROLE_STUDENT));
+        var roles = roleRepository.findAllByRoleNameIn(
+                List.of(Role.RoleType.ROLE_USER, Role.RoleType.ROLE_STUDENT)
+        );
         User user = mapper.map(request, User.class);
         user.setPassword(passwordEncoder.passwordEncode().encode(request.getPassword()));
         user.setRoles(roles);

@@ -1,7 +1,7 @@
 package com.demo.app.service.impl;
 
-import com.demo.app.dto.student.StudentResponse;
-import com.demo.app.dto.teacher.TeacherResponse;
+import com.demo.app.dto.student.StudentProfileResponse;
+import com.demo.app.dto.teacher.TeacherProfileResponse;
 import com.demo.app.dto.user.UserResponse;
 import com.demo.app.exception.UserNotEnrolledException;
 import com.demo.app.model.Role;
@@ -76,19 +76,31 @@ public class UserServiceImpl implements UserService {
         return response;
     }
 
-    private StudentResponse getStudentProfile(String username){
+    private StudentProfileResponse getStudentProfile(String username){
         var student = studentRepository.findByUsername(username).get();
-        var response = mapper.map(student, StudentResponse.class);
+        var response = mapper.map(student, StudentProfileResponse.class);
         response.setUsername(student.getUser().getUsername());
         response.setEmail(student.getUser().getEmail());
+        response.setRoles(
+                student.getUser()
+                        .getRoles()
+                        .parallelStream()
+                        .map(role -> role.getRoleName().toString())
+                        .collect(Collectors.toList()));
         return response;
     }
 
-    private TeacherResponse getTeacherProfile(String username){
+    private TeacherProfileResponse getTeacherProfile(String username){
         var teacher = teacherRepository.findByUsername(username).get();
-        var response = mapper.map(teacher, TeacherResponse.class);
+        var response = mapper.map(teacher, TeacherProfileResponse.class);
         response.setUsername(teacher.getUser().getUsername());
         response.setEmail(teacher.getUser().getEmail());
+        response.setRoles(
+                teacher.getUser()
+                        .getRoles()
+                        .parallelStream()
+                        .map(role -> role.getRoleName().toString())
+                        .collect(Collectors.toList()));
         return response;
     }
 

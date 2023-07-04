@@ -16,9 +16,13 @@ import org.springframework.context.annotation.Configuration;
                 version = "1.0.0",
                 description = "This API exposes endpoints for users to manage their tasks.",
                 termsOfService = "Term of Services"),
-        servers = {@Server(
-                description = "Local Development Environment",
-                url = "http://localhost:8000")
+        servers = {
+                @Server(description = "Local Development Environment",
+                        url = "http://localhost:8000"),
+                @Server(
+                        description = "Local Development Environment",
+                        url = "http://localhost:8000"
+                )
         },
         security = {
                 @SecurityRequirement(name = "bearerAuth")

@@ -17,6 +17,8 @@ public interface QuestionService {
     @Transactional
     void saveAllQuestions(MultipleQuestionRequest request);
 
+    void importQuestion(MultipartFile file) throws IOException;
+
     @Transactional
     List<QuestionResponse> getAllQuestionsBySubjectCode(String code);
 

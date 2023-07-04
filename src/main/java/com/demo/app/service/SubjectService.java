@@ -16,14 +16,14 @@ public interface SubjectService {
 
     List<SubjectResponse> getAllSubjects() throws EntityNotFoundException;
 
-    List<SubjectChaptersResponse> getAllSubjectsWithChapters();
-
     void updateSubject(int subjectId, SubjectRequest request) throws EntityNotFoundException;
 
     void disableSubject(int subjectId);
 
     @Transactional
     List<ChapterResponse> getAllSubjectChapters(String code) throws EntityNotFoundException;
+
+    List<SubjectChaptersResponse> getAllSubjectsWithChapters();
 
     @Transactional
     void addSubjectChapter(String code, ChapterRequest request) throws EntityNotFoundException;

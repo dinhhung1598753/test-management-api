@@ -1,14 +1,18 @@
 package com.demo.app.config.jwt;
 
+import com.demo.app.dto.message.ErrorResponse;
+import com.demo.app.exception.ExpiredTokenException;
 import com.demo.app.repository.TokenRepository;
-import com.demo.app.util.jwt.JwtUtils;
 import com.demo.app.service.impl.UserDetailsServiceImpl;
+import com.demo.app.util.jwt.JwtUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -23,6 +27,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
 
+    private final ObjectMapper mapper;
+
     private final UserDetailsServiceImpl userDetailsService;
 
     private final TokenRepository tokenRepository;
@@ -36,23 +42,29 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        final String jwt = authHeader.substring(7);
-        final String username = jwtUtils.extractUsername(jwt);
-
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            var userDetails = userDetailsService.loadUserByUsername(username);
-            var isTokenValid = tokenRepository.findByToken(jwt)
-                    .map(token -> !token.isExpired() && !token.isRevoked())
-                    .orElse(false);
-
-            if (jwtUtils.isTokenValid(jwt, userDetails) && isTokenValid) {
-                var authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+        try {
+            final String jwt = authHeader.substring(7);
+            if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                var isTokenValid = tokenRepository.findByToken(jwt)
+                        .map(token -> !token.isExpired() && !token.isRevoked())
+                        .orElse(false);
+                if (jwtUtils.isTokenExpired(jwt) && isTokenValid) {
+                    final String username = jwtUtils.extractUsername(jwt);
+                    var userDetails = userDetailsService.loadUserByUsername(username);
+                    var authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities());
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
+        } catch (ExpiredTokenException ex){
+            var errorResponse = new ErrorResponse(ex.getStatus(), ex.getMessage());
+            response.setStatus(ex.getStatus().value());
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.getWriter().write(mapper.writeValueAsString(errorResponse));
+            return;
         }
         filterChain.doFilter(request, response);
     }

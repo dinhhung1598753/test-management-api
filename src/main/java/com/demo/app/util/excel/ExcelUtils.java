@@ -2,7 +2,6 @@ package com.demo.app.util.excel;
 
 import com.demo.app.exception.FileInputException;
 import com.demo.app.marker.Excelable;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.poi.ss.usermodel.*;
@@ -38,8 +37,7 @@ public class ExcelUtils {
      * Read any object that can be excelable to Excel file
      */
     public static <T extends Excelable> List<T> convertExcelToDataTransferObject(MultipartFile file, Class<T> classType) throws IOException {
-        var mapper = new ObjectMapper()
-                .setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        var mapper = new ObjectMapper();
         var contents = getExcelContents(file);
         var jsons = convertContentsToJson(contents);
         return jsons.stream()
@@ -64,7 +62,8 @@ public class ExcelUtils {
                     .map(Cell::getStringCellValue)
                     .toList();
             var colNums = headerCells.size();
-            return rowStreamSupplier.get().skip(1)
+            return rowStreamSupplier.get()
+                    .skip(1)
                     .map(row -> {
                         var cells = getStream(row)
                                 .map(cell -> FORMATTER.formatCellValue(cell, evaluator))

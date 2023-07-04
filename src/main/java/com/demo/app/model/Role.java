@@ -18,8 +18,10 @@ public class Role extends BaseEntity {
 
     public enum RoleType{
         ROLE_ADMIN,
+        ROLE_PRINCIPAL,
         ROLE_TEACHER,
-        ROLE_STUDENT
+        ROLE_STUDENT,
+        ROLE_USER
     }
 
     public Role(RoleType roleName) {

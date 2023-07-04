@@ -28,7 +28,10 @@ public class QuestionController {
     @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> addQuestion(@RequestPart String jsonRequest,
                                          @RequestPart(required = false) MultipartFile file) throws IOException {
-        var request = mapper.readValue(jsonRequest, SingleQuestionRequest.class);
+        var bytes = jsonRequest.getBytes();
+        var request = mapper.readValue(bytes, SingleQuestionRequest.class);
+        System.out.println(jsonRequest);
+        System.out.println(request.getTopicText());
         questionService.saveQuestion(request, file);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -41,6 +44,13 @@ public class QuestionController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ResponseMessage("Add all questions successfully"));
+    }
+
+    @PostMapping(path = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> importQuestions(@RequestPart MultipartFile file) throws IOException {
+        questionService.importQuestion(file);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ResponseMessage("Import questions successfully !"));
     }
 
     @GetMapping(path = "/list")

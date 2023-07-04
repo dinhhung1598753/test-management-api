@@ -16,7 +16,7 @@ import java.util.List;
 @Builder
 public class SingleQuestionRequest {
 
-    private int chapterId;
+    private Integer chapterId;
 
     @NotBlank(message = "Please enter question's topic !")
     private String topicText;

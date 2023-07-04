@@ -2,9 +2,11 @@ package com.demo.app.service.impl;
 
 import com.demo.app.dto.chapter.ChapterResponse;
 import com.demo.app.dto.question.MultipleQuestionRequest;
+import com.demo.app.dto.question.QuestionExcelRequest;
 import com.demo.app.dto.question.SingleQuestionRequest;
 import com.demo.app.dto.question.QuestionResponse;
 import com.demo.app.exception.EntityNotFoundException;
+import com.demo.app.exception.FileInputException;
 import com.demo.app.model.Answer;
 import com.demo.app.model.Question;
 import com.demo.app.repository.AnswerRepository;
@@ -14,6 +16,7 @@ import com.demo.app.repository.SubjectRepository;
 import com.demo.app.service.FileStorageService;
 import com.demo.app.service.QuestionService;
 import com.demo.app.service.S3Service;
+import com.demo.app.util.excel.ExcelUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -24,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -48,10 +52,11 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     @Transactional
     public void saveQuestion(SingleQuestionRequest request, MultipartFile file) throws EntityNotFoundException, IOException {
-        var question = questionRepository.save(mapRequestToQuestion(request));
+        var question = mapRequestToQuestion(request);
+        var saved = questionRepository.save(question);
         if (file != null) {
-            setQuestionImageUrl(question, file);
-            questionRepository.save(question);
+            setQuestionImageUrl(saved, file);
+            questionRepository.save(saved);
         }
     }
 
@@ -62,12 +67,13 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     private Question mapRequestToQuestion(SingleQuestionRequest request) {
-        var chapter = chapterRepository.findById(request.getChapterId())
+        @SuppressWarnings("DefaultLocale") var chapter = chapterRepository.findById(request.getChapterId())
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Chapter with id %d not found !", request.getChapterId()),
                         HttpStatus.NOT_FOUND
                 ));
         var question = mapper.map(request, Question.class);
+        question.setId(null);
         question.setChapter(chapter);
         question.setAnswers(request.getAnswers().parallelStream()
                 .map(answerRequest -> {
@@ -86,7 +92,7 @@ public class QuestionServiceImpl implements QuestionService {
                         String.format("Subject %s not found !", request.getSubjectCode()),
                         HttpStatus.NOT_FOUND
                 ));
-        var chapter = chapterRepository.findBySubjectAndOrder(subject, request.getChapterNo())
+        @SuppressWarnings("DefaultLocale") var chapter = chapterRepository.findBySubjectAndOrder(subject, request.getChapterNo())
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Chapter No %d not found !", request.getChapterNo()),
                         HttpStatus.NOT_FOUND
@@ -106,6 +112,61 @@ public class QuestionServiceImpl implements QuestionService {
                     return question;
                 }).collect(Collectors.toList());
         questionRepository.saveAll(questions);
+    }
+
+    @Override
+    @Transactional
+    public void importQuestion(MultipartFile file) throws IOException {
+        if (ExcelUtils.notHaveExcelFormat(file)) {
+            throw new FileInputException(
+                    "There are something wrong with file, please check file format is .xlsx !",
+                    HttpStatus.CONFLICT);
+        }
+        var requests = ExcelUtils.convertExcelToDataTransferObject(file, QuestionExcelRequest.class);
+        var questions = requests.parallelStream().map(request -> {
+            var subject = subjectRepository.findByCode(request.getSubjectCode())
+                    .orElseThrow(() -> new EntityNotFoundException(
+                            String.format("Subject %s not found !", request.getSubjectCode()),
+                            HttpStatus.NOT_FOUND
+                    ));
+            @SuppressWarnings("DefaultLocale") var chapter = chapterRepository.findBySubjectAndOrder(subject, request.getChapterNo())
+                    .orElseThrow(() -> new EntityNotFoundException(
+                            String.format("Chapter No %d not found !", request.getChapterNo()),
+                            HttpStatus.NOT_FOUND
+                    ));
+            var question = mapper.map(request, Question.class);
+            question.setChapter(chapter);
+            question.setAnswers(mapRequestsToAnswers(
+                    question,
+                    request.getAnswer1(),
+                    request.getAnswer2(),
+                    request.getAnswer3(),
+                    request.getAnswer4(),
+                    request.getCorrectedAnswer()));
+            return question;
+        }).collect(Collectors.toList());
+        questionRepository.saveAll(questions);
+    }
+
+    private List<Answer> mapRequestsToAnswers(Question question,
+                                              String answer1, String answer2, String answer3, String answer4,
+                                              int correctedAnswer) {
+        var answerNumbers = Map.of(
+                1, answer1,
+                2, answer2,
+                3, answer3,
+                4, answer4);
+        return answerNumbers.entrySet().parallelStream().map(entry -> {
+            var answer = Answer.builder()
+                    .question(question)
+                    .content(entry.getValue())
+                    .isCorrected(false)
+                    .build();
+            if (entry.getKey() == correctedAnswer) {
+                answer.setIsCorrected(true);
+            }
+            return answer;
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -130,11 +191,11 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     @Transactional
     public void updateQuestion(int questionId, SingleQuestionRequest request, MultipartFile file) throws IOException {
-        var question = questionRepository.findById(questionId)
+        @SuppressWarnings("DefaultLocale") var question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Not found any question with id: %d !", questionId),
                         HttpStatus.NOT_FOUND));
-        var chapter = chapterRepository.findById(request.getChapterId())
+        @SuppressWarnings("DefaultLocale") var chapter = chapterRepository.findById(request.getChapterId())
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Not found any question with id: %d !", questionId),
                         HttpStatus.NOT_FOUND));
@@ -166,7 +227,7 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     @Transactional
     public void disableQuestion(int questionId) {
-        var question = questionRepository.findById(questionId)
+        @SuppressWarnings("DefaultLocale") var question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Not found any question with id: %d !", questionId),
                         HttpStatus.NOT_FOUND));
