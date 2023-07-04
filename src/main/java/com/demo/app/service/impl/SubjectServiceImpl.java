@@ -101,7 +101,7 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public List<SubjectChaptersResponse> getAllSubjectsWithChapters() {
         var subjects = subjectRepository.findByEnabledIsTrue();
-        return subjects.parallelStream()
+        return subjects.stream()
                 .map(subject -> mapper.map(subject, SubjectChaptersResponse.class))
                 .collect(Collectors.toList());
     }
