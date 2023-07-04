@@ -1,22 +1,22 @@
 {
-  "chapterId" : 42,
-  "topicText": "847234irjwlerjer",
+  "chapterId" : 1,
+  "topicText": "Cây nhị phân thường được dùng để làm gì",
   "level": "easy",
   "answers": [
     {
-      "content": "sfdjsldf",
+      "content": "Tìm kiếm nhị phân",
       "isCorrected": "true"
     },
     {
-      "content": "asioduapsdok",
+      "content": "Tìm kiếm tuyến tính",
       "isCorrected": "false"
     },
     {
-      "content": "asdoiauda",
+      "content": "Sắp xếp nổi bọt",
       "isCorrected": "false"
     },
     {
-      "content": "string",
+      "content": "Sắp xếp trộn",
       "isCorrected": "false"
     }
   ]
