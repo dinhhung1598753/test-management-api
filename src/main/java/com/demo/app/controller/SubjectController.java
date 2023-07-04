@@ -83,6 +83,12 @@ public class SubjectController {
                 .body(subjectService.getAllSubjectsWithChapters());
     }
 
+    @GetMapping(path = "/{code}")
+    public ResponseEntity<?> subjectWithChapters(@PathVariable String code){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(subjectService.getSubjectWithChapter(code));
+    }
+
     @Operation(
             description = "Update subject",
             method = "PUT",

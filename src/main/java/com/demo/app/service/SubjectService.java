@@ -25,6 +25,8 @@ public interface SubjectService {
 
     List<SubjectChaptersResponse> getAllSubjectsWithChapters();
 
+    SubjectChaptersResponse getSubjectWithChapter(String code);
+
     @Transactional
     void addSubjectChapter(String code, ChapterRequest request) throws EntityNotFoundException;
 

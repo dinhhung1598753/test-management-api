@@ -106,6 +106,13 @@ public class SubjectServiceImpl implements SubjectService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public SubjectChaptersResponse getSubjectWithChapter(String code){
+        var subject = subjectRepository.findByCode(code)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Subject %s not found !", code), HttpStatus.NOT_FOUND));
+        return mapper.map(subject, SubjectChaptersResponse.class);
+    }
+
    @Override
    @Transactional
    public void addSubjectChapter(String code, ChapterRequest request) throws EntityNotFoundException{
