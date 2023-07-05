@@ -137,11 +137,7 @@ public class TeacherServiceImpl implements TeacherService {
         if (!teacher.getUser().getEmail().equals(request.getEmail())) {
             checkIfEmailExists(request.getEmail());
         }
-        if (!teacher.getCode().equals(request.getCode())) {
-            checkIfCodeExists(request.getCode());
-        }
 
-        teacher.setCode(request.getCode());
         teacher.setPhoneNumber(request.getPhoneNumber());
         teacher.setFullname(request.getFullName());
         teacher.getUser().setEmail(request.getEmail());

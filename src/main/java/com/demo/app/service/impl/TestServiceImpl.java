@@ -73,6 +73,7 @@ public class TestServiceImpl implements TestService {
         return TestDetailResponse.builder()
                 .questionQuantity(request.getQuestionQuantity())
                 .testDay(request.getTestDay())
+                .testTime(request.getTestTime())
                 .subjectCode(subject.getCode())
                 .subjectTitle(subject.getTitle())
                 .questionResponses(questionResponses)

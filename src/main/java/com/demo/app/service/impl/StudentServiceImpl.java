@@ -136,12 +136,9 @@ public class StudentServiceImpl implements StudentService {
             checkIfPhoneNumberExists(request.getPhoneNumber());
         if (!student.getUser().getEmail().equals(request.getEmail()))
             checkIfEmailExists(request.getEmail());
-        if (!student.getCode().equals(request.getCode()))
-            checkIfCodeExists(request.getCode());
 
         student.setFullname(request.getFullName());
         student.setPhoneNumber(request.getPhoneNumber());
-        student.setCode(request.getCode());
         student.getUser().setEmail(request.getEmail());
         student.setCourse(request.getCourse());
         student.setBirthday(LocalDate.parse(
@@ -155,7 +152,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void disableStudent(int studentId) throws EntityNotFoundException {
-        var existStudent = studentRepository.findById(studentId).orElseThrow(
+        @SuppressWarnings("DefaultLocale") var existStudent = studentRepository.findById(studentId).orElseThrow(
                 () -> new EntityNotFoundException(
                         String.format("Not found any student with id = %d !", studentId),
                         HttpStatus.NOT_FOUND)

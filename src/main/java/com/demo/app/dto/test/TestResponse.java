@@ -16,8 +16,6 @@ public class TestResponse {
 
     private String updatedAt;
 
-    private double totalPoint;
-
     private String testDay;
 
     private String testTime;
