@@ -1,6 +1,7 @@
 package com.demo.app.config.jwt;
 
 import com.demo.app.dto.message.ErrorResponse;
+import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.exception.ExpiredTokenException;
 import com.demo.app.repository.TokenRepository;
 import com.demo.app.service.impl.UserDetailsServiceImpl;
@@ -44,13 +45,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
         try {
             final String jwt = authHeader.substring(7);
+            var username = jwtUtils.extractUsername(jwt);
             if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                var userDetails = userDetailsService.loadUserByUsername(username);
                 var isTokenValid = tokenRepository.findByToken(jwt)
                         .map(token -> !token.isExpired() && !token.isRevoked())
                         .orElse(false);
-                if (jwtUtils.isTokenExpired(jwt) && isTokenValid) {
-                    final String username = jwtUtils.extractUsername(jwt);
-                    var userDetails = userDetailsService.loadUserByUsername(username);
+                if (jwtUtils.isTokenValid(jwt, userDetails) && isTokenValid) {
                     var authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
                             null,
@@ -59,7 +60,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
-        } catch (ExpiredTokenException ex){
+        } catch (ExpiredTokenException | EntityNotFoundException ex){
             var errorResponse = new ErrorResponse(ex.getStatus(), ex.getMessage());
             response.setStatus(ex.getStatus().value());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);

@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public Object getUserProfile(Authentication auth) throws UserNotEnrolledException{
-        if (auth.getName().equals("anonymousUser")){
+        if (!auth.isAuthenticated() || auth.getName().equals("anonymousUser")){
             throw new UserNotEnrolledException("Cannot found user !", HttpStatus.FORBIDDEN);
         }
         var roles = auth.getAuthorities()
