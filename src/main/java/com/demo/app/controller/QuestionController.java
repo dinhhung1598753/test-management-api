@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping(path = "/api/v1/question")
@@ -26,12 +27,11 @@ public class QuestionController {
     private final ObjectMapper mapper;
 
     @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> addQuestion(@RequestPart String jsonRequest,
+    public ResponseEntity<?> addQuestion(@RequestPart() String jsonRequest,
                                          @RequestPart(required = false) MultipartFile file) throws IOException {
-        var bytes = jsonRequest.getBytes();
-        var request = mapper.readValue(bytes, SingleQuestionRequest.class);
-        System.out.println(jsonRequest);
-        System.out.println(request.getTopicText());
+        var bytes = jsonRequest.getBytes(StandardCharsets.ISO_8859_1);
+        String decodedJson = new String(bytes, StandardCharsets.UTF_8);
+        var request = mapper.readValue(decodedJson, SingleQuestionRequest.class);
         questionService.saveQuestion(request, file);
         return ResponseEntity
                 .status(HttpStatus.CREATED)

@@ -26,7 +26,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -108,11 +107,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public AuthenticationResponse login(AuthenticationRequest request) {
-        var authentication = manager.authenticate(new UsernamePasswordAuthenticationToken(
+        manager.authenticate(new UsernamePasswordAuthenticationToken(
                 request.getUsername(),
                 request.getPassword()
         ));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
         var user = userRepository.findByUsernameAndEnabledIsTrue(request.getUsername())
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Username not found !",

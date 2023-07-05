@@ -27,7 +27,7 @@ public class S3ServiceImpl implements S3Service {
         var metadata = new ObjectMetadata();
         metadata.setContentLength(file.getSize());
         s3Client.putObject(bucketName, keyName, file.getInputStream(), metadata);
-        s3Client.setObjectAcl(bucketName, keyName, CannedAccessControlList.BucketOwnerFullControl);
+        s3Client.setObjectAcl(bucketName, keyName, CannedAccessControlList.PublicRead);
         return s3Client.getUrl(bucketName, keyName).toString();
     }
 

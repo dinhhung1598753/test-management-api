@@ -20,8 +20,8 @@ import org.springframework.context.annotation.Configuration;
                 @Server(description = "Local Development Environment",
                         url = "http://localhost:8000"),
                 @Server(
-                        description = "Local Development Environment",
-                        url = "http://localhost:8000"
+                        description = "Remote Development Environment",
+                        url = "http://45.251.114.92:8000"
                 )
         },
         security = {
