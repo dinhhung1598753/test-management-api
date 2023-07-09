@@ -1,0 +1,23 @@
+{
+  "chapterId" : 1,
+  "topicText": "Cây nhị phân thường được dùng để làm gì",
+  "level": "easy",
+  "answers": [
+    {
+      "content": "Tìm kiếm nhị phân",
+      "isCorrected": "true"
+    },
+    {
+      "content": "Tìm kiếm tuyến tính",
+      "isCorrected": "false"
+    },
+    {
+      "content": "Sắp xếp nổi bọt",
+      "isCorrected": "false"
+    },
+    {
+      "content": "Sắp xếp trộn",
+      "isCorrected": "false"
+    }
+  ]
+}

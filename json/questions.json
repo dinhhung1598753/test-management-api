@@ -1,0 +1,24 @@
+{
+  "subjectCode": "ET3210",
+  "chapterNo": 2,
+  "questions": [
+    {
+      "answers": [
+        {
+          "content": "SEMT",
+          "isCorrected": "FALSE"
+        },
+        {
+          "content": "SE",
+          "isCorrected": "true"
+        },
+        {
+          "content": "SEM",
+          "isCorrected": "FALSE"
+        }
+      ],
+      "topicText": "sóng ngang là gì",
+      "level": "easy"
+    }
+  ]
+}
