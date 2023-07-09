@@ -48,4 +48,7 @@ public class StudentTest extends BaseEntity{
     @OneToMany(mappedBy = "studentTest", cascade = CascadeType.ALL)
     private List<StudentTestDetail> studentTestDetails;
 
+    @Column(name = "exam_class_id")
+    private Integer examClassId;
+
 }

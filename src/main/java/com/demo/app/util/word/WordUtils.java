@@ -1,41 +1,30 @@
 package com.demo.app.util.word;
 
+import com.deepoove.poi.XWPFTemplate;
 import com.demo.app.dto.testset.TestSetDetailResponse;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFRun;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Map;
+import java.util.HashMap;
 
 public class WordUtils {
 
-    private static final Map<Integer, String> answerNoText = Map.of(
-            1, "A",
-            2, "B",
-            3, "C",
-            4, "D");
-
-    public static ByteArrayInputStream convertContentToWord(TestSetDetailResponse content) throws IOException {
+    public static ByteArrayInputStream convertTestToWord(TestSetDetailResponse content) throws IOException {
         try (var document = new XWPFDocument();
-             var outputStream = new ByteArrayOutputStream()) {
-            XWPFParagraph paragraph = document.createParagraph();
-            content.getQuestions().forEach(question -> {
-                XWPFRun run = paragraph.createRun();
-                run.setFontSize(14);
-                run.setText("Câu " + question.getQuestionNo() + ": " + question.getTopicText());
-                run.addBreak();
-                question.getAnswers().forEach(answer -> {
-                    run.setText(answerNoText.get(answer.getAnswerNo()) + "." + answer.getContent());
-                    run.addBreak();
-                });
-            });
-
+             var outputStream = new ByteArrayOutputStream()){
+            var testSet = content.getTestSet();
+            XWPFTemplate.compile("word/TestSet_Template.docx").render(new HashMap<String, Object>() {{
+                put("testSet", testSet);
+                put("duration", testSet.getDuration());
+                put("testNo", testSet.getTestNo());
+                put("questions", content.getQuestions());
+            }}).writeAndClose(outputStream);
             document.write(outputStream);
             return new ByteArrayInputStream(outputStream.toByteArray());
         }
     }
+
 
 }

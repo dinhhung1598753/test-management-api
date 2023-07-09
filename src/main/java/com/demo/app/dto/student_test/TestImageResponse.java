@@ -18,5 +18,13 @@ public class TestImageResponse {
 
     private List<Filename> imageFilenames;
 
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class Filename{
+        private String filename;
+    }
 
 }

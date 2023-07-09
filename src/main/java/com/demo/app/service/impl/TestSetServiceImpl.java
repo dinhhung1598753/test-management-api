@@ -1,8 +1,6 @@
 package com.demo.app.service.impl;
 
 import com.demo.app.dto.testset.TestSetDetailResponse;
-import com.demo.app.dto.testset.TestSetQuestionResponse;
-import com.demo.app.dto.testset.TestSetRequest;
 import com.demo.app.dto.testset.TestSetResponse;
 import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.model.*;
@@ -20,6 +18,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
@@ -33,24 +32,31 @@ public class TestSetServiceImpl implements TestSetService {
 
     private final TestSetRepository testSetRepository;
 
+    private static final Map<Integer, String> answerNoText = Map.of(
+            1, "A",
+            2, "B",
+            3, "C",
+            4, "D");
+
     @Override
     @Transactional
-    public void createTestSetFromTest(int testId, TestSetRequest request) {
+    public void createTestSetFromTest(int testId, Integer testSetQuantity) {
         @SuppressWarnings("DefaultLocale") var test = testRepository.findById(testId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Test with id: %d not found !", testId),
                         HttpStatus.NOT_FOUND));
-        var testSetQuantity = request.getTestSetQuantity();
         var executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        for (var digit = 1; digit <= testSetQuantity; ++digit) {
-            int finalDigit = digit;
+        for (var i = 1; i <= testSetQuantity; ++i) {
+            var digit = i;
             executor.execute(() -> {
-                int root = 100, testNo = finalDigit + root;
+                int root = 100, testNo = digit + root;
                 while (testSetRepository.existsByTestAndTestNoAndEnabledTrue(test, testNo)) {
                     root = (root / 100 + 1) * 100;
-                    testNo = root + finalDigit;
+                    testNo = root + digit;
                 }
-                var testSet = TestSet.builder().testNo(testNo).test(test)
+                var testSet = TestSet.builder()
+                        .testNo(testNo)
+                        .test(test)
                         .build();
                 var testSetQuestions = assignQuestionsNumber(testSet, test.getQuestions());
                 testSet.setTestSetQuestions(testSetQuestions);
@@ -128,22 +134,25 @@ public class TestSetServiceImpl implements TestSetService {
                         String.format("Test set with id %d not found !", testSetId),
                         HttpStatus.NOT_FOUND));
         var response = mapTestSetToDetailResponse(testSet);
-        return WordUtils.convertContentToWord(response);
+        return WordUtils.convertTestToWord(response);
     }
 
-    private TestSetDetailResponse mapTestSetToDetailResponse(TestSet testSet){
+    private TestSetDetailResponse mapTestSetToDetailResponse(TestSet testSet) {
         var questionResponses = testSet.getTestSetQuestions()
                 .stream()
                 .map(testSetQuestion -> {
-                    var questionResponse = mapper.map(testSetQuestion, TestSetQuestionResponse.class);
-                    var question = testSetQuestion.getQuestion();
+                    var questionResponse = mapper.map(
+                            testSetQuestion.getQuestion(),
+                            TestSetDetailResponse.TestSetQuestionResponse.class);
+                    questionResponse.setQuestionNo(testSetQuestion.getQuestionNo());
                     var answers = testSetQuestion.getTestSetQuestionAnswers()
                             .iterator();
-                    questionResponse.setLevel(question.getLevel().toString());
-                    questionResponse.setTopicText(question.getTopicText());
-                    questionResponse.setTopicImage(question.getTopicImage());
-                    questionResponse.getAnswers().forEach(responseAnswer ->
-                            responseAnswer.setContent(answers.next().getAnswer().getContent()));
+                    questionResponse.getAnswers()
+                            .forEach(responseAnswer -> {
+                                var answer = answers.next();
+                                responseAnswer.setContent(answer.getAnswer().getContent());
+                                responseAnswer.setAnswerNo(answerNoText.get(answer.getAnswerNo()));
+                            });
                     return questionResponse;
                 })
                 .collect(Collectors.toList());

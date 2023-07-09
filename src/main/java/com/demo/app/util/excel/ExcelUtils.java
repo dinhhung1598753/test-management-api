@@ -4,6 +4,7 @@ import com.demo.app.exception.FileInputException;
 import com.demo.app.marker.Excelable;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.http.HttpStatus;
@@ -49,6 +50,7 @@ public class ExcelUtils {
                     }
                 }).collect(Collectors.toList());
     }
+
     private static List<Map<String, String>> getExcelContents(MultipartFile file) throws IOException {
         try (InputStream inputStream = file.getInputStream();
              Workbook workbook = WorkbookFactory.create(inputStream)) {
@@ -59,7 +61,7 @@ public class ExcelUtils {
             var headerRow = rowStreamSupplier.get()
                     .findFirst().get();
             var headerCells = getStream(headerRow)
-                    .map(Cell::getStringCellValue)
+                    .map(cell -> reverseTitleText(cell.getStringCellValue()))
                     .toList();
             var colNums = headerCells.size();
             return rowStreamSupplier.get()
@@ -74,6 +76,17 @@ public class ExcelUtils {
                     }).collect(Collectors.toList());
         }
     }
+
+    private static String reverseTitleText(String title){
+        title = StringUtils.uncapitalize(title);
+        var joiner = new StringJoiner("");
+        var letters = title.split("\\s+");
+        for (String letter : letters) {
+            joiner.add(letter);
+        }
+        return joiner.toString();
+    }
+
     private static List<String> convertContentsToJson(List<Map<String, String>> contents) {
         return contents.parallelStream()
                 .map(content -> {
@@ -93,12 +106,15 @@ public class ExcelUtils {
     private static Supplier<Stream<Row>> getRowStreamSupplier(Iterable<Row> rows) {
         return () -> getStream(rows);
     }
+
     private static <T> Stream<T> getStream(Iterable<T> iterable) {
         return StreamSupport.stream(iterable.spliterator(), true);
     }
+
     private static Supplier<Stream<Integer>> cellIteratorSupplier(int end) {
         return () -> numberStream(end);
     }
+
     private static Stream<Integer> numberStream(int end) {
         return IntStream.range(0, end).boxed();
     }
@@ -111,33 +127,44 @@ public class ExcelUtils {
              var workbook = new XSSFWorkbook()) {
             var sheet = workbook.createSheet(objects.getClass().getName());
             var contents = convertObjectsToContents(objects);
-
-            var title = contents.get(0).keySet().iterator();
-            var size = contents.get(0).size();
-            var rowTitle = sheet.createRow(0);
-            int colNum, colRow = 0;
-            var font = workbook.createFont();
-            font.setBold(true);
-            var style = workbook.createCellStyle();
-            style.setFont(font);
-            for (colNum = 0; colNum < size; colNum++){
-                var cell = rowTitle.createCell(colNum);
-                cell.setCellValue(title.next());
-                cell.setCellStyle(style);
-            }
-            colNum = 0;
-            for (var content : contents) {
-                var row = sheet.createRow(++colRow);
-                for (var entry : content.entrySet()) {
-                    row.createCell(colNum++).setCellValue(entry.getValue());
-                }
-                colNum = 0;
-            }
-
+            createTitleRow(contents.get(0).keySet(), workbook, sheet);
+            createBodyRow(contents, sheet);
             workbook.write(outputStream);
             return new ByteArrayInputStream(outputStream.toByteArray());
         }
 
+    }
+
+    private static void createTitleRow(Set<String> header, Workbook workbook, Sheet sheet) {
+        var titles = header.iterator();
+        var size = header.size();
+        var rowTitle = sheet.createRow(0);
+        rowTitle.setHeight((short) 500);
+        var font = workbook.createFont();
+        font.setFontHeight((short) 300);
+        font.setBold(true);
+        var style = workbook.createCellStyle();
+        style.setFont(font);
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
+        for (var colNum = 0; colNum < size; colNum++) {
+            var title = convertTitleText(titles.next());
+            var cell = rowTitle.createCell(colNum);
+            cell.setCellValue(title);
+            cell.setCellStyle(style);
+            sheet.setColumnWidth(colNum, title.length() * 265);
+        }
+    }
+
+    private static void createBodyRow(List<Map<String, String>> contents, Sheet sheet) {
+        int colNum = 0, colRow = 0;
+        for (var content : contents) {
+            var row = sheet.createRow(++colRow);
+            for (var entry : content.entrySet()) {
+                row.createCell(colNum++).setCellValue(entry.getValue());
+            }
+            colNum = 0;
+        }
     }
 
     private static <T extends Excelable> List<Map<String, String>> convertObjectsToContents(List<T> objects) {
@@ -153,6 +180,16 @@ public class ExcelUtils {
                             }
                         }))
                 ).collect(Collectors.toList());
+    }
+
+    private static String convertTitleText(String title){
+        title = StringUtils.capitalize(title);
+        var joiner = new StringJoiner(" ");
+        var letters = title.split("(?=\\p{Upper})");
+        for (var letter : letters) {
+            joiner.add(letter);
+        }
+        return joiner.toString();
     }
 
 }

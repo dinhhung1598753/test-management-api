@@ -1,7 +1,6 @@
 package com.demo.app.controller;
 
 import com.demo.app.dto.message.ResponseMessage;
-import com.demo.app.dto.student_test.Filename;
 import com.demo.app.dto.student_test.TestImageResponse;
 import com.demo.app.exception.FileInputException;
 import com.demo.app.service.FileStorageService;
@@ -39,8 +38,9 @@ public class StudentTestController {
         fileStorageService.checkIfFileIsImageFormat(files);
         var path = fileStorageService.createClassDirectory(classCode);
         var imageFilenames = files.stream()
-                .map(file -> Filename.builder()
-                        .filename(fileStorageService.upload(classCode, file)).build())
+                .map(file -> TestImageResponse.Filename.builder()
+                        .filename(fileStorageService.upload(classCode, file))
+                        .build())
                 .collect(Collectors.toList());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(TestImageResponse.builder()

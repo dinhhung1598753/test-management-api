@@ -19,7 +19,10 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.*;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -129,6 +132,9 @@ public class StudentTestServiceImpl implements StudentTestService {
                 .testSet(testset)
                 .mark(mark)
                 .grade((double) mark / questionAnswers.size())
+                .testDate(LocalDate.now())
+                .examClassId(examClass.getId())
+                .state(State.FINISHED)
                 .build();
         var studentTestDetails = offlineExam.getAnswers()
                 .parallelStream()
@@ -160,5 +166,7 @@ public class StudentTestServiceImpl implements StudentTestService {
                 })
                 .count();
     }
+
+
 
 }

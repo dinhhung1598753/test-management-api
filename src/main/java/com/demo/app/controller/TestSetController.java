@@ -1,10 +1,8 @@
 package com.demo.app.controller;
 
 import com.demo.app.dto.message.ResponseMessage;
-import com.demo.app.dto.testset.TestSetRequest;
 import com.demo.app.service.TestSetService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.*;
@@ -23,8 +21,8 @@ public class TestSetController {
 
     @PostMapping(path = "/{test-id}/create")
     public ResponseEntity<?> createTestSetFromTest(@PathVariable(name = "test-id") int testId,
-                                                   @RequestBody @Valid final TestSetRequest request) throws InterruptedException {
-        testSetService.createTestSetFromTest(testId, request);
+                                                   @RequestParam final Integer testSetQuantity) throws InterruptedException {
+        testSetService.createTestSetFromTest(testId, testSetQuantity);
         Thread.sleep(5000);
         return ResponseEntity
                 .status(HttpStatus.CREATED)

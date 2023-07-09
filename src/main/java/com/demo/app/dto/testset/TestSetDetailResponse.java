@@ -18,4 +18,40 @@ public class TestSetDetailResponse {
 
     @JsonProperty("questions")
     private List<TestSetQuestionResponse> questions;
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TestSetQuestionResponse {
+
+        private int id;
+
+        private int questionNo;
+
+        private String level;
+
+        private String topicText;
+
+        private String topicImage;
+
+        @JsonProperty("answers")
+        private List<TestSetQuestionAnswerResponse> answers;
+
+        @Getter
+        @Setter
+        @Builder
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class TestSetQuestionAnswerResponse {
+
+            private int id;
+
+            private String answerNo;
+
+            private String content;
+
+        }
+    }
 }

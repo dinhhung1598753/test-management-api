@@ -1,27 +1,23 @@
 package com.demo.app.dto.student_test;
 
-import com.demo.app.dto.testset.TestSetResponse;
+import com.demo.app.dto.student.StudentResponse;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.List;
+import lombok.ToString;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
+@ToString
 public class StudentTestResponse {
 
-    @JsonIgnoreProperties({"createdAt", "updatedAt", "questionQuantity", "id"})
-    private TestSetResponse testSet;
+    @JsonIgnoreProperties({"id", "username", "phoneNumber", "birthday", "createdAt"})
+    private StudentResponse student;
 
-    @JsonProperty("questions")
-    private List<StudentTestQuestionResponse> questions;
+    private String testDate;
 
-
+    private Double grade;
 
 }

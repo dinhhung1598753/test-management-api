@@ -5,18 +5,13 @@ import com.demo.app.dto.test.TestDetailRequest;
 import com.demo.app.dto.test.TestQuestionRequest;
 import com.demo.app.dto.test.TestRequest;
 import com.demo.app.exception.EntityNotFoundException;
-import com.demo.app.model.MyObject;
 import com.demo.app.service.TestService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.File;
-import java.io.IOException;
 
 @RestController
 @RequestMapping(path = "/api/v1/test")
@@ -55,6 +50,8 @@ public class TestController {
                 .body(testService.getTestDetail(testId));
     }
 
+
+    @SuppressWarnings("DefaultLocale")
     @PutMapping(path = "/update/{id}")
     public  ResponseEntity<?> updateTest(@PathVariable(name = "id") int testId, @Valid final TestDetailRequest request){
         testService.updateTest(testId, request);
@@ -69,42 +66,42 @@ public class TestController {
         return new ResponseEntity<>(new ResponseMessage("Disable test successfully !"), HttpStatus.OK);
     }
 
-    @GetMapping(path="/mark-ai")
-    public ResponseEntity<?> getModelAI(@RequestParam(name="pathImg") String pathImg,
-                                        @RequestParam(name="numberAnswer") Integer numberAnswer) throws IOException {
-        class MyRunnable implements Runnable {
-            public void run(){
-                String CMD =
-                        "cmd /c python app.py %s %d";
-                CMD = String.format(CMD, pathImg, numberAnswer);
-                try {
-                    File fileTxt = new File("result.txt");
-                    if(fileTxt.exists() && !fileTxt.isDirectory()) {
-                        fileTxt.delete();
-                    }
-                    File fileJson = new File("data.json");
-                    if(fileJson.exists() && !fileJson.isDirectory()) {
-                        fileJson.delete();
-                    }
-                    Process process = Runtime.getRuntime().exec(CMD);
-                    while (true) {
-                        File f = new File("result.txt");
-                        if (f.exists()) return;
-                    }
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-        Thread thread = new Thread(new MyRunnable());
-        thread.start();
-        while (thread.isAlive());
-        String filePath = "data.json";
-        File file = new File(filePath);
-        ObjectMapper objectMapper = new ObjectMapper();
-        MyObject myObject = objectMapper.readValue(file, MyObject.class);
-        return ResponseEntity.status(HttpStatus.CREATED).body(myObject);
-    }
+//    @GetMapping(path="/mark-ai")
+//    public ResponseEntity<?> getModelAI(@RequestParam(name="pathImg") String pathImg,
+//                                        @RequestParam(name="numberAnswer") Integer numberAnswer) throws IOException {
+//        class MyRunnable implements Runnable {
+//            public void run(){
+//                String CMD =
+//                        "cmd /c python app.py %s %d";
+//                CMD = String.format(CMD, pathImg, numberAnswer);
+//                try {
+//                    File fileTxt = new File("result.txt");
+//                    if(fileTxt.exists() && !fileTxt.isDirectory()) {
+//                        fileTxt.delete();
+//                    }
+//                    File fileJson = new File("data.json");
+//                    if(fileJson.exists() && !fileJson.isDirectory()) {
+//                        fileJson.delete();
+//                    }
+//                    Process process = Runtime.getRuntime().exec(CMD);
+//                    while (true) {
+//                        File f = new File("result.txt");
+//                        if (f.exists()) return;
+//                    }
+//                } catch (IOException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            }
+//        }
+//        Thread thread = new Thread(new MyRunnable());
+//        thread.start();
+//        while (thread.isAlive());
+//        String filePath = "data.json";
+//        File file = new File(filePath);
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        MyObject myObject = objectMapper.readValue(file, MyObject.class);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(myObject);
+//    }
 
 
 }

@@ -6,6 +6,8 @@ import com.demo.app.exception.InvalidRoleException;
 import com.demo.app.service.ExamClassService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -49,7 +51,8 @@ public class ExamClassController {
     }
 
     @PostMapping(path = "/import/students", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> importStudentExamClass(@RequestPart String classCode ,@RequestPart MultipartFile file) throws IOException {
+    public ResponseEntity<?> importStudentExamClass(@RequestPart String classCode ,
+                                                    @RequestPart MultipartFile file) throws IOException {
         examClassService.importClassStudents(classCode, file);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseMessage("Import Students to class successfully !"));
@@ -60,6 +63,22 @@ public class ExamClassController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(examClassService.getAllEnabledExamClass());
+    }
+
+    @GetMapping(path = "/detail/{id}")
+    public ResponseEntity<?> getExamClassDetail(@PathVariable(name = "id") final Integer examClassId){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(examClassService.getExamClassDetail(examClassId));
+    }
+
+    @GetMapping(path = "/export/{code}")
+    public ResponseEntity<?> exportStudentTestExcel(@PathVariable(name = "code") String code) throws IOException {
+        var resource = new InputStreamResource(examClassService.exportStudentTestToExcel(code));
+        var filename = "StudentTest:" + code + ".xlsx";
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+                .body(resource);
     }
 
     @DeleteMapping(path = "/disable/{id}")
