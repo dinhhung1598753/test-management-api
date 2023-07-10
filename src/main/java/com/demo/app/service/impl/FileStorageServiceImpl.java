@@ -22,8 +22,8 @@ public class FileStorageServiceImpl implements FileStorageService {
     private static final Set<String> FILE_FORMATs = Set.of(new String[] {".jpg", ".jpeg", ".png"});
 
     @Override
-    public String createClassDirectory(String classCode) throws IOException {
-        var path = uploadPath + "/" + classCode;
+    public String createClassDirectory(String directory) throws IOException {
+        var path = uploadPath + directory;
         var of = Path.of(path);
         if (!Files.exists(of))
             Files.createDirectories(of);
@@ -31,8 +31,8 @@ public class FileStorageServiceImpl implements FileStorageService {
     }
 
     @Override
-    public String upload(String classCode, MultipartFile file) throws FileInputException {
-        var targetPath = uploadPath + "/" + classCode + "/" + file.getOriginalFilename();
+    public String upload(String directory, MultipartFile file) throws FileInputException {
+        var targetPath = directory + "/" + file.getOriginalFilename();
         try {
             Files.copy(file.getInputStream(), Path.of(targetPath));
         } catch (IOException e) {

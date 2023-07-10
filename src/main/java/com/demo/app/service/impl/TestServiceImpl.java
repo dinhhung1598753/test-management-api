@@ -52,7 +52,8 @@ public class TestServiceImpl implements TestService {
                 request.getChapterOrders(),
                 pageable
         );
-        var questionResponses = questions.stream().parallel()
+        var questionResponses = questions.stream()
+                .parallel()
                 .map(question -> {
                     var response = mapper.map(question, QuestionResponse.class);
                     response.setSubjectTitle(subject.getTitle());

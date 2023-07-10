@@ -15,7 +15,6 @@ import com.demo.app.repository.QuestionRepository;
 import com.demo.app.repository.SubjectRepository;
 import com.demo.app.service.FileStorageService;
 import com.demo.app.service.QuestionService;
-import com.demo.app.service.S3Service;
 import com.demo.app.util.excel.ExcelUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,8 +43,6 @@ public class QuestionServiceImpl implements QuestionService {
 
     private final FileStorageService fileStorageService;
 
-    private final S3Service s3service;
-
     private final ModelMapper mapper;
 
     @Override
@@ -55,15 +51,9 @@ public class QuestionServiceImpl implements QuestionService {
         var question = mapRequestToQuestion(request);
         var saved = questionRepository.save(question);
         if (file != null) {
-            setQuestionImageUrl(saved, file);
+            uploadQuestionImage(saved, file);
             questionRepository.save(saved);
         }
-    }
-
-    private String uploadQuestionTopicImageToS3(Integer questionId, MultipartFile file) throws IOException {
-        String imageId = UUID.randomUUID().toString();
-        var key = String.format("question/%s/%s", questionId, imageId);
-        return s3service.uploadFile(key, file);
     }
 
     private Question mapRequestToQuestion(SingleQuestionRequest request) {
@@ -213,15 +203,16 @@ public class QuestionServiceImpl implements QuestionService {
             answerRepository.save(answer);
         });
         if (file != null) {
-            setQuestionImageUrl(question, file);
+            uploadQuestionImage(question, file);
         }
         questionRepository.save(question);
     }
 
-    private void setQuestionImageUrl(Question question, MultipartFile file) throws IOException {
+    private void uploadQuestionImage(Question question, MultipartFile file) throws IOException {
         fileStorageService.checkIfFileIsImageFormat(Collections.singletonList(file));
-        String imageUrl = uploadQuestionTopicImageToS3(question.getId(), file);
-        question.setTopicImage(imageUrl);
+        var path = fileStorageService.createClassDirectory("questions/" + question.getId());
+        fileStorageService.upload(path, file);
+        question.setTopicImage(path);
     }
 
     @Override

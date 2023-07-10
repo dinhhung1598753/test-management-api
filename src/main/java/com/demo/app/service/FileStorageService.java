@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface FileStorageService {
-    String createClassDirectory(String classCode) throws IOException;
+    String createClassDirectory(String directory) throws IOException;
 
     String upload(String classCode, MultipartFile file) throws FileInputException;
 

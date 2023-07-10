@@ -36,10 +36,10 @@ public class StudentTestController {
     public ResponseEntity<?> uploadStudentTestImages(@RequestParam(name = "exam-class") String classCode,
                                                      @RequestPart(name = "files") List<MultipartFile> files) throws FileInputException, IOException {
         fileStorageService.checkIfFileIsImageFormat(files);
-        var path = fileStorageService.createClassDirectory(classCode);
+        var path = fileStorageService.createClassDirectory("answer_sheets/" + classCode);
         var imageFilenames = files.stream()
                 .map(file -> TestImageResponse.Filename.builder()
-                        .filename(fileStorageService.upload(classCode, file))
+                        .filename(fileStorageService.upload(path, file))
                         .build())
                 .collect(Collectors.toList());
         return ResponseEntity.status(HttpStatus.OK)
