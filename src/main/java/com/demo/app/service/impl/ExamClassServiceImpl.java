@@ -4,6 +4,7 @@ import com.demo.app.dto.examClass.ClassDetailResponse;
 import com.demo.app.dto.examClass.ClassRequest;
 import com.demo.app.dto.examClass.ClassResponse;
 import com.demo.app.dto.examClass.ClassStudentRequest;
+import com.demo.app.dto.student_test.StudentClassResponse;
 import com.demo.app.dto.student_test.StudentTestExcelResponse;
 import com.demo.app.exception.*;
 import com.demo.app.model.Student;
@@ -112,7 +113,7 @@ public class ExamClassServiceImpl implements ExamClassService {
             var student = (Student) object[1];
             var studentTest = (StudentTest) object[2];
             return ClassDetailResponse.StudentClassResponse.builder()
-                    .fullname(student.getFullname())
+                    .fullName(student.getFullname())
                     .code(student.getCode())
                     .state(studentTest.getState().toString())
                     .testDate(studentTest.getTestDate().toString())
@@ -143,6 +144,28 @@ public class ExamClassServiceImpl implements ExamClassService {
                             .build();
                 }).collect(Collectors.toList());
         return ExcelUtils.convertContentsToExcel(studentTestExcelResponses);
+    }
+
+    @Override
+    public ByteArrayInputStream exportStudentBaseOnClass(String code) throws IOException {
+        var examClass = examClassRepository.findByCode(code)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Exam class " + code + " not found !",
+                        HttpStatus.NOT_FOUND));
+        var studentClass = examClass.getStudents();
+        var studentClassExcelResponses = studentClass.parallelStream()
+                .map(student -> StudentClassResponse.builder()
+                        .fullName(student.getFullname())
+                        .code(student.getCode())
+                        .email(student.getUser().getEmail())
+                        .phoneNumber(student.getPhoneNumber())
+                        .birthday(student.getBirthday().toString())
+                        .gender(student.getGender().toString())
+                        .course(student.getCourse())
+                        .build())
+                .collect(Collectors.toList());
+        return ExcelUtils.convertContentsToExcel(studentClassExcelResponses);
+
     }
 
     @Override

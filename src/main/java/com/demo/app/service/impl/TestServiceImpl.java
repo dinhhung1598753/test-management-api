@@ -1,13 +1,14 @@
 package com.demo.app.service.impl;
 
-import com.demo.app.dto.question.QuestionResponse;
 import com.demo.app.dto.test.*;
 import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.model.Question;
 import com.demo.app.model.Test;
+import com.demo.app.model.TestSet;
 import com.demo.app.repository.QuestionRepository;
 import com.demo.app.repository.SubjectRepository;
 import com.demo.app.repository.TestRepository;
+import com.demo.app.repository.TestSetRepository;
 import com.demo.app.service.TestService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,8 @@ public class TestServiceImpl implements TestService {
 
     private final QuestionRepository questionRepository;
 
+    private final TestSetRepository testSetRepository;
+
     private final SubjectRepository subjectRepository;
 
     private final TestRepository testRepository;
@@ -40,7 +43,7 @@ public class TestServiceImpl implements TestService {
 
     @Override
     @Transactional
-    public TestDetailResponse createTestRandomQuestion(TestRequest request) throws EntityNotFoundException {
+    public void createTestRandomQuestion(TestRequest request) throws EntityNotFoundException {
         var subject = subjectRepository.findByCode(request.getSubjectCode())
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Code: %s not found !", request.getSubjectCode()),
@@ -52,15 +55,6 @@ public class TestServiceImpl implements TestService {
                 request.getChapterOrders(),
                 pageable
         );
-        var questionResponses = questions.stream()
-                .parallel()
-                .map(question -> {
-                    var response = mapper.map(question, QuestionResponse.class);
-                    response.setSubjectTitle(subject.getTitle());
-                    response.setSubjectCode(subject.getCode());
-                    return response;
-                })
-                .collect(Collectors.toList());
         var test = Test.builder()
                 .testDay(LocalDate.parse(request.getTestDay(), DATE_FORMATTER))
                 .testTime(LocalTime.parse(request.getTestTime(), TIME_FORMATTER))
@@ -70,16 +64,6 @@ public class TestServiceImpl implements TestService {
                 .subject(subject)
                 .build();
         testRepository.save(test);
-
-        return TestDetailResponse.builder()
-                .questionQuantity(request.getQuestionQuantity())
-                .testDay(request.getTestDay())
-                .testTime(request.getTestTime())
-                .subjectCode(subject.getCode())
-                .subjectTitle(subject.getTitle())
-                .questionResponses(questionResponses)
-                .duration(request.getDuration())
-                .build();
     }
 
     @Override
@@ -109,33 +93,17 @@ public class TestServiceImpl implements TestService {
                 .map(test -> {
                     var testResponse = mapper.map(test, TestResponse.class);
                     var subject = test.getSubject();
+                    var testSets = testSetRepository.findByEnabledIsTrueAndTest(test);
                     testResponse.setSubjectCode(subject.getCode());
                     testResponse.setSubjectTitle(subject.getTitle());
+                    testResponse.setTestSetNos(
+                            testSets.parallelStream()
+                                    .map(TestSet::getTestNo)
+                                    .collect(Collectors.toList())
+                    );
                     return testResponse;
                 })
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public TestDetailResponse getTestDetail(int testId) {
-        @SuppressWarnings("DefaultLocale") var test = testRepository.findById(testId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Test with id : %d not found !", testId),
-                        HttpStatus.NOT_FOUND));
-        var subject = test.getSubject();
-        System.out.println(subject.getId());
-        var questionResponses = test.getQuestions()
-                .stream()
-                .map(question -> mapper.map(question, QuestionResponse.class))
-                .collect(Collectors.toList());
-        return TestDetailResponse.builder()
-                .questionResponses(questionResponses)
-                .questionQuantity(test.getQuestionQuantity())
-                .subjectCode(subject.getCode())
-                .subjectTitle(subject.getTitle())
-                .testDay(test.getTestDay().toString())
-                .duration(test.getDuration())
-                .build();
     }
 
     @Override
@@ -162,8 +130,10 @@ public class TestServiceImpl implements TestService {
                         String.format("Cannot find any chapter with id %d", testId),
                         HttpStatus.NOT_FOUND));
         test.setEnabled(false);
+        var testSets = testSetRepository.findByEnabledIsTrueAndTest(test);
+        testSets.forEach(testSet -> testSet.setEnabled(false));
         testRepository.save(test);
+        testSetRepository.saveAll(testSets);
     }
-
 
 }

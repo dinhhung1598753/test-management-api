@@ -1,0 +1,5158 @@
+{
+  "subjectTitle": "Data Structure and Algorithms",
+  "subjectCode": "IT3240",
+  "questionQuantity": 60,
+  "testDay": "2023-07-11",
+  "testTime": null,
+  "duration": 60,
+  "testSets": [
+    {
+      "testSet": {
+        "testNo": 102,
+        "duration": 60,
+        "subjectTitle": "Data Structure and Algorithms",
+        "subjectCode": "IT3240",
+        "testDay": "2023-07-11"
+      },
+      "questions": [
+        {
+          "id": 1036,
+          "questionNo": 1,
+          "level": "EASY",
+          "topicText": "Số lượng Node con tối đa của một Node trong cây nhị phân có thể có là ?",
+          "topicImage": "",
+          "answers": [
+            {
+              "id": 4117,
+              "answerNo": "A",
+              "content": "3"
+            },
+            {
+              "id": 4118,
+              "answerNo": "B",
+              "content": "1"
+            },
+            {
+              "id": 4119,
+              "answerNo": "C",
+              "content": "2"
+            },
+            {
+              "id": 4120,
+              "answerNo": "D",
+              "content": "There is no limit"
+            }
+          ]
+        },
+        {
+          "id": 40,
+          "questionNo": 2,
+          "level": "MEDIUM",
+          "topicText": "Stack và Queue có thể được sử dụng để giải quyết vấn đề nào sau đây?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 157,
+              "answerNo": "A",
+              "content": "Lưu trữ dữ liệu trong cấu trúc dữ liệu cây"
+            },
+            {
+              "id": 158,
+              "answerNo": "B",
+              "content": "Sắp xếp danh sách các phần tử theo thứ tự tăng dần"
+            },
+            {
+              "id": 159,
+              "answerNo": "C",
+              "content": "Xử lý các phần tử theo nguyên tắc LIFO hoặc FIFO"
+            },
+            {
+              "id": 160,
+              "answerNo": "D",
+              "content": "Tìm kiếm phần tử có giá trị lớn nhất trong danh sách"
+            }
+          ]
+        },
+        {
+          "id": 14,
+          "questionNo": 3,
+          "level": "EASY",
+          "topicText": " Làm thế nào để kiểm tra xem một mảng có trống hay không trong ngôn ngữ lập trình Python?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 53,
+              "answerNo": "A",
+              "content": "if array.is_empty():"
+            },
+            {
+              "id": 54,
+              "answerNo": "B",
+              "content": "if array.length == 0:"
+            },
+            {
+              "id": 55,
+              "answerNo": "C",
+              "content": "if len(array) == 0:"
+            },
+            {
+              "id": 56,
+              "answerNo": "D",
+              "content": "if array == []:"
+            }
+          ]
+        },
+        {
+          "id": 30,
+          "questionNo": 4,
+          "level": "MEDIUM",
+          "topicText": "Linked List có thể bị tràn bộ nhớ (memory overflow) không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 117,
+              "answerNo": "A",
+              "content": "Không, Linked List không bị tràn bộ nhớ vì nó có thể tự động giải phóng bộ nhớ"
+            },
+            {
+              "id": 118,
+              "answerNo": "B",
+              "content": "Chỉ khi Linked List có kích thước quá lớn"
+            },
+            {
+              "id": 119,
+              "answerNo": "C",
+              "content": "Chỉ khi Linked List được sử dụng trong ngôn ngữ lập trình không hỗ trợ quản lý bộ nhớ tự động"
+            },
+            {
+              "id": 120,
+              "answerNo": "D",
+              "content": "Có, Linked List có thể bị tràn bộ nhớ nếu không được quản lý cẩn thận"
+            }
+          ]
+        },
+        {
+          "id": 33,
+          "questionNo": 5,
+          "level": "EASY",
+          "topicText": "Trong Stack, phần tử nào được truy cập trước cùng?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 129,
+              "answerNo": "A",
+              "content": "Phần tử ở giữa"
+            },
+            {
+              "id": 130,
+              "answerNo": "B",
+              "content": "Phần tử bất kỳ"
+            },
+            {
+              "id": 131,
+              "answerNo": "C",
+              "content": "Phần tử cuối cùng"
+            },
+            {
+              "id": 132,
+              "answerNo": "D",
+              "content": "Phần tử đầu tiên"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "questionNo": 6,
+          "level": "HARD",
+          "topicText": "Cấu trúc dữ liệu nào được sử dụng để lưu trữ dữ liệu theo thứ tự và có thể truy cập nhanh vào phần tử bằng chỉ số?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 5,
+              "answerNo": "A",
+              "content": "Hàng đợi (Queue)"
+            },
+            {
+              "id": 6,
+              "answerNo": "B",
+              "content": "Mảng (Array)"
+            },
+            {
+              "id": 7,
+              "answerNo": "C",
+              "content": "Ngăn xếp (Stack)"
+            },
+            {
+              "id": 8,
+              "answerNo": "D",
+              "content": "Danh sách liên kết (Linked List)"
+            }
+          ]
+        },
+        {
+          "id": 28,
+          "questionNo": 7,
+          "level": "HARD",
+          "topicText": "Linked List có khả năng thực hiện các phép toán như truy cập ngẫu nhiên, chèn và xoá phần tử ở đầu và cuối mảng một cách hiệu quả không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 109,
+              "answerNo": "A",
+              "content": "Không, Linked List chỉ phù hợp với các phép toán tuần tự"
+            },
+            {
+              "id": 110,
+              "answerNo": "B",
+              "content": "Chỉ có thể thực hiện phép toán chèn và xoá phần tử ở đầu và cuối mảng một cách hiệu quả"
+            },
+            {
+              "id": 111,
+              "answerNo": "C",
+              "content": "Có, Linked List có khả năng thực hiện các phép toán đó một cách hiệu quả"
+            },
+            {
+              "id": 112,
+              "answerNo": "D",
+              "content": "Chỉ có thể thực hiện phép toán truy cập ngẫu nhiên một cách hiệu quả"
+            }
+          ]
+        },
+        {
+          "id": 25,
+          "questionNo": 8,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để xoá một phần tử khỏi Linked List?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 97,
+              "answerNo": "A",
+              "content": "Sử dụng phép toán delete() để xoá phần tử"
+            },
+            {
+              "id": 98,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức remove() của lớp Linked List"
+            },
+            {
+              "id": 99,
+              "answerNo": "C",
+              "content": "Tạo một nút trống và gán con trỏ trỏ tới nút trống"
+            },
+            {
+              "id": 100,
+              "answerNo": "D",
+              "content": "Tìm phần tử cần xoá và gán con trỏ trỏ tới phần tử sau nó"
+            }
+          ]
+        },
+        {
+          "id": 20,
+          "questionNo": 9,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để tìm phần tử lớn nhất trong một mảng số nguyên trong ngôn ngữ lập trình Python?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 77,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức max() của lớp list"
+            },
+            {
+              "id": 78,
+              "answerNo": "B",
+              "content": "Sử dụng thuật toán Binary Search"
+            },
+            {
+              "id": 79,
+              "answerNo": "C",
+              "content": "Sử dụng thuật toán Linear Search"
+            },
+            {
+              "id": 80,
+              "answerNo": "D",
+              "content": "Sử dụng vòng lặp để so sánh từng phần tử trong mảng"
+            }
+          ]
+        },
+        {
+          "id": 1495,
+          "questionNo": 10,
+          "level": "EASY",
+          "topicText": "Số lượng Node con tối đa của một Node trong cây nhị phân có thể có là ?",
+          "topicImage": "null",
+          "answers": [
+            {
+              "id": 5921,
+              "answerNo": "A",
+              "content": "2"
+            },
+            {
+              "id": 5922,
+              "answerNo": "B",
+              "content": "There is no limit"
+            },
+            {
+              "id": 5923,
+              "answerNo": "C",
+              "content": "3"
+            },
+            {
+              "id": 5924,
+              "answerNo": "D",
+              "content": "1"
+            }
+          ]
+        },
+        {
+          "id": 16,
+          "questionNo": 11,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để kiểm tra xem hai chuỗi ký tự có là hoán vị của nhau không trong ngôn ngữ lập trình Python?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 61,
+              "answerNo": "A",
+              "content": "Sắp xếp hai chuỗi ký tự và so sánh chúng"
+            },
+            {
+              "id": 62,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức is_permutation() để kiểm tra"
+            },
+            {
+              "id": 63,
+              "answerNo": "C",
+              "content": "So sánh số lượng từng ký tự trong hai chuỗi"
+            },
+            {
+              "id": 64,
+              "answerNo": "D",
+              "content": "Sử dụng phương thức equals() để so sánh hai chuỗi"
+            }
+          ]
+        },
+        {
+          "id": 32,
+          "questionNo": 12,
+          "level": "EASY",
+          "topicText": "Queue (hàng đợi) là gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 125,
+              "answerNo": "A",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự FIFO (First-In-First-Out)"
+            },
+            {
+              "id": 126,
+              "answerNo": "B",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự LIFO (Last-In-First-Out)"
+            },
+            {
+              "id": 127,
+              "answerNo": "C",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự đảo ngược"
+            },
+            {
+              "id": 128,
+              "answerNo": "D",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự ngẫu nhiên"
+            }
+          ]
+        },
+        {
+          "id": 24,
+          "questionNo": 13,
+          "level": "EASY",
+          "topicText": "Linked List có thể chứa các phần tử cùng kiểu dữ liệu không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 93,
+              "answerNo": "A",
+              "content": "Có, Linked List chỉ chứa các phần tử cùng kiểu dữ liệu"
+            },
+            {
+              "id": 94,
+              "answerNo": "B",
+              "content": "Không, Linked List không giới hạn kiểu dữ liệu của phần tử"
+            },
+            {
+              "id": 95,
+              "answerNo": "C",
+              "content": "Chỉ chứa kiểu dữ liệu nguyên thủy"
+            },
+            {
+              "id": 96,
+              "answerNo": "D",
+              "content": "Chỉ chứa kiểu dữ liệu đối tượng"
+            }
+          ]
+        },
+        {
+          "id": 29,
+          "questionNo": 14,
+          "level": "HARD",
+          "topicText": "Linked List có thể được sử dụng để cài đặt cấu trúc dữ liệu Stack không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 113,
+              "answerNo": "A",
+              "content": "Chỉ khi Linked List được cài đặt theo nguyên tắc FIFO"
+            },
+            {
+              "id": 114,
+              "answerNo": "B",
+              "content": "Có, Linked List có thể được sử dụng để cài đặt Stack"
+            },
+            {
+              "id": 115,
+              "answerNo": "C",
+              "content": "Không, Linked List không thích hợp để cài đặt Stack"
+            },
+            {
+              "id": 116,
+              "answerNo": "D",
+              "content": "Chỉ khi Linked List được cài đặt theo nguyên tắc LIFO"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "questionNo": 15,
+          "level": "EASY",
+          "topicText": "Thuật toán nào được sử dụng để sắp xếp một mảng theo thứ tự tăng dần?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 9,
+              "answerNo": "A",
+              "content": "Thuật toán Insertion Sort"
+            },
+            {
+              "id": 10,
+              "answerNo": "B",
+              "content": "Thuật toán Merge Sort"
+            },
+            {
+              "id": 11,
+              "answerNo": "C",
+              "content": "Thuật toán Quick Sort"
+            },
+            {
+              "id": 12,
+              "answerNo": "D",
+              "content": "Thuật toán Bubble Sort"
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "questionNo": 16,
+          "level": "MEDIUM",
+          "topicText": "Tại sao việc chọn cấu trúc dữ liệu phù hợp là quan trọng trong lập trình?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 21,
+              "answerNo": "A",
+              "content": "Chỉ cần sử dụng một cấu trúc dữ liệu duy nhất cho mọi tình huống"
+            },
+            {
+              "id": 22,
+              "answerNo": "B",
+              "content": "Cấu trúc dữ liệu phù hợp giúp tối ưu hóa thời gian và không gian"
+            },
+            {
+              "id": 23,
+              "answerNo": "C",
+              "content": "Không có sự liên quan giữa cấu trúc dữ liệu và hiệu suất của chương trình"
+            },
+            {
+              "id": 24,
+              "answerNo": "D",
+              "content": "Cấu trúc dữ liệu không ảnh hưởng đến hiệu suất của chương trình"
+            }
+          ]
+        },
+        {
+          "id": 11,
+          "questionNo": 17,
+          "level": "EASY",
+          "topicText": "Cách khai báo một mảng trong ngôn ngữ lập trình Java là gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 41,
+              "answerNo": "A",
+              "content": "Array[] arr = new Array[]{};"
+            },
+            {
+              "id": 42,
+              "answerNo": "B",
+              "content": "Array[] arr = new Array[];"
+            },
+            {
+              "id": 43,
+              "answerNo": "C",
+              "content": "Array[] arr = new Array[length];"
+            },
+            {
+              "id": 44,
+              "answerNo": "D",
+              "content": "Array[] arr = new Array[]();"
+            }
+          ]
+        },
+        {
+          "id": 34,
+          "questionNo": 18,
+          "level": "EASY",
+          "topicText": "Trong Queue, phần tử nào được truy cập trước cùng?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 133,
+              "answerNo": "A",
+              "content": "Phần tử ở giữa"
+            },
+            {
+              "id": 134,
+              "answerNo": "B",
+              "content": "Phần tử bất kỳ"
+            },
+            {
+              "id": 135,
+              "answerNo": "C",
+              "content": "Phần tử đầu tiên"
+            },
+            {
+              "id": 136,
+              "answerNo": "D",
+              "content": "Phần tử cuối cùng"
+            }
+          ]
+        },
+        {
+          "id": 18,
+          "questionNo": 19,
+          "level": "HARD",
+          "topicText": "Làm thế nào để xoá một phần tử khỏi mảng trong ngôn ngữ lập trình Java?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 69,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức remove() của lớp ArrayList"
+            },
+            {
+              "id": 70,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức delete() của lớp Array"
+            },
+            {
+              "id": 71,
+              "answerNo": "C",
+              "content": "Sử dụng vòng lặp để sao chép mảng mới loại bỏ phần tử cần xoá"
+            },
+            {
+              "id": 72,
+              "answerNo": "D",
+              "content": "Sử dụng phương thức erase() của lớp Vector"
+            }
+          ]
+        },
+        {
+          "id": 36,
+          "questionNo": 20,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để lấy ra phần tử đầu tiên từ Queue?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 141,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức poll() của lớp Queue"
+            },
+            {
+              "id": 142,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức dequeue() của lớp Queue"
+            },
+            {
+              "id": 143,
+              "answerNo": "C",
+              "content": "Sử dụng phương thức pop() của lớp Queue"
+            },
+            {
+              "id": 144,
+              "answerNo": "D",
+              "content": "Sử dụng phương thức remove() của lớp Queue"
+            }
+          ]
+        },
+        {
+          "id": 1496,
+          "questionNo": 21,
+          "level": "EASY",
+          "topicText": "Câu nào sau đây là đúng ?",
+          "topicImage": "null",
+          "answers": [
+            {
+              "id": 5925,
+              "answerNo": "A",
+              "content": "Mỗi một Node chỉ có thể có 1 Node trái và 1 node bên phải"
+            },
+            {
+              "id": 5926,
+              "answerNo": "B",
+              "content": "Mỗi một node có thể có tùy số lượng node trái và phải"
+            },
+            {
+              "id": 5927,
+              "answerNo": "C",
+              "content": "Mỗi một Node chỉ có thể có 1 Node trái nhưng có thể có nhiều Node bên phải"
+            },
+            {
+              "id": 5928,
+              "answerNo": "D",
+              "content": "Mỗi nút có thể có nhiều nút con bên phải nhưng chỉ có một nút con bên trái."
+            }
+          ]
+        },
+        {
+          "id": 31,
+          "questionNo": 22,
+          "level": "EASY",
+          "topicText": "Stack (ngăn xếp) là gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 121,
+              "answerNo": "A",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự đảo ngược"
+            },
+            {
+              "id": 122,
+              "answerNo": "B",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự ngẫu nhiên"
+            },
+            {
+              "id": 123,
+              "answerNo": "C",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự FIFO (First-In-First-Out)"
+            },
+            {
+              "id": 124,
+              "answerNo": "D",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự LIFO (Last-In-First-Out)"
+            }
+          ]
+        },
+        {
+          "id": 21,
+          "questionNo": 23,
+          "level": "EASY",
+          "topicText": "Câu hỏi: Linked List là gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 81,
+              "answerNo": "A",
+              "content": "Một dạng cây trong cấu trúc dữ liệu"
+            },
+            {
+              "id": 82,
+              "answerNo": "B",
+              "content": "Một dạng mảng trong ngôn ngữ lập trình"
+            },
+            {
+              "id": 83,
+              "answerNo": "C",
+              "content": "Một phần tử duy nhất trong ngôn ngữ lập trình"
+            },
+            {
+              "id": 84,
+              "answerNo": "D",
+              "content": "Một danh sách các phần tử liên kết với nhau"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "questionNo": 24,
+          "level": "EASY",
+          "topicText": "Cấu trúc dữ liệu nào được sử dụng để biểu diễn mối quan hệ \"cha-con\" giữa các phần tử?\n",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 13,
+              "answerNo": "A",
+              "content": "Ngăn xếp (Stack)"
+            },
+            {
+              "id": 14,
+              "answerNo": "B",
+              "content": "Cây (Tree)"
+            },
+            {
+              "id": 15,
+              "answerNo": "C",
+              "content": "Hàng đợi (Queue)"
+            },
+            {
+              "id": 16,
+              "answerNo": "D",
+              "content": "Đồ thị (Graph)"
+            }
+          ]
+        },
+        {
+          "id": 27,
+          "questionNo": 25,
+          "level": "MEDIUM",
+          "topicText": "Để kiểm tra xem Linked List có trống hay không, ta phải thực hiện kiểm tra điều kiện nào?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 105,
+              "answerNo": "A",
+              "content": "Kiểm tra xem số lượng phần tử trong Linked List có bằng 1 hay không"
+            },
+            {
+              "id": 106,
+              "answerNo": "B",
+              "content": "Kiểm tra xem số lượng phần tử trong Linked List có bằng 0 hay không"
+            },
+            {
+              "id": 107,
+              "answerNo": "C",
+              "content": "Kiểm tra xem con trỏ đầu tiên có trỏ tới null hay không"
+            },
+            {
+              "id": 108,
+              "answerNo": "D",
+              "content": "Kiểm tra xem con trỏ cuối cùng có trỏ tới null hay không"
+            }
+          ]
+        },
+        {
+          "id": 39,
+          "questionNo": 26,
+          "level": "HARD",
+          "topicText": "Làm thế nào để kiểm tra xem Queue có rỗng hay không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 153,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức isEmpty() của lớp Queue"
+            },
+            {
+              "id": 154,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức getSize() của lớp Queue và kiểm tra kích thước"
+            },
+            {
+              "id": 155,
+              "answerNo": "C",
+              "content": "Sử dụng phương thức peek() của lớp Queue và kiểm tra giá trị trả về"
+            },
+            {
+              "id": 156,
+              "answerNo": "D",
+              "content": "Sử dụng phương thức isFull() của lớp Queue"
+            }
+          ]
+        },
+        {
+          "id": 35,
+          "questionNo": 27,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để thêm một phần tử vào Stack?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 137,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức add() của lớp Stack"
+            },
+            {
+              "id": 138,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức push() của lớp Stack"
+            },
+            {
+              "id": 139,
+              "answerNo": "C",
+              "content": "Sử dụng phương thức insert() của lớp Stack"
+            },
+            {
+              "id": 140,
+              "answerNo": "D",
+              "content": "Sử dụng phương thức append() của lớp Stack"
+            }
+          ]
+        },
+        {
+          "id": 17,
+          "questionNo": 28,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để tìm kiếm một chuỗi con trong chuỗi gốc trong ngôn ngữ lập trình C++?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 65,
+              "answerNo": "A",
+              "content": "Sử dụng hàm locate() của lớp string"
+            },
+            {
+              "id": 66,
+              "answerNo": "B",
+              "content": "Sử dụng hàm search() của lớp string"
+            },
+            {
+              "id": 67,
+              "answerNo": "C",
+              "content": "Sử dụng hàm find() của lớp string"
+            },
+            {
+              "id": 68,
+              "answerNo": "D",
+              "content": "Sử dụng hàm substring() của lớp string"
+            }
+          ]
+        },
+        {
+          "id": 15,
+          "questionNo": 29,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để đảo ngược một chuỗi ký tự trong ngôn ngữ lập trình Java?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 57,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức reverse() của lớp StringBuffer"
+            },
+            {
+              "id": 58,
+              "answerNo": "B",
+              "content": " Sử dụng vòng lặp để đảo ngược từng ký tự trong chuỗi"
+            },
+            {
+              "id": 59,
+              "answerNo": "C",
+              "content": "Sử dụng phương thức reverse() của lớp String"
+            },
+            {
+              "id": 60,
+              "answerNo": "D",
+              "content": "Sử dụng phương thức reverse() của lớp StringBuilder"
+            }
+          ]
+        },
+        {
+          "id": 19,
+          "questionNo": 30,
+          "level": "HARD",
+          "topicText": "Làm thế nào để sắp xếp một mảng số nguyên theo thứ tự tăng dần trong ngôn ngữ lập trình C++?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 73,
+              "answerNo": "A",
+              "content": "Sử dụng thuật toán Bubble Sort"
+            },
+            {
+              "id": 74,
+              "answerNo": "B",
+              "content": "Sử dụng thuật toán Quick Sort"
+            },
+            {
+              "id": 75,
+              "answerNo": "C",
+              "content": "Sử dụng thuật toán Insertion Sort"
+            },
+            {
+              "id": 76,
+              "answerNo": "D",
+              "content": "Sử dụng thuật toán Merge Sort"
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "questionNo": 31,
+          "level": "MEDIUM",
+          "topicText": "Cấu trúc dữ liệu và giải thuật khác nhau như thế nào?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 25,
+              "answerNo": "A",
+              "content": "Cấu trúc dữ liệu tập trung vào việc lưu trữ dữ liệu, trong khi giải thuật tập trung vào việc xử lý dữ liệu"
+            },
+            {
+              "id": 26,
+              "answerNo": "B",
+              "content": "Cấu trúc dữ liệu và giải thuật chỉ khác nhau về tên gọi"
+            },
+            {
+              "id": 27,
+              "answerNo": "C",
+              "content": "Cấu trúc dữ liệu và giải thuật không liên quan đến nhau"
+            },
+            {
+              "id": 28,
+              "answerNo": "D",
+              "content": "Cấu trúc dữ liệu và giải thuật là hai thuật ngữ chỉ cùng một khái niệm"
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "questionNo": 32,
+          "level": "HARD",
+          "topicText": "Làm thế nào để biểu diễn cấu trúc dữ liệu trong lập trình?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 33,
+              "answerNo": "A",
+              "content": "Sử dụng mã nguồn lập trình"
+            },
+            {
+              "id": 34,
+              "answerNo": "B",
+              "content": "Sử dụng ngôn ngữ tự nhiên"
+            },
+            {
+              "id": 35,
+              "answerNo": "C",
+              "content": "Sử dụng biểu đồ sơ đồ"
+            },
+            {
+              "id": 36,
+              "answerNo": "D",
+              "content": "Sử dụng các kiểu dữ liệu và cú pháp lập trình"
+            }
+          ]
+        },
+        {
+          "id": 37,
+          "questionNo": 33,
+          "level": "MEDIUM",
+          "topicText": "Stack và Queue có thể được cài đặt bằng cách sử dụng cấu trúc dữ liệu nào sau đây?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 145,
+              "answerNo": "A",
+              "content": "Mảng (Array)"
+            },
+            {
+              "id": 146,
+              "answerNo": "B",
+              "content": "Cây nhị phân (Binary Tree)"
+            },
+            {
+              "id": 147,
+              "answerNo": "C",
+              "content": "Danh sách liên kết (Linked List)"
+            },
+            {
+              "id": 148,
+              "answerNo": "D",
+              "content": "Đồ thị (Graph)"
+            }
+          ]
+        },
+        {
+          "id": 26,
+          "questionNo": 34,
+          "level": "MEDIUM",
+          "topicText": "Linked List có thể được duyệt theo thứ tự ngược lại không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 101,
+              "answerNo": "A",
+              "content": "Không, Linked List chỉ có thể được duyệt theo thứ tự từ đầu đến cuối"
+            },
+            {
+              "id": 102,
+              "answerNo": "B",
+              "content": "Có, ta có thể duyệt Linked List theo thứ tự ngược lại"
+            },
+            {
+              "id": 103,
+              "answerNo": "C",
+              "content": "Chỉ khi có phần tử cuối cùng trong Linked List"
+            },
+            {
+              "id": 104,
+              "answerNo": "D",
+              "content": "Chỉ khi có phần tử đầu tiên trong Linked List"
+            }
+          ]
+        },
+        {
+          "id": 22,
+          "questionNo": 35,
+          "level": "EASY",
+          "topicText": "Để thêm một phần tử vào cuối Linked List, ta phải làm gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 85,
+              "answerNo": "A",
+              "content": "Sử dụng phép toán insert() của lớp Linked List"
+            },
+            {
+              "id": 86,
+              "answerNo": "B",
+              "content": "Sử dụng phép toán add() của lớp Linked List"
+            },
+            {
+              "id": 87,
+              "answerNo": "C",
+              "content": "Tạo một nút mới và gán nút đầu tiên của Linked List trỏ tới nút mới"
+            },
+            {
+              "id": 88,
+              "answerNo": "D",
+              "content": "Tạo một nút mới và gán nút cuối cùng của Linked List trỏ tới nút mới"
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "questionNo": 36,
+          "level": "EASY",
+          "topicText": "Độ phức tạp thời gian để truy cập phần tử trong một mảng là bao nhiêu?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 49,
+              "answerNo": "A",
+              "content": "O(log n)"
+            },
+            {
+              "id": 50,
+              "answerNo": "B",
+              "content": "O(n)"
+            },
+            {
+              "id": 51,
+              "answerNo": "C",
+              "content": "O(1)"
+            },
+            {
+              "id": 52,
+              "answerNo": "D",
+              "content": "O(n^2)"
+            }
+          ]
+        },
+        {
+          "id": 1501,
+          "questionNo": 37,
+          "level": "MEDIUM",
+          "topicText": "Hay cho biet cach duyet do thi sau theo DFS",
+          "topicImage": "https://multiple-choice-images.s3.ap-southeast-1.amazonaws.com/question/1501/0db58655-eedf-4c8a-968c-d677eba392ce",
+          "answers": [
+            {
+              "id": 5945,
+              "answerNo": "A",
+              "content": "EFABC"
+            },
+            {
+              "id": 5946,
+              "answerNo": "B",
+              "content": "BDEFCA"
+            },
+            {
+              "id": 5947,
+              "answerNo": "C",
+              "content": "ABCDEF"
+            },
+            {
+              "id": 5948,
+              "answerNo": "D",
+              "content": "DEBCAF"
+            }
+          ]
+        },
+        {
+          "id": 1037,
+          "questionNo": 38,
+          "level": "EASY",
+          "topicText": "Câu nào sau đây là đúng ?",
+          "topicImage": "",
+          "answers": [
+            {
+              "id": 4121,
+              "answerNo": "A",
+              "content": "Mỗi một Node chỉ có thể có 1 Node trái và 1 node bên phải"
+            },
+            {
+              "id": 4122,
+              "answerNo": "B",
+              "content": "Mỗi nút có thể có nhiều nút con bên phải nhưng chỉ có một nút con bên trái."
+            },
+            {
+              "id": 4123,
+              "answerNo": "C",
+              "content": "Mỗi một Node chỉ có thể có 1 Node trái nhưng có thể có nhiều Node bên phải"
+            },
+            {
+              "id": 4124,
+              "answerNo": "D",
+              "content": "Mỗi một node có thể có tùy số lượng node trái và phải"
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "questionNo": 39,
+          "level": "EASY",
+          "topicText": "Làm thế nào để truy cập phần tử thứ i trong một mảng trong ngôn ngữ lập trình C++?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 45,
+              "answerNo": "A",
+              "content": "arr{i};"
+            },
+            {
+              "id": 46,
+              "answerNo": "B",
+              "content": "arr[i];"
+            },
+            {
+              "id": 47,
+              "answerNo": "C",
+              "content": "arr(i);"
+            },
+            {
+              "id": 48,
+              "answerNo": "D",
+              "content": "arr.i;"
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "questionNo": 40,
+          "level": "MEDIUM",
+          "topicText": "Độ phức tạp thời gian của thuật toán là gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 37,
+              "answerNo": "A",
+              "content": "Số lượng câu lệnh trong thuật toán"
+            },
+            {
+              "id": 38,
+              "answerNo": "B",
+              "content": "Số lượng bước thực hiện trong thuật toán"
+            },
+            {
+              "id": 39,
+              "answerNo": "C",
+              "content": "Thời gian thực thi của thuật toán"
+            },
+            {
+              "id": 40,
+              "answerNo": "D",
+              "content": "Số lần thực hiện các phép toán trong thuật toán"
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "questionNo": 41,
+          "level": "EASY",
+          "topicText": "Giải thuật là gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 17,
+              "answerNo": "A",
+              "content": "Một ngôn ngữ lập trình"
+            },
+            {
+              "id": 18,
+              "answerNo": "B",
+              "content": "Một phương pháp đồ họa"
+            },
+            {
+              "id": 19,
+              "answerNo": "C",
+              "content": "Một khái niệm về lập trình"
+            },
+            {
+              "id": 20,
+              "answerNo": "D",
+              "content": "Một quy trình giải quyết vấn đề bằng cách sử dụng các bước cụ thể"
+            }
+          ]
+        },
+        {
+          "id": 23,
+          "questionNo": 42,
+          "level": "EASY",
+          "topicText": "Để truy cập phần tử thứ i trong Linked List, ta phải thực hiện bao nhiêu bước?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 89,
+              "answerNo": "A",
+              "content": "O(n)"
+            },
+            {
+              "id": 90,
+              "answerNo": "B",
+              "content": "O(1)"
+            },
+            {
+              "id": 91,
+              "answerNo": "C",
+              "content": "O(n^2)"
+            },
+            {
+              "id": 92,
+              "answerNo": "D",
+              "content": "O(log n)"
+            }
+          ]
+        },
+        {
+          "id": 38,
+          "questionNo": 43,
+          "level": "HARD",
+          "topicText": "Làm thế nào để kiểm tra xem Stack có rỗng hay không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 149,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức peek() của lớp Stack và kiểm tra giá trị trả về"
+            },
+            {
+              "id": 150,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức isFull() của lớp Stack"
+            },
+            {
+              "id": 151,
+              "answerNo": "C",
+              "content": "Sử dụng phương thức getSize() của lớp Stack và kiểm tra kích thước"
+            },
+            {
+              "id": 152,
+              "answerNo": "D",
+              "content": "Sử dụng phương thức isEmpty() của lớp Stack"
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "questionNo": 44,
+          "level": "HARD",
+          "topicText": "Cấu trúc dữ liệu và giải thuật có vai trò gì trong lập trình?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 29,
+              "answerNo": "A",
+              "content": "Lưu trữ dữ liệu một cách an toàn"
+            },
+            {
+              "id": 30,
+              "answerNo": "B",
+              "content": "Đảm bảo tính đúng đắn của chương trình"
+            },
+            {
+              "id": 31,
+              "answerNo": "C",
+              "content": "Tăng tính linh hoạt và hiệu suất của chương trình"
+            },
+            {
+              "id": 32,
+              "answerNo": "D",
+              "content": "Làm cho chương trình chạy nhanh hơn"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "testSet": {
+        "testNo": 101,
+        "duration": 60,
+        "subjectTitle": "Data Structure and Algorithms",
+        "subjectCode": "IT3240",
+        "testDay": "2023-07-11"
+      },
+      "questions": [
+        {
+          "id": 2,
+          "questionNo": 1,
+          "level": "HARD",
+          "topicText": "Cấu trúc dữ liệu nào được sử dụng để lưu trữ dữ liệu theo thứ tự và có thể truy cập nhanh vào phần tử bằng chỉ số?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 5,
+              "answerNo": "A",
+              "content": "Ngăn xếp (Stack)"
+            },
+            {
+              "id": 6,
+              "answerNo": "B",
+              "content": "Hàng đợi (Queue)"
+            },
+            {
+              "id": 7,
+              "answerNo": "C",
+              "content": "Danh sách liên kết (Linked List)"
+            },
+            {
+              "id": 8,
+              "answerNo": "D",
+              "content": "Mảng (Array)"
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "questionNo": 2,
+          "level": "MEDIUM",
+          "topicText": "Tại sao việc chọn cấu trúc dữ liệu phù hợp là quan trọng trong lập trình?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 21,
+              "answerNo": "A",
+              "content": "Cấu trúc dữ liệu phù hợp giúp tối ưu hóa thời gian và không gian"
+            },
+            {
+              "id": 22,
+              "answerNo": "B",
+              "content": "Cấu trúc dữ liệu không ảnh hưởng đến hiệu suất của chương trình"
+            },
+            {
+              "id": 23,
+              "answerNo": "C",
+              "content": "Chỉ cần sử dụng một cấu trúc dữ liệu duy nhất cho mọi tình huống"
+            },
+            {
+              "id": 24,
+              "answerNo": "D",
+              "content": "Không có sự liên quan giữa cấu trúc dữ liệu và hiệu suất của chương trình"
+            }
+          ]
+        },
+        {
+          "id": 15,
+          "questionNo": 3,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để đảo ngược một chuỗi ký tự trong ngôn ngữ lập trình Java?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 57,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức reverse() của lớp String"
+            },
+            {
+              "id": 58,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức reverse() của lớp StringBuilder"
+            },
+            {
+              "id": 59,
+              "answerNo": "C",
+              "content": "Sử dụng phương thức reverse() của lớp StringBuffer"
+            },
+            {
+              "id": 60,
+              "answerNo": "D",
+              "content": " Sử dụng vòng lặp để đảo ngược từng ký tự trong chuỗi"
+            }
+          ]
+        },
+        {
+          "id": 1036,
+          "questionNo": 4,
+          "level": "EASY",
+          "topicText": "Số lượng Node con tối đa của một Node trong cây nhị phân có thể có là ?",
+          "topicImage": "",
+          "answers": [
+            {
+              "id": 4117,
+              "answerNo": "A",
+              "content": "3"
+            },
+            {
+              "id": 4118,
+              "answerNo": "B",
+              "content": "There is no limit"
+            },
+            {
+              "id": 4119,
+              "answerNo": "C",
+              "content": "2"
+            },
+            {
+              "id": 4120,
+              "answerNo": "D",
+              "content": "1"
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "questionNo": 5,
+          "level": "HARD",
+          "topicText": "Cấu trúc dữ liệu và giải thuật có vai trò gì trong lập trình?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 29,
+              "answerNo": "A",
+              "content": "Lưu trữ dữ liệu một cách an toàn"
+            },
+            {
+              "id": 30,
+              "answerNo": "B",
+              "content": "Làm cho chương trình chạy nhanh hơn"
+            },
+            {
+              "id": 31,
+              "answerNo": "C",
+              "content": "Tăng tính linh hoạt và hiệu suất của chương trình"
+            },
+            {
+              "id": 32,
+              "answerNo": "D",
+              "content": "Đảm bảo tính đúng đắn của chương trình"
+            }
+          ]
+        },
+        {
+          "id": 16,
+          "questionNo": 6,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để kiểm tra xem hai chuỗi ký tự có là hoán vị của nhau không trong ngôn ngữ lập trình Python?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 61,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức is_permutation() để kiểm tra"
+            },
+            {
+              "id": 62,
+              "answerNo": "B",
+              "content": "So sánh số lượng từng ký tự trong hai chuỗi"
+            },
+            {
+              "id": 63,
+              "answerNo": "C",
+              "content": "Sử dụng phương thức equals() để so sánh hai chuỗi"
+            },
+            {
+              "id": 64,
+              "answerNo": "D",
+              "content": "Sắp xếp hai chuỗi ký tự và so sánh chúng"
+            }
+          ]
+        },
+        {
+          "id": 18,
+          "questionNo": 7,
+          "level": "HARD",
+          "topicText": "Làm thế nào để xoá một phần tử khỏi mảng trong ngôn ngữ lập trình Java?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 69,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức delete() của lớp Array"
+            },
+            {
+              "id": 70,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức remove() của lớp ArrayList"
+            },
+            {
+              "id": 71,
+              "answerNo": "C",
+              "content": "Sử dụng vòng lặp để sao chép mảng mới loại bỏ phần tử cần xoá"
+            },
+            {
+              "id": 72,
+              "answerNo": "D",
+              "content": "Sử dụng phương thức erase() của lớp Vector"
+            }
+          ]
+        },
+        {
+          "id": 28,
+          "questionNo": 8,
+          "level": "HARD",
+          "topicText": "Linked List có khả năng thực hiện các phép toán như truy cập ngẫu nhiên, chèn và xoá phần tử ở đầu và cuối mảng một cách hiệu quả không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 109,
+              "answerNo": "A",
+              "content": "Chỉ có thể thực hiện phép toán chèn và xoá phần tử ở đầu và cuối mảng một cách hiệu quả"
+            },
+            {
+              "id": 110,
+              "answerNo": "B",
+              "content": "Có, Linked List có khả năng thực hiện các phép toán đó một cách hiệu quả"
+            },
+            {
+              "id": 111,
+              "answerNo": "C",
+              "content": "Không, Linked List chỉ phù hợp với các phép toán tuần tự"
+            },
+            {
+              "id": 112,
+              "answerNo": "D",
+              "content": "Chỉ có thể thực hiện phép toán truy cập ngẫu nhiên một cách hiệu quả"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "questionNo": 9,
+          "level": "EASY",
+          "topicText": "Cấu trúc dữ liệu nào được sử dụng để biểu diễn mối quan hệ \"cha-con\" giữa các phần tử?\n",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 13,
+              "answerNo": "A",
+              "content": "Cây (Tree)"
+            },
+            {
+              "id": 14,
+              "answerNo": "B",
+              "content": "Hàng đợi (Queue)"
+            },
+            {
+              "id": 15,
+              "answerNo": "C",
+              "content": "Đồ thị (Graph)"
+            },
+            {
+              "id": 16,
+              "answerNo": "D",
+              "content": "Ngăn xếp (Stack)"
+            }
+          ]
+        },
+        {
+          "id": 17,
+          "questionNo": 10,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để tìm kiếm một chuỗi con trong chuỗi gốc trong ngôn ngữ lập trình C++?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 65,
+              "answerNo": "A",
+              "content": "Sử dụng hàm find() của lớp string"
+            },
+            {
+              "id": 66,
+              "answerNo": "B",
+              "content": "Sử dụng hàm substring() của lớp string"
+            },
+            {
+              "id": 67,
+              "answerNo": "C",
+              "content": "Sử dụng hàm locate() của lớp string"
+            },
+            {
+              "id": 68,
+              "answerNo": "D",
+              "content": "Sử dụng hàm search() của lớp string"
+            }
+          ]
+        },
+        {
+          "id": 30,
+          "questionNo": 11,
+          "level": "MEDIUM",
+          "topicText": "Linked List có thể bị tràn bộ nhớ (memory overflow) không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 117,
+              "answerNo": "A",
+              "content": "Chỉ khi Linked List có kích thước quá lớn"
+            },
+            {
+              "id": 118,
+              "answerNo": "B",
+              "content": "Không, Linked List không bị tràn bộ nhớ vì nó có thể tự động giải phóng bộ nhớ"
+            },
+            {
+              "id": 119,
+              "answerNo": "C",
+              "content": "Chỉ khi Linked List được sử dụng trong ngôn ngữ lập trình không hỗ trợ quản lý bộ nhớ tự động"
+            },
+            {
+              "id": 120,
+              "answerNo": "D",
+              "content": "Có, Linked List có thể bị tràn bộ nhớ nếu không được quản lý cẩn thận"
+            }
+          ]
+        },
+        {
+          "id": 35,
+          "questionNo": 12,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để thêm một phần tử vào Stack?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 137,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức insert() của lớp Stack"
+            },
+            {
+              "id": 138,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức push() của lớp Stack"
+            },
+            {
+              "id": 139,
+              "answerNo": "C",
+              "content": "Sử dụng phương thức add() của lớp Stack"
+            },
+            {
+              "id": 140,
+              "answerNo": "D",
+              "content": "Sử dụng phương thức append() của lớp Stack"
+            }
+          ]
+        },
+        {
+          "id": 19,
+          "questionNo": 13,
+          "level": "HARD",
+          "topicText": "Làm thế nào để sắp xếp một mảng số nguyên theo thứ tự tăng dần trong ngôn ngữ lập trình C++?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 73,
+              "answerNo": "A",
+              "content": "Sử dụng thuật toán Insertion Sort"
+            },
+            {
+              "id": 74,
+              "answerNo": "B",
+              "content": "Sử dụng thuật toán Quick Sort"
+            },
+            {
+              "id": 75,
+              "answerNo": "C",
+              "content": "Sử dụng thuật toán Bubble Sort"
+            },
+            {
+              "id": 76,
+              "answerNo": "D",
+              "content": "Sử dụng thuật toán Merge Sort"
+            }
+          ]
+        },
+        {
+          "id": 11,
+          "questionNo": 14,
+          "level": "EASY",
+          "topicText": "Cách khai báo một mảng trong ngôn ngữ lập trình Java là gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 41,
+              "answerNo": "A",
+              "content": "Array[] arr = new Array[]();"
+            },
+            {
+              "id": 42,
+              "answerNo": "B",
+              "content": "Array[] arr = new Array[]{};"
+            },
+            {
+              "id": 43,
+              "answerNo": "C",
+              "content": "Array[] arr = new Array[];"
+            },
+            {
+              "id": 44,
+              "answerNo": "D",
+              "content": "Array[] arr = new Array[length];"
+            }
+          ]
+        },
+        {
+          "id": 1495,
+          "questionNo": 15,
+          "level": "EASY",
+          "topicText": "Số lượng Node con tối đa của một Node trong cây nhị phân có thể có là ?",
+          "topicImage": "null",
+          "answers": [
+            {
+              "id": 5921,
+              "answerNo": "A",
+              "content": "2"
+            },
+            {
+              "id": 5922,
+              "answerNo": "B",
+              "content": "1"
+            },
+            {
+              "id": 5923,
+              "answerNo": "C",
+              "content": "There is no limit"
+            },
+            {
+              "id": 5924,
+              "answerNo": "D",
+              "content": "3"
+            }
+          ]
+        },
+        {
+          "id": 14,
+          "questionNo": 16,
+          "level": "EASY",
+          "topicText": " Làm thế nào để kiểm tra xem một mảng có trống hay không trong ngôn ngữ lập trình Python?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 53,
+              "answerNo": "A",
+              "content": "if array.is_empty():"
+            },
+            {
+              "id": 54,
+              "answerNo": "B",
+              "content": "if len(array) == 0:"
+            },
+            {
+              "id": 55,
+              "answerNo": "C",
+              "content": "if array.length == 0:"
+            },
+            {
+              "id": 56,
+              "answerNo": "D",
+              "content": "if array == []:"
+            }
+          ]
+        },
+        {
+          "id": 36,
+          "questionNo": 17,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để lấy ra phần tử đầu tiên từ Queue?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 141,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức pop() của lớp Queue"
+            },
+            {
+              "id": 142,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức dequeue() của lớp Queue"
+            },
+            {
+              "id": 143,
+              "answerNo": "C",
+              "content": "Sử dụng phương thức poll() của lớp Queue"
+            },
+            {
+              "id": 144,
+              "answerNo": "D",
+              "content": "Sử dụng phương thức remove() của lớp Queue"
+            }
+          ]
+        },
+        {
+          "id": 37,
+          "questionNo": 18,
+          "level": "MEDIUM",
+          "topicText": "Stack và Queue có thể được cài đặt bằng cách sử dụng cấu trúc dữ liệu nào sau đây?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 145,
+              "answerNo": "A",
+              "content": "Đồ thị (Graph)"
+            },
+            {
+              "id": 146,
+              "answerNo": "B",
+              "content": "Cây nhị phân (Binary Tree)"
+            },
+            {
+              "id": 147,
+              "answerNo": "C",
+              "content": "Danh sách liên kết (Linked List)"
+            },
+            {
+              "id": 148,
+              "answerNo": "D",
+              "content": "Mảng (Array)"
+            }
+          ]
+        },
+        {
+          "id": 22,
+          "questionNo": 19,
+          "level": "EASY",
+          "topicText": "Để thêm một phần tử vào cuối Linked List, ta phải làm gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 85,
+              "answerNo": "A",
+              "content": "Tạo một nút mới và gán nút cuối cùng của Linked List trỏ tới nút mới"
+            },
+            {
+              "id": 86,
+              "answerNo": "B",
+              "content": "Sử dụng phép toán add() của lớp Linked List"
+            },
+            {
+              "id": 87,
+              "answerNo": "C",
+              "content": "Sử dụng phép toán insert() của lớp Linked List"
+            },
+            {
+              "id": 88,
+              "answerNo": "D",
+              "content": "Tạo một nút mới và gán nút đầu tiên của Linked List trỏ tới nút mới"
+            }
+          ]
+        },
+        {
+          "id": 39,
+          "questionNo": 20,
+          "level": "HARD",
+          "topicText": "Làm thế nào để kiểm tra xem Queue có rỗng hay không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 153,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức peek() của lớp Queue và kiểm tra giá trị trả về"
+            },
+            {
+              "id": 154,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức isFull() của lớp Queue"
+            },
+            {
+              "id": 155,
+              "answerNo": "C",
+              "content": "Sử dụng phương thức getSize() của lớp Queue và kiểm tra kích thước"
+            },
+            {
+              "id": 156,
+              "answerNo": "D",
+              "content": "Sử dụng phương thức isEmpty() của lớp Queue"
+            }
+          ]
+        },
+        {
+          "id": 21,
+          "questionNo": 21,
+          "level": "EASY",
+          "topicText": "Câu hỏi: Linked List là gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 81,
+              "answerNo": "A",
+              "content": "Một danh sách các phần tử liên kết với nhau"
+            },
+            {
+              "id": 82,
+              "answerNo": "B",
+              "content": "Một phần tử duy nhất trong ngôn ngữ lập trình"
+            },
+            {
+              "id": 83,
+              "answerNo": "C",
+              "content": "Một dạng mảng trong ngôn ngữ lập trình"
+            },
+            {
+              "id": 84,
+              "answerNo": "D",
+              "content": "Một dạng cây trong cấu trúc dữ liệu"
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "questionNo": 22,
+          "level": "HARD",
+          "topicText": "Làm thế nào để biểu diễn cấu trúc dữ liệu trong lập trình?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 33,
+              "answerNo": "A",
+              "content": "Sử dụng mã nguồn lập trình"
+            },
+            {
+              "id": 34,
+              "answerNo": "B",
+              "content": "Sử dụng ngôn ngữ tự nhiên"
+            },
+            {
+              "id": 35,
+              "answerNo": "C",
+              "content": "Sử dụng biểu đồ sơ đồ"
+            },
+            {
+              "id": 36,
+              "answerNo": "D",
+              "content": "Sử dụng các kiểu dữ liệu và cú pháp lập trình"
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "questionNo": 23,
+          "level": "MEDIUM",
+          "topicText": "Độ phức tạp thời gian của thuật toán là gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 37,
+              "answerNo": "A",
+              "content": "Số lần thực hiện các phép toán trong thuật toán"
+            },
+            {
+              "id": 38,
+              "answerNo": "B",
+              "content": "Số lượng bước thực hiện trong thuật toán"
+            },
+            {
+              "id": 39,
+              "answerNo": "C",
+              "content": "Thời gian thực thi của thuật toán"
+            },
+            {
+              "id": 40,
+              "answerNo": "D",
+              "content": "Số lượng câu lệnh trong thuật toán"
+            }
+          ]
+        },
+        {
+          "id": 27,
+          "questionNo": 24,
+          "level": "MEDIUM",
+          "topicText": "Để kiểm tra xem Linked List có trống hay không, ta phải thực hiện kiểm tra điều kiện nào?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 105,
+              "answerNo": "A",
+              "content": "Kiểm tra xem số lượng phần tử trong Linked List có bằng 0 hay không"
+            },
+            {
+              "id": 106,
+              "answerNo": "B",
+              "content": "Kiểm tra xem con trỏ đầu tiên có trỏ tới null hay không"
+            },
+            {
+              "id": 107,
+              "answerNo": "C",
+              "content": "Kiểm tra xem con trỏ cuối cùng có trỏ tới null hay không"
+            },
+            {
+              "id": 108,
+              "answerNo": "D",
+              "content": "Kiểm tra xem số lượng phần tử trong Linked List có bằng 1 hay không"
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "questionNo": 25,
+          "level": "EASY",
+          "topicText": "Làm thế nào để truy cập phần tử thứ i trong một mảng trong ngôn ngữ lập trình C++?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 45,
+              "answerNo": "A",
+              "content": "arr.i;"
+            },
+            {
+              "id": 46,
+              "answerNo": "B",
+              "content": "arr[i];"
+            },
+            {
+              "id": 47,
+              "answerNo": "C",
+              "content": "arr(i);"
+            },
+            {
+              "id": 48,
+              "answerNo": "D",
+              "content": "arr{i};"
+            }
+          ]
+        },
+        {
+          "id": 40,
+          "questionNo": 26,
+          "level": "MEDIUM",
+          "topicText": "Stack và Queue có thể được sử dụng để giải quyết vấn đề nào sau đây?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 157,
+              "answerNo": "A",
+              "content": "Lưu trữ dữ liệu trong cấu trúc dữ liệu cây"
+            },
+            {
+              "id": 158,
+              "answerNo": "B",
+              "content": "Xử lý các phần tử theo nguyên tắc LIFO hoặc FIFO"
+            },
+            {
+              "id": 159,
+              "answerNo": "C",
+              "content": "Tìm kiếm phần tử có giá trị lớn nhất trong danh sách"
+            },
+            {
+              "id": 160,
+              "answerNo": "D",
+              "content": "Sắp xếp danh sách các phần tử theo thứ tự tăng dần"
+            }
+          ]
+        },
+        {
+          "id": 31,
+          "questionNo": 27,
+          "level": "EASY",
+          "topicText": "Stack (ngăn xếp) là gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 121,
+              "answerNo": "A",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự ngẫu nhiên"
+            },
+            {
+              "id": 122,
+              "answerNo": "B",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự đảo ngược"
+            },
+            {
+              "id": 123,
+              "answerNo": "C",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự FIFO (First-In-First-Out)"
+            },
+            {
+              "id": 124,
+              "answerNo": "D",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự LIFO (Last-In-First-Out)"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "questionNo": 28,
+          "level": "EASY",
+          "topicText": "Thuật toán nào được sử dụng để sắp xếp một mảng theo thứ tự tăng dần?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 9,
+              "answerNo": "A",
+              "content": "Thuật toán Merge Sort"
+            },
+            {
+              "id": 10,
+              "answerNo": "B",
+              "content": "Thuật toán Insertion Sort"
+            },
+            {
+              "id": 11,
+              "answerNo": "C",
+              "content": "Thuật toán Bubble Sort"
+            },
+            {
+              "id": 12,
+              "answerNo": "D",
+              "content": "Thuật toán Quick Sort"
+            }
+          ]
+        },
+        {
+          "id": 24,
+          "questionNo": 29,
+          "level": "EASY",
+          "topicText": "Linked List có thể chứa các phần tử cùng kiểu dữ liệu không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 93,
+              "answerNo": "A",
+              "content": "Chỉ chứa kiểu dữ liệu đối tượng"
+            },
+            {
+              "id": 94,
+              "answerNo": "B",
+              "content": "Chỉ chứa kiểu dữ liệu nguyên thủy"
+            },
+            {
+              "id": 95,
+              "answerNo": "C",
+              "content": "Không, Linked List không giới hạn kiểu dữ liệu của phần tử"
+            },
+            {
+              "id": 96,
+              "answerNo": "D",
+              "content": "Có, Linked List chỉ chứa các phần tử cùng kiểu dữ liệu"
+            }
+          ]
+        },
+        {
+          "id": 1496,
+          "questionNo": 30,
+          "level": "EASY",
+          "topicText": "Câu nào sau đây là đúng ?",
+          "topicImage": "null",
+          "answers": [
+            {
+              "id": 5925,
+              "answerNo": "A",
+              "content": "Mỗi một Node chỉ có thể có 1 Node trái và 1 node bên phải"
+            },
+            {
+              "id": 5926,
+              "answerNo": "B",
+              "content": "Mỗi một node có thể có tùy số lượng node trái và phải"
+            },
+            {
+              "id": 5927,
+              "answerNo": "C",
+              "content": "Mỗi nút có thể có nhiều nút con bên phải nhưng chỉ có một nút con bên trái."
+            },
+            {
+              "id": 5928,
+              "answerNo": "D",
+              "content": "Mỗi một Node chỉ có thể có 1 Node trái nhưng có thể có nhiều Node bên phải"
+            }
+          ]
+        },
+        {
+          "id": 33,
+          "questionNo": 31,
+          "level": "EASY",
+          "topicText": "Trong Stack, phần tử nào được truy cập trước cùng?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 129,
+              "answerNo": "A",
+              "content": "Phần tử bất kỳ"
+            },
+            {
+              "id": 130,
+              "answerNo": "B",
+              "content": "Phần tử đầu tiên"
+            },
+            {
+              "id": 131,
+              "answerNo": "C",
+              "content": "Phần tử ở giữa"
+            },
+            {
+              "id": 132,
+              "answerNo": "D",
+              "content": "Phần tử cuối cùng"
+            }
+          ]
+        },
+        {
+          "id": 20,
+          "questionNo": 32,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để tìm phần tử lớn nhất trong một mảng số nguyên trong ngôn ngữ lập trình Python?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 77,
+              "answerNo": "A",
+              "content": "Sử dụng vòng lặp để so sánh từng phần tử trong mảng"
+            },
+            {
+              "id": 78,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức max() của lớp list"
+            },
+            {
+              "id": 79,
+              "answerNo": "C",
+              "content": "Sử dụng thuật toán Linear Search"
+            },
+            {
+              "id": 80,
+              "answerNo": "D",
+              "content": "Sử dụng thuật toán Binary Search"
+            }
+          ]
+        },
+        {
+          "id": 38,
+          "questionNo": 33,
+          "level": "HARD",
+          "topicText": "Làm thế nào để kiểm tra xem Stack có rỗng hay không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 149,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức isFull() của lớp Stack"
+            },
+            {
+              "id": 150,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức isEmpty() của lớp Stack"
+            },
+            {
+              "id": 151,
+              "answerNo": "C",
+              "content": "Sử dụng phương thức peek() của lớp Stack và kiểm tra giá trị trả về"
+            },
+            {
+              "id": 152,
+              "answerNo": "D",
+              "content": "Sử dụng phương thức getSize() của lớp Stack và kiểm tra kích thước"
+            }
+          ]
+        },
+        {
+          "id": 23,
+          "questionNo": 34,
+          "level": "EASY",
+          "topicText": "Để truy cập phần tử thứ i trong Linked List, ta phải thực hiện bao nhiêu bước?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 89,
+              "answerNo": "A",
+              "content": "O(log n)"
+            },
+            {
+              "id": 90,
+              "answerNo": "B",
+              "content": "O(n)"
+            },
+            {
+              "id": 91,
+              "answerNo": "C",
+              "content": "O(1)"
+            },
+            {
+              "id": 92,
+              "answerNo": "D",
+              "content": "O(n^2)"
+            }
+          ]
+        },
+        {
+          "id": 26,
+          "questionNo": 35,
+          "level": "MEDIUM",
+          "topicText": "Linked List có thể được duyệt theo thứ tự ngược lại không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 101,
+              "answerNo": "A",
+              "content": "Không, Linked List chỉ có thể được duyệt theo thứ tự từ đầu đến cuối"
+            },
+            {
+              "id": 102,
+              "answerNo": "B",
+              "content": "Chỉ khi có phần tử cuối cùng trong Linked List"
+            },
+            {
+              "id": 103,
+              "answerNo": "C",
+              "content": "Có, ta có thể duyệt Linked List theo thứ tự ngược lại"
+            },
+            {
+              "id": 104,
+              "answerNo": "D",
+              "content": "Chỉ khi có phần tử đầu tiên trong Linked List"
+            }
+          ]
+        },
+        {
+          "id": 1501,
+          "questionNo": 36,
+          "level": "MEDIUM",
+          "topicText": "Hay cho biet cach duyet do thi sau theo DFS",
+          "topicImage": "https://multiple-choice-images.s3.ap-southeast-1.amazonaws.com/question/1501/0db58655-eedf-4c8a-968c-d677eba392ce",
+          "answers": [
+            {
+              "id": 5945,
+              "answerNo": "A",
+              "content": "ABCDEF"
+            },
+            {
+              "id": 5946,
+              "answerNo": "B",
+              "content": "DEBCAF"
+            },
+            {
+              "id": 5947,
+              "answerNo": "C",
+              "content": "BDEFCA"
+            },
+            {
+              "id": 5948,
+              "answerNo": "D",
+              "content": "EFABC"
+            }
+          ]
+        },
+        {
+          "id": 32,
+          "questionNo": 37,
+          "level": "EASY",
+          "topicText": "Queue (hàng đợi) là gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 125,
+              "answerNo": "A",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự đảo ngược"
+            },
+            {
+              "id": 126,
+              "answerNo": "B",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự LIFO (Last-In-First-Out)"
+            },
+            {
+              "id": 127,
+              "answerNo": "C",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự ngẫu nhiên"
+            },
+            {
+              "id": 128,
+              "answerNo": "D",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự FIFO (First-In-First-Out)"
+            }
+          ]
+        },
+        {
+          "id": 34,
+          "questionNo": 38,
+          "level": "EASY",
+          "topicText": "Trong Queue, phần tử nào được truy cập trước cùng?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 133,
+              "answerNo": "A",
+              "content": "Phần tử đầu tiên"
+            },
+            {
+              "id": 134,
+              "answerNo": "B",
+              "content": "Phần tử cuối cùng"
+            },
+            {
+              "id": 135,
+              "answerNo": "C",
+              "content": "Phần tử bất kỳ"
+            },
+            {
+              "id": 136,
+              "answerNo": "D",
+              "content": "Phần tử ở giữa"
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "questionNo": 39,
+          "level": "EASY",
+          "topicText": "Giải thuật là gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 17,
+              "answerNo": "A",
+              "content": "Một quy trình giải quyết vấn đề bằng cách sử dụng các bước cụ thể"
+            },
+            {
+              "id": 18,
+              "answerNo": "B",
+              "content": "Một phương pháp đồ họa"
+            },
+            {
+              "id": 19,
+              "answerNo": "C",
+              "content": "Một khái niệm về lập trình"
+            },
+            {
+              "id": 20,
+              "answerNo": "D",
+              "content": "Một ngôn ngữ lập trình"
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "questionNo": 40,
+          "level": "EASY",
+          "topicText": "Độ phức tạp thời gian để truy cập phần tử trong một mảng là bao nhiêu?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 49,
+              "answerNo": "A",
+              "content": "O(log n)"
+            },
+            {
+              "id": 50,
+              "answerNo": "B",
+              "content": "O(n^2)"
+            },
+            {
+              "id": 51,
+              "answerNo": "C",
+              "content": "O(n)"
+            },
+            {
+              "id": 52,
+              "answerNo": "D",
+              "content": "O(1)"
+            }
+          ]
+        },
+        {
+          "id": 25,
+          "questionNo": 41,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để xoá một phần tử khỏi Linked List?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 97,
+              "answerNo": "A",
+              "content": "Sử dụng phép toán delete() để xoá phần tử"
+            },
+            {
+              "id": 98,
+              "answerNo": "B",
+              "content": "Tạo một nút trống và gán con trỏ trỏ tới nút trống"
+            },
+            {
+              "id": 99,
+              "answerNo": "C",
+              "content": "Tìm phần tử cần xoá và gán con trỏ trỏ tới phần tử sau nó"
+            },
+            {
+              "id": 100,
+              "answerNo": "D",
+              "content": "Sử dụng phương thức remove() của lớp Linked List"
+            }
+          ]
+        },
+        {
+          "id": 29,
+          "questionNo": 42,
+          "level": "HARD",
+          "topicText": "Linked List có thể được sử dụng để cài đặt cấu trúc dữ liệu Stack không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 113,
+              "answerNo": "A",
+              "content": "Chỉ khi Linked List được cài đặt theo nguyên tắc LIFO"
+            },
+            {
+              "id": 114,
+              "answerNo": "B",
+              "content": "Không, Linked List không thích hợp để cài đặt Stack"
+            },
+            {
+              "id": 115,
+              "answerNo": "C",
+              "content": "Chỉ khi Linked List được cài đặt theo nguyên tắc FIFO"
+            },
+            {
+              "id": 116,
+              "answerNo": "D",
+              "content": "Có, Linked List có thể được sử dụng để cài đặt Stack"
+            }
+          ]
+        },
+        {
+          "id": 1037,
+          "questionNo": 43,
+          "level": "EASY",
+          "topicText": "Câu nào sau đây là đúng ?",
+          "topicImage": "",
+          "answers": [
+            {
+              "id": 4121,
+              "answerNo": "A",
+              "content": "Mỗi một Node chỉ có thể có 1 Node trái nhưng có thể có nhiều Node bên phải"
+            },
+            {
+              "id": 4122,
+              "answerNo": "B",
+              "content": "Mỗi một node có thể có tùy số lượng node trái và phải"
+            },
+            {
+              "id": 4123,
+              "answerNo": "C",
+              "content": "Mỗi nút có thể có nhiều nút con bên phải nhưng chỉ có một nút con bên trái."
+            },
+            {
+              "id": 4124,
+              "answerNo": "D",
+              "content": "Mỗi một Node chỉ có thể có 1 Node trái và 1 node bên phải"
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "questionNo": 44,
+          "level": "MEDIUM",
+          "topicText": "Cấu trúc dữ liệu và giải thuật khác nhau như thế nào?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 25,
+              "answerNo": "A",
+              "content": "Cấu trúc dữ liệu và giải thuật không liên quan đến nhau"
+            },
+            {
+              "id": 26,
+              "answerNo": "B",
+              "content": "Cấu trúc dữ liệu tập trung vào việc lưu trữ dữ liệu, trong khi giải thuật tập trung vào việc xử lý dữ liệu"
+            },
+            {
+              "id": 27,
+              "answerNo": "C",
+              "content": "Cấu trúc dữ liệu và giải thuật là hai thuật ngữ chỉ cùng một khái niệm"
+            },
+            {
+              "id": 28,
+              "answerNo": "D",
+              "content": "Cấu trúc dữ liệu và giải thuật chỉ khác nhau về tên gọi"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "testSet": {
+        "testNo": 201,
+        "duration": 60,
+        "subjectTitle": "Data Structure and Algorithms",
+        "subjectCode": "IT3240",
+        "testDay": "2023-07-11"
+      },
+      "questions": [
+        {
+          "id": 27,
+          "questionNo": 1,
+          "level": "MEDIUM",
+          "topicText": "Để kiểm tra xem Linked List có trống hay không, ta phải thực hiện kiểm tra điều kiện nào?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 105,
+              "answerNo": "A",
+              "content": "Kiểm tra xem con trỏ đầu tiên có trỏ tới null hay không"
+            },
+            {
+              "id": 106,
+              "answerNo": "B",
+              "content": "Kiểm tra xem số lượng phần tử trong Linked List có bằng 1 hay không"
+            },
+            {
+              "id": 107,
+              "answerNo": "C",
+              "content": "Kiểm tra xem số lượng phần tử trong Linked List có bằng 0 hay không"
+            },
+            {
+              "id": 108,
+              "answerNo": "D",
+              "content": "Kiểm tra xem con trỏ cuối cùng có trỏ tới null hay không"
+            }
+          ]
+        },
+        {
+          "id": 36,
+          "questionNo": 2,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để lấy ra phần tử đầu tiên từ Queue?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 141,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức pop() của lớp Queue"
+            },
+            {
+              "id": 142,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức dequeue() của lớp Queue"
+            },
+            {
+              "id": 143,
+              "answerNo": "C",
+              "content": "Sử dụng phương thức remove() của lớp Queue"
+            },
+            {
+              "id": 144,
+              "answerNo": "D",
+              "content": "Sử dụng phương thức poll() của lớp Queue"
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "questionNo": 3,
+          "level": "MEDIUM",
+          "topicText": "Tại sao việc chọn cấu trúc dữ liệu phù hợp là quan trọng trong lập trình?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 21,
+              "answerNo": "A",
+              "content": "Chỉ cần sử dụng một cấu trúc dữ liệu duy nhất cho mọi tình huống"
+            },
+            {
+              "id": 22,
+              "answerNo": "B",
+              "content": "Cấu trúc dữ liệu không ảnh hưởng đến hiệu suất của chương trình"
+            },
+            {
+              "id": 23,
+              "answerNo": "C",
+              "content": "Cấu trúc dữ liệu phù hợp giúp tối ưu hóa thời gian và không gian"
+            },
+            {
+              "id": 24,
+              "answerNo": "D",
+              "content": "Không có sự liên quan giữa cấu trúc dữ liệu và hiệu suất của chương trình"
+            }
+          ]
+        },
+        {
+          "id": 1495,
+          "questionNo": 4,
+          "level": "EASY",
+          "topicText": "Số lượng Node con tối đa của một Node trong cây nhị phân có thể có là ?",
+          "topicImage": "null",
+          "answers": [
+            {
+              "id": 5921,
+              "answerNo": "A",
+              "content": "2"
+            },
+            {
+              "id": 5922,
+              "answerNo": "B",
+              "content": "1"
+            },
+            {
+              "id": 5923,
+              "answerNo": "C",
+              "content": "There is no limit"
+            },
+            {
+              "id": 5924,
+              "answerNo": "D",
+              "content": "3"
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "questionNo": 5,
+          "level": "MEDIUM",
+          "topicText": "Cấu trúc dữ liệu và giải thuật khác nhau như thế nào?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 25,
+              "answerNo": "A",
+              "content": "Cấu trúc dữ liệu và giải thuật là hai thuật ngữ chỉ cùng một khái niệm"
+            },
+            {
+              "id": 26,
+              "answerNo": "B",
+              "content": "Cấu trúc dữ liệu tập trung vào việc lưu trữ dữ liệu, trong khi giải thuật tập trung vào việc xử lý dữ liệu"
+            },
+            {
+              "id": 27,
+              "answerNo": "C",
+              "content": "Cấu trúc dữ liệu và giải thuật chỉ khác nhau về tên gọi"
+            },
+            {
+              "id": 28,
+              "answerNo": "D",
+              "content": "Cấu trúc dữ liệu và giải thuật không liên quan đến nhau"
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "questionNo": 6,
+          "level": "EASY",
+          "topicText": "Độ phức tạp thời gian để truy cập phần tử trong một mảng là bao nhiêu?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 49,
+              "answerNo": "A",
+              "content": "O(n)"
+            },
+            {
+              "id": 50,
+              "answerNo": "B",
+              "content": "O(log n)"
+            },
+            {
+              "id": 51,
+              "answerNo": "C",
+              "content": "O(1)"
+            },
+            {
+              "id": 52,
+              "answerNo": "D",
+              "content": "O(n^2)"
+            }
+          ]
+        },
+        {
+          "id": 17,
+          "questionNo": 7,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để tìm kiếm một chuỗi con trong chuỗi gốc trong ngôn ngữ lập trình C++?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 65,
+              "answerNo": "A",
+              "content": "Sử dụng hàm substring() của lớp string"
+            },
+            {
+              "id": 66,
+              "answerNo": "B",
+              "content": "Sử dụng hàm search() của lớp string"
+            },
+            {
+              "id": 67,
+              "answerNo": "C",
+              "content": "Sử dụng hàm find() của lớp string"
+            },
+            {
+              "id": 68,
+              "answerNo": "D",
+              "content": "Sử dụng hàm locate() của lớp string"
+            }
+          ]
+        },
+        {
+          "id": 34,
+          "questionNo": 8,
+          "level": "EASY",
+          "topicText": "Trong Queue, phần tử nào được truy cập trước cùng?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 133,
+              "answerNo": "A",
+              "content": "Phần tử bất kỳ"
+            },
+            {
+              "id": 134,
+              "answerNo": "B",
+              "content": "Phần tử cuối cùng"
+            },
+            {
+              "id": 135,
+              "answerNo": "C",
+              "content": "Phần tử ở giữa"
+            },
+            {
+              "id": 136,
+              "answerNo": "D",
+              "content": "Phần tử đầu tiên"
+            }
+          ]
+        },
+        {
+          "id": 23,
+          "questionNo": 9,
+          "level": "EASY",
+          "topicText": "Để truy cập phần tử thứ i trong Linked List, ta phải thực hiện bao nhiêu bước?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 89,
+              "answerNo": "A",
+              "content": "O(1)"
+            },
+            {
+              "id": 90,
+              "answerNo": "B",
+              "content": "O(n)"
+            },
+            {
+              "id": 91,
+              "answerNo": "C",
+              "content": "O(n^2)"
+            },
+            {
+              "id": 92,
+              "answerNo": "D",
+              "content": "O(log n)"
+            }
+          ]
+        },
+        {
+          "id": 1036,
+          "questionNo": 10,
+          "level": "EASY",
+          "topicText": "Số lượng Node con tối đa của một Node trong cây nhị phân có thể có là ?",
+          "topicImage": "",
+          "answers": [
+            {
+              "id": 4117,
+              "answerNo": "A",
+              "content": "3"
+            },
+            {
+              "id": 4118,
+              "answerNo": "B",
+              "content": "1"
+            },
+            {
+              "id": 4119,
+              "answerNo": "C",
+              "content": "There is no limit"
+            },
+            {
+              "id": 4120,
+              "answerNo": "D",
+              "content": "2"
+            }
+          ]
+        },
+        {
+          "id": 1037,
+          "questionNo": 11,
+          "level": "EASY",
+          "topicText": "Câu nào sau đây là đúng ?",
+          "topicImage": "",
+          "answers": [
+            {
+              "id": 4121,
+              "answerNo": "A",
+              "content": "Mỗi nút có thể có nhiều nút con bên phải nhưng chỉ có một nút con bên trái."
+            },
+            {
+              "id": 4122,
+              "answerNo": "B",
+              "content": "Mỗi một Node chỉ có thể có 1 Node trái và 1 node bên phải"
+            },
+            {
+              "id": 4123,
+              "answerNo": "C",
+              "content": "Mỗi một Node chỉ có thể có 1 Node trái nhưng có thể có nhiều Node bên phải"
+            },
+            {
+              "id": 4124,
+              "answerNo": "D",
+              "content": "Mỗi một node có thể có tùy số lượng node trái và phải"
+            }
+          ]
+        },
+        {
+          "id": 24,
+          "questionNo": 12,
+          "level": "EASY",
+          "topicText": "Linked List có thể chứa các phần tử cùng kiểu dữ liệu không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 93,
+              "answerNo": "A",
+              "content": "Có, Linked List chỉ chứa các phần tử cùng kiểu dữ liệu"
+            },
+            {
+              "id": 94,
+              "answerNo": "B",
+              "content": "Chỉ chứa kiểu dữ liệu đối tượng"
+            },
+            {
+              "id": 95,
+              "answerNo": "C",
+              "content": "Không, Linked List không giới hạn kiểu dữ liệu của phần tử"
+            },
+            {
+              "id": 96,
+              "answerNo": "D",
+              "content": "Chỉ chứa kiểu dữ liệu nguyên thủy"
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "questionNo": 13,
+          "level": "MEDIUM",
+          "topicText": "Độ phức tạp thời gian của thuật toán là gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 37,
+              "answerNo": "A",
+              "content": "Thời gian thực thi của thuật toán"
+            },
+            {
+              "id": 38,
+              "answerNo": "B",
+              "content": "Số lượng bước thực hiện trong thuật toán"
+            },
+            {
+              "id": 39,
+              "answerNo": "C",
+              "content": "Số lần thực hiện các phép toán trong thuật toán"
+            },
+            {
+              "id": 40,
+              "answerNo": "D",
+              "content": "Số lượng câu lệnh trong thuật toán"
+            }
+          ]
+        },
+        {
+          "id": 39,
+          "questionNo": 14,
+          "level": "HARD",
+          "topicText": "Làm thế nào để kiểm tra xem Queue có rỗng hay không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 153,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức isEmpty() của lớp Queue"
+            },
+            {
+              "id": 154,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức isFull() của lớp Queue"
+            },
+            {
+              "id": 155,
+              "answerNo": "C",
+              "content": "Sử dụng phương thức peek() của lớp Queue và kiểm tra giá trị trả về"
+            },
+            {
+              "id": 156,
+              "answerNo": "D",
+              "content": "Sử dụng phương thức getSize() của lớp Queue và kiểm tra kích thước"
+            }
+          ]
+        },
+        {
+          "id": 1501,
+          "questionNo": 15,
+          "level": "MEDIUM",
+          "topicText": "Hay cho biet cach duyet do thi sau theo DFS",
+          "topicImage": "https://multiple-choice-images.s3.ap-southeast-1.amazonaws.com/question/1501/0db58655-eedf-4c8a-968c-d677eba392ce",
+          "answers": [
+            {
+              "id": 5945,
+              "answerNo": "A",
+              "content": "EFABC"
+            },
+            {
+              "id": 5946,
+              "answerNo": "B",
+              "content": "DEBCAF"
+            },
+            {
+              "id": 5947,
+              "answerNo": "C",
+              "content": "BDEFCA"
+            },
+            {
+              "id": 5948,
+              "answerNo": "D",
+              "content": "ABCDEF"
+            }
+          ]
+        },
+        {
+          "id": 18,
+          "questionNo": 16,
+          "level": "HARD",
+          "topicText": "Làm thế nào để xoá một phần tử khỏi mảng trong ngôn ngữ lập trình Java?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 69,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức delete() của lớp Array"
+            },
+            {
+              "id": 70,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức remove() của lớp ArrayList"
+            },
+            {
+              "id": 71,
+              "answerNo": "C",
+              "content": "Sử dụng phương thức erase() của lớp Vector"
+            },
+            {
+              "id": 72,
+              "answerNo": "D",
+              "content": "Sử dụng vòng lặp để sao chép mảng mới loại bỏ phần tử cần xoá"
+            }
+          ]
+        },
+        {
+          "id": 32,
+          "questionNo": 17,
+          "level": "EASY",
+          "topicText": "Queue (hàng đợi) là gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 125,
+              "answerNo": "A",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự FIFO (First-In-First-Out)"
+            },
+            {
+              "id": 126,
+              "answerNo": "B",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự LIFO (Last-In-First-Out)"
+            },
+            {
+              "id": 127,
+              "answerNo": "C",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự đảo ngược"
+            },
+            {
+              "id": 128,
+              "answerNo": "D",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự ngẫu nhiên"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "questionNo": 18,
+          "level": "EASY",
+          "topicText": "Cấu trúc dữ liệu nào được sử dụng để biểu diễn mối quan hệ \"cha-con\" giữa các phần tử?\n",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 13,
+              "answerNo": "A",
+              "content": "Ngăn xếp (Stack)"
+            },
+            {
+              "id": 14,
+              "answerNo": "B",
+              "content": "Hàng đợi (Queue)"
+            },
+            {
+              "id": 15,
+              "answerNo": "C",
+              "content": "Cây (Tree)"
+            },
+            {
+              "id": 16,
+              "answerNo": "D",
+              "content": "Đồ thị (Graph)"
+            }
+          ]
+        },
+        {
+          "id": 31,
+          "questionNo": 19,
+          "level": "EASY",
+          "topicText": "Stack (ngăn xếp) là gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 121,
+              "answerNo": "A",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự LIFO (Last-In-First-Out)"
+            },
+            {
+              "id": 122,
+              "answerNo": "B",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự đảo ngược"
+            },
+            {
+              "id": 123,
+              "answerNo": "C",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự FIFO (First-In-First-Out)"
+            },
+            {
+              "id": 124,
+              "answerNo": "D",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự ngẫu nhiên"
+            }
+          ]
+        },
+        {
+          "id": 33,
+          "questionNo": 20,
+          "level": "EASY",
+          "topicText": "Trong Stack, phần tử nào được truy cập trước cùng?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 129,
+              "answerNo": "A",
+              "content": "Phần tử đầu tiên"
+            },
+            {
+              "id": 130,
+              "answerNo": "B",
+              "content": "Phần tử bất kỳ"
+            },
+            {
+              "id": 131,
+              "answerNo": "C",
+              "content": "Phần tử ở giữa"
+            },
+            {
+              "id": 132,
+              "answerNo": "D",
+              "content": "Phần tử cuối cùng"
+            }
+          ]
+        },
+        {
+          "id": 25,
+          "questionNo": 21,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để xoá một phần tử khỏi Linked List?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 97,
+              "answerNo": "A",
+              "content": "Tìm phần tử cần xoá và gán con trỏ trỏ tới phần tử sau nó"
+            },
+            {
+              "id": 98,
+              "answerNo": "B",
+              "content": "Sử dụng phép toán delete() để xoá phần tử"
+            },
+            {
+              "id": 99,
+              "answerNo": "C",
+              "content": "Sử dụng phương thức remove() của lớp Linked List"
+            },
+            {
+              "id": 100,
+              "answerNo": "D",
+              "content": "Tạo một nút trống và gán con trỏ trỏ tới nút trống"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "questionNo": 22,
+          "level": "EASY",
+          "topicText": "Thuật toán nào được sử dụng để sắp xếp một mảng theo thứ tự tăng dần?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 9,
+              "answerNo": "A",
+              "content": "Thuật toán Bubble Sort"
+            },
+            {
+              "id": 10,
+              "answerNo": "B",
+              "content": "Thuật toán Insertion Sort"
+            },
+            {
+              "id": 11,
+              "answerNo": "C",
+              "content": "Thuật toán Quick Sort"
+            },
+            {
+              "id": 12,
+              "answerNo": "D",
+              "content": "Thuật toán Merge Sort"
+            }
+          ]
+        },
+        {
+          "id": 14,
+          "questionNo": 23,
+          "level": "EASY",
+          "topicText": " Làm thế nào để kiểm tra xem một mảng có trống hay không trong ngôn ngữ lập trình Python?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 53,
+              "answerNo": "A",
+              "content": "if len(array) == 0:"
+            },
+            {
+              "id": 54,
+              "answerNo": "B",
+              "content": "if array == []:"
+            },
+            {
+              "id": 55,
+              "answerNo": "C",
+              "content": "if array.length == 0:"
+            },
+            {
+              "id": 56,
+              "answerNo": "D",
+              "content": "if array.is_empty():"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "questionNo": 24,
+          "level": "HARD",
+          "topicText": "Cấu trúc dữ liệu nào được sử dụng để lưu trữ dữ liệu theo thứ tự và có thể truy cập nhanh vào phần tử bằng chỉ số?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 5,
+              "answerNo": "A",
+              "content": "Danh sách liên kết (Linked List)"
+            },
+            {
+              "id": 6,
+              "answerNo": "B",
+              "content": "Ngăn xếp (Stack)"
+            },
+            {
+              "id": 7,
+              "answerNo": "C",
+              "content": "Mảng (Array)"
+            },
+            {
+              "id": 8,
+              "answerNo": "D",
+              "content": "Hàng đợi (Queue)"
+            }
+          ]
+        },
+        {
+          "id": 30,
+          "questionNo": 25,
+          "level": "MEDIUM",
+          "topicText": "Linked List có thể bị tràn bộ nhớ (memory overflow) không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 117,
+              "answerNo": "A",
+              "content": "Chỉ khi Linked List có kích thước quá lớn"
+            },
+            {
+              "id": 118,
+              "answerNo": "B",
+              "content": "Có, Linked List có thể bị tràn bộ nhớ nếu không được quản lý cẩn thận"
+            },
+            {
+              "id": 119,
+              "answerNo": "C",
+              "content": "Chỉ khi Linked List được sử dụng trong ngôn ngữ lập trình không hỗ trợ quản lý bộ nhớ tự động"
+            },
+            {
+              "id": 120,
+              "answerNo": "D",
+              "content": "Không, Linked List không bị tràn bộ nhớ vì nó có thể tự động giải phóng bộ nhớ"
+            }
+          ]
+        },
+        {
+          "id": 38,
+          "questionNo": 26,
+          "level": "HARD",
+          "topicText": "Làm thế nào để kiểm tra xem Stack có rỗng hay không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 149,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức isFull() của lớp Stack"
+            },
+            {
+              "id": 150,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức peek() của lớp Stack và kiểm tra giá trị trả về"
+            },
+            {
+              "id": 151,
+              "answerNo": "C",
+              "content": "Sử dụng phương thức getSize() của lớp Stack và kiểm tra kích thước"
+            },
+            {
+              "id": 152,
+              "answerNo": "D",
+              "content": "Sử dụng phương thức isEmpty() của lớp Stack"
+            }
+          ]
+        },
+        {
+          "id": 40,
+          "questionNo": 27,
+          "level": "MEDIUM",
+          "topicText": "Stack và Queue có thể được sử dụng để giải quyết vấn đề nào sau đây?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 157,
+              "answerNo": "A",
+              "content": "Xử lý các phần tử theo nguyên tắc LIFO hoặc FIFO"
+            },
+            {
+              "id": 158,
+              "answerNo": "B",
+              "content": "Lưu trữ dữ liệu trong cấu trúc dữ liệu cây"
+            },
+            {
+              "id": 159,
+              "answerNo": "C",
+              "content": "Sắp xếp danh sách các phần tử theo thứ tự tăng dần"
+            },
+            {
+              "id": 160,
+              "answerNo": "D",
+              "content": "Tìm kiếm phần tử có giá trị lớn nhất trong danh sách"
+            }
+          ]
+        },
+        {
+          "id": 37,
+          "questionNo": 28,
+          "level": "MEDIUM",
+          "topicText": "Stack và Queue có thể được cài đặt bằng cách sử dụng cấu trúc dữ liệu nào sau đây?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 145,
+              "answerNo": "A",
+              "content": "Mảng (Array)"
+            },
+            {
+              "id": 146,
+              "answerNo": "B",
+              "content": "Đồ thị (Graph)"
+            },
+            {
+              "id": 147,
+              "answerNo": "C",
+              "content": "Danh sách liên kết (Linked List)"
+            },
+            {
+              "id": 148,
+              "answerNo": "D",
+              "content": "Cây nhị phân (Binary Tree)"
+            }
+          ]
+        },
+        {
+          "id": 29,
+          "questionNo": 29,
+          "level": "HARD",
+          "topicText": "Linked List có thể được sử dụng để cài đặt cấu trúc dữ liệu Stack không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 113,
+              "answerNo": "A",
+              "content": "Có, Linked List có thể được sử dụng để cài đặt Stack"
+            },
+            {
+              "id": 114,
+              "answerNo": "B",
+              "content": "Chỉ khi Linked List được cài đặt theo nguyên tắc LIFO"
+            },
+            {
+              "id": 115,
+              "answerNo": "C",
+              "content": "Chỉ khi Linked List được cài đặt theo nguyên tắc FIFO"
+            },
+            {
+              "id": 116,
+              "answerNo": "D",
+              "content": "Không, Linked List không thích hợp để cài đặt Stack"
+            }
+          ]
+        },
+        {
+          "id": 31,
+          "questionNo": 30,
+          "level": "EASY",
+          "topicText": "Stack (ngăn xếp) là gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 121,
+              "answerNo": "A",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự LIFO (Last-In-First-Out)"
+            },
+            {
+              "id": 122,
+              "answerNo": "B",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự đảo ngược"
+            },
+            {
+              "id": 123,
+              "answerNo": "C",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự FIFO (First-In-First-Out)"
+            },
+            {
+              "id": 124,
+              "answerNo": "D",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự ngẫu nhiên"
+            }
+          ]
+        },
+        {
+          "id": 22,
+          "questionNo": 31,
+          "level": "EASY",
+          "topicText": "Để thêm một phần tử vào cuối Linked List, ta phải làm gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 85,
+              "answerNo": "A",
+              "content": "Tạo một nút mới và gán nút đầu tiên của Linked List trỏ tới nút mới"
+            },
+            {
+              "id": 86,
+              "answerNo": "B",
+              "content": "Sử dụng phép toán add() của lớp Linked List"
+            },
+            {
+              "id": 87,
+              "answerNo": "C",
+              "content": "Tạo một nút mới và gán nút cuối cùng của Linked List trỏ tới nút mới"
+            },
+            {
+              "id": 88,
+              "answerNo": "D",
+              "content": "Sử dụng phép toán insert() của lớp Linked List"
+            }
+          ]
+        },
+        {
+          "id": 36,
+          "questionNo": 32,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để lấy ra phần tử đầu tiên từ Queue?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 141,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức dequeue() của lớp Queue"
+            },
+            {
+              "id": 142,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức poll() của lớp Queue"
+            },
+            {
+              "id": 143,
+              "answerNo": "C",
+              "content": "Sử dụng phương thức remove() của lớp Queue"
+            },
+            {
+              "id": 144,
+              "answerNo": "D",
+              "content": "Sử dụng phương thức pop() của lớp Queue"
+            }
+          ]
+        },
+        {
+          "id": 28,
+          "questionNo": 33,
+          "level": "HARD",
+          "topicText": "Linked List có khả năng thực hiện các phép toán như truy cập ngẫu nhiên, chèn và xoá phần tử ở đầu và cuối mảng một cách hiệu quả không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 109,
+              "answerNo": "A",
+              "content": "Chỉ có thể thực hiện phép toán chèn và xoá phần tử ở đầu và cuối mảng một cách hiệu quả"
+            },
+            {
+              "id": 110,
+              "answerNo": "B",
+              "content": "Chỉ có thể thực hiện phép toán truy cập ngẫu nhiên một cách hiệu quả"
+            },
+            {
+              "id": 111,
+              "answerNo": "C",
+              "content": "Có, Linked List có khả năng thực hiện các phép toán đó một cách hiệu quả"
+            },
+            {
+              "id": 112,
+              "answerNo": "D",
+              "content": "Không, Linked List chỉ phù hợp với các phép toán tuần tự"
+            }
+          ]
+        },
+        {
+          "id": 1036,
+          "questionNo": 34,
+          "level": "EASY",
+          "topicText": "Số lượng Node con tối đa của một Node trong cây nhị phân có thể có là ?",
+          "topicImage": "",
+          "answers": [
+            {
+              "id": 4117,
+              "answerNo": "A",
+              "content": "2"
+            },
+            {
+              "id": 4118,
+              "answerNo": "B",
+              "content": "3"
+            },
+            {
+              "id": 4119,
+              "answerNo": "C",
+              "content": "1"
+            },
+            {
+              "id": 4120,
+              "answerNo": "D",
+              "content": "There is no limit"
+            }
+          ]
+        },
+        {
+          "id": 17,
+          "questionNo": 35,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để tìm kiếm một chuỗi con trong chuỗi gốc trong ngôn ngữ lập trình C++?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 65,
+              "answerNo": "A",
+              "content": "Sử dụng hàm locate() của lớp string"
+            },
+            {
+              "id": 66,
+              "answerNo": "B",
+              "content": "Sử dụng hàm search() của lớp string"
+            },
+            {
+              "id": 67,
+              "answerNo": "C",
+              "content": "Sử dụng hàm find() của lớp string"
+            },
+            {
+              "id": 68,
+              "answerNo": "D",
+              "content": "Sử dụng hàm substring() của lớp string"
+            }
+          ]
+        },
+        {
+          "id": 27,
+          "questionNo": 36,
+          "level": "MEDIUM",
+          "topicText": "Để kiểm tra xem Linked List có trống hay không, ta phải thực hiện kiểm tra điều kiện nào?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 105,
+              "answerNo": "A",
+              "content": "Kiểm tra xem con trỏ đầu tiên có trỏ tới null hay không"
+            },
+            {
+              "id": 106,
+              "answerNo": "B",
+              "content": "Kiểm tra xem số lượng phần tử trong Linked List có bằng 1 hay không"
+            },
+            {
+              "id": 107,
+              "answerNo": "C",
+              "content": "Kiểm tra xem số lượng phần tử trong Linked List có bằng 0 hay không"
+            },
+            {
+              "id": 108,
+              "answerNo": "D",
+              "content": "Kiểm tra xem con trỏ cuối cùng có trỏ tới null hay không"
+            }
+          ]
+        },
+        {
+          "id": 35,
+          "questionNo": 37,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để thêm một phần tử vào Stack?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 137,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức add() của lớp Stack"
+            },
+            {
+              "id": 138,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức insert() của lớp Stack"
+            },
+            {
+              "id": 139,
+              "answerNo": "C",
+              "content": "Sử dụng phương thức push() của lớp Stack"
+            },
+            {
+              "id": 140,
+              "answerNo": "D",
+              "content": "Sử dụng phương thức append() của lớp Stack"
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "questionNo": 38,
+          "level": "HARD",
+          "topicText": "Làm thế nào để biểu diễn cấu trúc dữ liệu trong lập trình?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 33,
+              "answerNo": "A",
+              "content": "Sử dụng mã nguồn lập trình"
+            },
+            {
+              "id": 34,
+              "answerNo": "B",
+              "content": "Sử dụng các kiểu dữ liệu và cú pháp lập trình"
+            },
+            {
+              "id": 35,
+              "answerNo": "C",
+              "content": "Sử dụng ngôn ngữ tự nhiên"
+            },
+            {
+              "id": 36,
+              "answerNo": "D",
+              "content": "Sử dụng biểu đồ sơ đồ"
+            }
+          ]
+        },
+        {
+          "id": 34,
+          "questionNo": 39,
+          "level": "EASY",
+          "topicText": "Trong Queue, phần tử nào được truy cập trước cùng?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 133,
+              "answerNo": "A",
+              "content": "Phần tử ở giữa"
+            },
+            {
+              "id": 134,
+              "answerNo": "B",
+              "content": "Phần tử bất kỳ"
+            },
+            {
+              "id": 135,
+              "answerNo": "C",
+              "content": "Phần tử cuối cùng"
+            },
+            {
+              "id": 136,
+              "answerNo": "D",
+              "content": "Phần tử đầu tiên"
+            }
+          ]
+        },
+        {
+          "id": 25,
+          "questionNo": 40,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để xoá một phần tử khỏi Linked List?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 97,
+              "answerNo": "A",
+              "content": "Tạo một nút trống và gán con trỏ trỏ tới nút trống"
+            },
+            {
+              "id": 98,
+              "answerNo": "B",
+              "content": "Tìm phần tử cần xoá và gán con trỏ trỏ tới phần tử sau nó"
+            },
+            {
+              "id": 99,
+              "answerNo": "C",
+              "content": "Sử dụng phép toán delete() để xoá phần tử"
+            },
+            {
+              "id": 100,
+              "answerNo": "D",
+              "content": "Sử dụng phương thức remove() của lớp Linked List"
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "questionNo": 41,
+          "level": "MEDIUM",
+          "topicText": "Độ phức tạp thời gian của thuật toán là gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 37,
+              "answerNo": "A",
+              "content": "Số lượng bước thực hiện trong thuật toán"
+            },
+            {
+              "id": 38,
+              "answerNo": "B",
+              "content": "Số lượng câu lệnh trong thuật toán"
+            },
+            {
+              "id": 39,
+              "answerNo": "C",
+              "content": "Thời gian thực thi của thuật toán"
+            },
+            {
+              "id": 40,
+              "answerNo": "D",
+              "content": "Số lần thực hiện các phép toán trong thuật toán"
+            }
+          ]
+        },
+        {
+          "id": 19,
+          "questionNo": 42,
+          "level": "HARD",
+          "topicText": "Làm thế nào để sắp xếp một mảng số nguyên theo thứ tự tăng dần trong ngôn ngữ lập trình C++?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 73,
+              "answerNo": "A",
+              "content": "Sử dụng thuật toán Merge Sort"
+            },
+            {
+              "id": 74,
+              "answerNo": "B",
+              "content": "Sử dụng thuật toán Insertion Sort"
+            },
+            {
+              "id": 75,
+              "answerNo": "C",
+              "content": "Sử dụng thuật toán Quick Sort"
+            },
+            {
+              "id": 76,
+              "answerNo": "D",
+              "content": "Sử dụng thuật toán Bubble Sort"
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "questionNo": 43,
+          "level": "EASY",
+          "topicText": "Độ phức tạp thời gian để truy cập phần tử trong một mảng là bao nhiêu?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 49,
+              "answerNo": "A",
+              "content": "O(n^2)"
+            },
+            {
+              "id": 50,
+              "answerNo": "B",
+              "content": "O(1)"
+            },
+            {
+              "id": 51,
+              "answerNo": "C",
+              "content": "O(log n)"
+            },
+            {
+              "id": 52,
+              "answerNo": "D",
+              "content": "O(n)"
+            }
+          ]
+        },
+        {
+          "id": 26,
+          "questionNo": 44,
+          "level": "MEDIUM",
+          "topicText": "Linked List có thể được duyệt theo thứ tự ngược lại không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 101,
+              "answerNo": "A",
+              "content": "Chỉ khi có phần tử cuối cùng trong Linked List"
+            },
+            {
+              "id": 102,
+              "answerNo": "B",
+              "content": "Có, ta có thể duyệt Linked List theo thứ tự ngược lại"
+            },
+            {
+              "id": 103,
+              "answerNo": "C",
+              "content": "Chỉ khi có phần tử đầu tiên trong Linked List"
+            },
+            {
+              "id": 104,
+              "answerNo": "D",
+              "content": "Không, Linked List chỉ có thể được duyệt theo thứ tự từ đầu đến cuối"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "testSet": {
+        "testNo": 202,
+        "duration": 60,
+        "subjectTitle": "Data Structure and Algorithms",
+        "subjectCode": "IT3240",
+        "testDay": "2023-07-11"
+      },
+      "questions": [
+        {
+          "id": 18,
+          "questionNo": 1,
+          "level": "HARD",
+          "topicText": "Làm thế nào để xoá một phần tử khỏi mảng trong ngôn ngữ lập trình Java?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 69,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức delete() của lớp Array"
+            },
+            {
+              "id": 70,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức erase() của lớp Vector"
+            },
+            {
+              "id": 71,
+              "answerNo": "C",
+              "content": "Sử dụng phương thức remove() của lớp ArrayList"
+            },
+            {
+              "id": 72,
+              "answerNo": "D",
+              "content": "Sử dụng vòng lặp để sao chép mảng mới loại bỏ phần tử cần xoá"
+            }
+          ]
+        },
+        {
+          "id": 33,
+          "questionNo": 2,
+          "level": "EASY",
+          "topicText": "Trong Stack, phần tử nào được truy cập trước cùng?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 129,
+              "answerNo": "A",
+              "content": "Phần tử ở giữa"
+            },
+            {
+              "id": 130,
+              "answerNo": "B",
+              "content": "Phần tử bất kỳ"
+            },
+            {
+              "id": 131,
+              "answerNo": "C",
+              "content": "Phần tử cuối cùng"
+            },
+            {
+              "id": 132,
+              "answerNo": "D",
+              "content": "Phần tử đầu tiên"
+            }
+          ]
+        },
+        {
+          "id": 11,
+          "questionNo": 3,
+          "level": "EASY",
+          "topicText": "Cách khai báo một mảng trong ngôn ngữ lập trình Java là gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 41,
+              "answerNo": "A",
+              "content": "Array[] arr = new Array[]();"
+            },
+            {
+              "id": 42,
+              "answerNo": "B",
+              "content": "Array[] arr = new Array[]{};"
+            },
+            {
+              "id": 43,
+              "answerNo": "C",
+              "content": "Array[] arr = new Array[length];"
+            },
+            {
+              "id": 44,
+              "answerNo": "D",
+              "content": "Array[] arr = new Array[];"
+            }
+          ]
+        },
+        {
+          "id": 1496,
+          "questionNo": 4,
+          "level": "EASY",
+          "topicText": "Câu nào sau đây là đúng ?",
+          "topicImage": "null",
+          "answers": [
+            {
+              "id": 5925,
+              "answerNo": "A",
+              "content": "Mỗi một Node chỉ có thể có 1 Node trái và 1 node bên phải"
+            },
+            {
+              "id": 5926,
+              "answerNo": "B",
+              "content": "Mỗi một Node chỉ có thể có 1 Node trái nhưng có thể có nhiều Node bên phải"
+            },
+            {
+              "id": 5927,
+              "answerNo": "C",
+              "content": "Mỗi nút có thể có nhiều nút con bên phải nhưng chỉ có một nút con bên trái."
+            },
+            {
+              "id": 5928,
+              "answerNo": "D",
+              "content": "Mỗi một node có thể có tùy số lượng node trái và phải"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "questionNo": 5,
+          "level": "EASY",
+          "topicText": "Thuật toán nào được sử dụng để sắp xếp một mảng theo thứ tự tăng dần?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 9,
+              "answerNo": "A",
+              "content": "Thuật toán Bubble Sort"
+            },
+            {
+              "id": 10,
+              "answerNo": "B",
+              "content": "Thuật toán Merge Sort"
+            },
+            {
+              "id": 11,
+              "answerNo": "C",
+              "content": "Thuật toán Insertion Sort"
+            },
+            {
+              "id": 12,
+              "answerNo": "D",
+              "content": "Thuật toán Quick Sort"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "questionNo": 6,
+          "level": "HARD",
+          "topicText": "Cấu trúc dữ liệu nào được sử dụng để lưu trữ dữ liệu theo thứ tự và có thể truy cập nhanh vào phần tử bằng chỉ số?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 5,
+              "answerNo": "A",
+              "content": "Hàng đợi (Queue)"
+            },
+            {
+              "id": 6,
+              "answerNo": "B",
+              "content": "Mảng (Array)"
+            },
+            {
+              "id": 7,
+              "answerNo": "C",
+              "content": "Danh sách liên kết (Linked List)"
+            },
+            {
+              "id": 8,
+              "answerNo": "D",
+              "content": "Ngăn xếp (Stack)"
+            }
+          ]
+        },
+        {
+          "id": 37,
+          "questionNo": 7,
+          "level": "MEDIUM",
+          "topicText": "Stack và Queue có thể được cài đặt bằng cách sử dụng cấu trúc dữ liệu nào sau đây?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 145,
+              "answerNo": "A",
+              "content": "Danh sách liên kết (Linked List)"
+            },
+            {
+              "id": 146,
+              "answerNo": "B",
+              "content": "Mảng (Array)"
+            },
+            {
+              "id": 147,
+              "answerNo": "C",
+              "content": "Đồ thị (Graph)"
+            },
+            {
+              "id": 148,
+              "answerNo": "D",
+              "content": "Cây nhị phân (Binary Tree)"
+            }
+          ]
+        },
+        {
+          "id": 21,
+          "questionNo": 8,
+          "level": "EASY",
+          "topicText": "Câu hỏi: Linked List là gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 81,
+              "answerNo": "A",
+              "content": "Một dạng mảng trong ngôn ngữ lập trình"
+            },
+            {
+              "id": 82,
+              "answerNo": "B",
+              "content": "Một dạng cây trong cấu trúc dữ liệu"
+            },
+            {
+              "id": 83,
+              "answerNo": "C",
+              "content": "Một danh sách các phần tử liên kết với nhau"
+            },
+            {
+              "id": 84,
+              "answerNo": "D",
+              "content": "Một phần tử duy nhất trong ngôn ngữ lập trình"
+            }
+          ]
+        },
+        {
+          "id": 1495,
+          "questionNo": 9,
+          "level": "EASY",
+          "topicText": "Số lượng Node con tối đa của một Node trong cây nhị phân có thể có là ?",
+          "topicImage": "null",
+          "answers": [
+            {
+              "id": 5921,
+              "answerNo": "A",
+              "content": "2"
+            },
+            {
+              "id": 5922,
+              "answerNo": "B",
+              "content": "3"
+            },
+            {
+              "id": 5923,
+              "answerNo": "C",
+              "content": "1"
+            },
+            {
+              "id": 5924,
+              "answerNo": "D",
+              "content": "There is no limit"
+            }
+          ]
+        },
+        {
+          "id": 39,
+          "questionNo": 10,
+          "level": "HARD",
+          "topicText": "Làm thế nào để kiểm tra xem Queue có rỗng hay không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 153,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức isEmpty() của lớp Queue"
+            },
+            {
+              "id": 154,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức peek() của lớp Queue và kiểm tra giá trị trả về"
+            },
+            {
+              "id": 155,
+              "answerNo": "C",
+              "content": "Sử dụng phương thức getSize() của lớp Queue và kiểm tra kích thước"
+            },
+            {
+              "id": 156,
+              "answerNo": "D",
+              "content": "Sử dụng phương thức isFull() của lớp Queue"
+            }
+          ]
+        },
+        {
+          "id": 24,
+          "questionNo": 11,
+          "level": "EASY",
+          "topicText": "Linked List có thể chứa các phần tử cùng kiểu dữ liệu không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 93,
+              "answerNo": "A",
+              "content": "Chỉ chứa kiểu dữ liệu nguyên thủy"
+            },
+            {
+              "id": 94,
+              "answerNo": "B",
+              "content": "Có, Linked List chỉ chứa các phần tử cùng kiểu dữ liệu"
+            },
+            {
+              "id": 95,
+              "answerNo": "C",
+              "content": "Chỉ chứa kiểu dữ liệu đối tượng"
+            },
+            {
+              "id": 96,
+              "answerNo": "D",
+              "content": "Không, Linked List không giới hạn kiểu dữ liệu của phần tử"
+            }
+          ]
+        },
+        {
+          "id": 14,
+          "questionNo": 12,
+          "level": "EASY",
+          "topicText": " Làm thế nào để kiểm tra xem một mảng có trống hay không trong ngôn ngữ lập trình Python?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 53,
+              "answerNo": "A",
+              "content": "if len(array) == 0:"
+            },
+            {
+              "id": 54,
+              "answerNo": "B",
+              "content": "if array.length == 0:"
+            },
+            {
+              "id": 55,
+              "answerNo": "C",
+              "content": "if array.is_empty():"
+            },
+            {
+              "id": 56,
+              "answerNo": "D",
+              "content": "if array == []:"
+            }
+          ]
+        },
+        {
+          "id": 16,
+          "questionNo": 13,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để kiểm tra xem hai chuỗi ký tự có là hoán vị của nhau không trong ngôn ngữ lập trình Python?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 61,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức equals() để so sánh hai chuỗi"
+            },
+            {
+              "id": 62,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức is_permutation() để kiểm tra"
+            },
+            {
+              "id": 63,
+              "answerNo": "C",
+              "content": "So sánh số lượng từng ký tự trong hai chuỗi"
+            },
+            {
+              "id": 64,
+              "answerNo": "D",
+              "content": "Sắp xếp hai chuỗi ký tự và so sánh chúng"
+            }
+          ]
+        },
+        {
+          "id": 23,
+          "questionNo": 14,
+          "level": "EASY",
+          "topicText": "Để truy cập phần tử thứ i trong Linked List, ta phải thực hiện bao nhiêu bước?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 89,
+              "answerNo": "A",
+              "content": "O(n)"
+            },
+            {
+              "id": 90,
+              "answerNo": "B",
+              "content": "O(log n)"
+            },
+            {
+              "id": 91,
+              "answerNo": "C",
+              "content": "O(1)"
+            },
+            {
+              "id": 92,
+              "answerNo": "D",
+              "content": "O(n^2)"
+            }
+          ]
+        },
+        {
+          "id": 38,
+          "questionNo": 15,
+          "level": "HARD",
+          "topicText": "Làm thế nào để kiểm tra xem Stack có rỗng hay không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 149,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức isFull() của lớp Stack"
+            },
+            {
+              "id": 150,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức peek() của lớp Stack và kiểm tra giá trị trả về"
+            },
+            {
+              "id": 151,
+              "answerNo": "C",
+              "content": "Sử dụng phương thức getSize() của lớp Stack và kiểm tra kích thước"
+            },
+            {
+              "id": 152,
+              "answerNo": "D",
+              "content": "Sử dụng phương thức isEmpty() của lớp Stack"
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "questionNo": 16,
+          "level": "EASY",
+          "topicText": "Giải thuật là gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 17,
+              "answerNo": "A",
+              "content": "Một phương pháp đồ họa"
+            },
+            {
+              "id": 18,
+              "answerNo": "B",
+              "content": "Một quy trình giải quyết vấn đề bằng cách sử dụng các bước cụ thể"
+            },
+            {
+              "id": 19,
+              "answerNo": "C",
+              "content": "Một khái niệm về lập trình"
+            },
+            {
+              "id": 20,
+              "answerNo": "D",
+              "content": "Một ngôn ngữ lập trình"
+            }
+          ]
+        },
+        {
+          "id": 15,
+          "questionNo": 17,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để đảo ngược một chuỗi ký tự trong ngôn ngữ lập trình Java?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 57,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức reverse() của lớp String"
+            },
+            {
+              "id": 58,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức reverse() của lớp StringBuilder"
+            },
+            {
+              "id": 59,
+              "answerNo": "C",
+              "content": "Sử dụng phương thức reverse() của lớp StringBuffer"
+            },
+            {
+              "id": 60,
+              "answerNo": "D",
+              "content": " Sử dụng vòng lặp để đảo ngược từng ký tự trong chuỗi"
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "questionNo": 18,
+          "level": "EASY",
+          "topicText": "Làm thế nào để truy cập phần tử thứ i trong một mảng trong ngôn ngữ lập trình C++?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 45,
+              "answerNo": "A",
+              "content": "arr[i];"
+            },
+            {
+              "id": 46,
+              "answerNo": "B",
+              "content": "arr(i);"
+            },
+            {
+              "id": 47,
+              "answerNo": "C",
+              "content": "arr.i;"
+            },
+            {
+              "id": 48,
+              "answerNo": "D",
+              "content": "arr{i};"
+            }
+          ]
+        },
+        {
+          "id": 40,
+          "questionNo": 19,
+          "level": "MEDIUM",
+          "topicText": "Stack và Queue có thể được sử dụng để giải quyết vấn đề nào sau đây?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 157,
+              "answerNo": "A",
+              "content": "Lưu trữ dữ liệu trong cấu trúc dữ liệu cây"
+            },
+            {
+              "id": 158,
+              "answerNo": "B",
+              "content": "Tìm kiếm phần tử có giá trị lớn nhất trong danh sách"
+            },
+            {
+              "id": 159,
+              "answerNo": "C",
+              "content": "Sắp xếp danh sách các phần tử theo thứ tự tăng dần"
+            },
+            {
+              "id": 160,
+              "answerNo": "D",
+              "content": "Xử lý các phần tử theo nguyên tắc LIFO hoặc FIFO"
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "questionNo": 20,
+          "level": "MEDIUM",
+          "topicText": "Tại sao việc chọn cấu trúc dữ liệu phù hợp là quan trọng trong lập trình?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 21,
+              "answerNo": "A",
+              "content": "Cấu trúc dữ liệu không ảnh hưởng đến hiệu suất của chương trình"
+            },
+            {
+              "id": 22,
+              "answerNo": "B",
+              "content": "Cấu trúc dữ liệu phù hợp giúp tối ưu hóa thời gian và không gian"
+            },
+            {
+              "id": 23,
+              "answerNo": "C",
+              "content": "Chỉ cần sử dụng một cấu trúc dữ liệu duy nhất cho mọi tình huống"
+            },
+            {
+              "id": 24,
+              "answerNo": "D",
+              "content": "Không có sự liên quan giữa cấu trúc dữ liệu và hiệu suất của chương trình"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "questionNo": 21,
+          "level": "EASY",
+          "topicText": "Cấu trúc dữ liệu nào được sử dụng để biểu diễn mối quan hệ \"cha-con\" giữa các phần tử?\n",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 13,
+              "answerNo": "A",
+              "content": "Ngăn xếp (Stack)"
+            },
+            {
+              "id": 14,
+              "answerNo": "B",
+              "content": "Cây (Tree)"
+            },
+            {
+              "id": 15,
+              "answerNo": "C",
+              "content": "Hàng đợi (Queue)"
+            },
+            {
+              "id": 16,
+              "answerNo": "D",
+              "content": "Đồ thị (Graph)"
+            }
+          ]
+        },
+        {
+          "id": 32,
+          "questionNo": 22,
+          "level": "EASY",
+          "topicText": "Queue (hàng đợi) là gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 125,
+              "answerNo": "A",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự đảo ngược"
+            },
+            {
+              "id": 126,
+              "answerNo": "B",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự ngẫu nhiên"
+            },
+            {
+              "id": 127,
+              "answerNo": "C",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự FIFO (First-In-First-Out)"
+            },
+            {
+              "id": 128,
+              "answerNo": "D",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự LIFO (Last-In-First-Out)"
+            }
+          ]
+        },
+        {
+          "id": 1037,
+          "questionNo": 23,
+          "level": "EASY",
+          "topicText": "Câu nào sau đây là đúng ?",
+          "topicImage": "",
+          "answers": [
+            {
+              "id": 4121,
+              "answerNo": "A",
+              "content": "Mỗi một node có thể có tùy số lượng node trái và phải"
+            },
+            {
+              "id": 4122,
+              "answerNo": "B",
+              "content": "Mỗi một Node chỉ có thể có 1 Node trái nhưng có thể có nhiều Node bên phải"
+            },
+            {
+              "id": 4123,
+              "answerNo": "C",
+              "content": "Mỗi nút có thể có nhiều nút con bên phải nhưng chỉ có một nút con bên trái."
+            },
+            {
+              "id": 4124,
+              "answerNo": "D",
+              "content": "Mỗi một Node chỉ có thể có 1 Node trái và 1 node bên phải"
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "questionNo": 24,
+          "level": "HARD",
+          "topicText": "Cấu trúc dữ liệu và giải thuật có vai trò gì trong lập trình?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 29,
+              "answerNo": "A",
+              "content": "Lưu trữ dữ liệu một cách an toàn"
+            },
+            {
+              "id": 30,
+              "answerNo": "B",
+              "content": "Làm cho chương trình chạy nhanh hơn"
+            },
+            {
+              "id": 31,
+              "answerNo": "C",
+              "content": "Tăng tính linh hoạt và hiệu suất của chương trình"
+            },
+            {
+              "id": 32,
+              "answerNo": "D",
+              "content": "Đảm bảo tính đúng đắn của chương trình"
+            }
+          ]
+        },
+        {
+          "id": 1501,
+          "questionNo": 25,
+          "level": "MEDIUM",
+          "topicText": "Hay cho biet cach duyet do thi sau theo DFS",
+          "topicImage": "https://multiple-choice-images.s3.ap-southeast-1.amazonaws.com/question/1501/0db58655-eedf-4c8a-968c-d677eba392ce",
+          "answers": [
+            {
+              "id": 5945,
+              "answerNo": "A",
+              "content": "EFABC"
+            },
+            {
+              "id": 5946,
+              "answerNo": "B",
+              "content": "ABCDEF"
+            },
+            {
+              "id": 5947,
+              "answerNo": "C",
+              "content": "BDEFCA"
+            },
+            {
+              "id": 5948,
+              "answerNo": "D",
+              "content": "DEBCAF"
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "questionNo": 26,
+          "level": "MEDIUM",
+          "topicText": "Cấu trúc dữ liệu và giải thuật khác nhau như thế nào?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 25,
+              "answerNo": "A",
+              "content": "Cấu trúc dữ liệu và giải thuật chỉ khác nhau về tên gọi"
+            },
+            {
+              "id": 26,
+              "answerNo": "B",
+              "content": "Cấu trúc dữ liệu và giải thuật là hai thuật ngữ chỉ cùng một khái niệm"
+            },
+            {
+              "id": 27,
+              "answerNo": "C",
+              "content": "Cấu trúc dữ liệu và giải thuật không liên quan đến nhau"
+            },
+            {
+              "id": 28,
+              "answerNo": "D",
+              "content": "Cấu trúc dữ liệu tập trung vào việc lưu trữ dữ liệu, trong khi giải thuật tập trung vào việc xử lý dữ liệu"
+            }
+          ]
+        },
+        {
+          "id": 30,
+          "questionNo": 27,
+          "level": "MEDIUM",
+          "topicText": "Linked List có thể bị tràn bộ nhớ (memory overflow) không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 117,
+              "answerNo": "A",
+              "content": "Có, Linked List có thể bị tràn bộ nhớ nếu không được quản lý cẩn thận"
+            },
+            {
+              "id": 118,
+              "answerNo": "B",
+              "content": "Không, Linked List không bị tràn bộ nhớ vì nó có thể tự động giải phóng bộ nhớ"
+            },
+            {
+              "id": 119,
+              "answerNo": "C",
+              "content": "Chỉ khi Linked List có kích thước quá lớn"
+            },
+            {
+              "id": 120,
+              "answerNo": "D",
+              "content": "Chỉ khi Linked List được sử dụng trong ngôn ngữ lập trình không hỗ trợ quản lý bộ nhớ tự động"
+            }
+          ]
+        },
+        {
+          "id": 20,
+          "questionNo": 28,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để tìm phần tử lớn nhất trong một mảng số nguyên trong ngôn ngữ lập trình Python?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 77,
+              "answerNo": "A",
+              "content": "Sử dụng thuật toán Binary Search"
+            },
+            {
+              "id": 78,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức max() của lớp list"
+            },
+            {
+              "id": 79,
+              "answerNo": "C",
+              "content": "Sử dụng thuật toán Linear Search"
+            },
+            {
+              "id": 80,
+              "answerNo": "D",
+              "content": "Sử dụng vòng lặp để so sánh từng phần tử trong mảng"
+            }
+          ]
+        },
+        {
+          "id": 29,
+          "questionNo": 29,
+          "level": "HARD",
+          "topicText": "Linked List có thể được sử dụng để cài đặt cấu trúc dữ liệu Stack không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 113,
+              "answerNo": "A",
+              "content": "Chỉ khi Linked List được cài đặt theo nguyên tắc LIFO"
+            },
+            {
+              "id": 114,
+              "answerNo": "B",
+              "content": "Không, Linked List không thích hợp để cài đặt Stack"
+            },
+            {
+              "id": 115,
+              "answerNo": "C",
+              "content": "Có, Linked List có thể được sử dụng để cài đặt Stack"
+            },
+            {
+              "id": 116,
+              "answerNo": "D",
+              "content": "Chỉ khi Linked List được cài đặt theo nguyên tắc FIFO"
+            }
+          ]
+        },
+        {
+          "id": 31,
+          "questionNo": 30,
+          "level": "EASY",
+          "topicText": "Stack (ngăn xếp) là gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 121,
+              "answerNo": "A",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự ngẫu nhiên"
+            },
+            {
+              "id": 122,
+              "answerNo": "B",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự FIFO (First-In-First-Out)"
+            },
+            {
+              "id": 123,
+              "answerNo": "C",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự LIFO (Last-In-First-Out)"
+            },
+            {
+              "id": 124,
+              "answerNo": "D",
+              "content": "Một danh sách các phần tử được sắp xếp theo thứ tự đảo ngược"
+            }
+          ]
+        },
+        {
+          "id": 22,
+          "questionNo": 31,
+          "level": "EASY",
+          "topicText": "Để thêm một phần tử vào cuối Linked List, ta phải làm gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 85,
+              "answerNo": "A",
+              "content": "Sử dụng phép toán add() của lớp Linked List"
+            },
+            {
+              "id": 86,
+              "answerNo": "B",
+              "content": "Tạo một nút mới và gán nút cuối cùng của Linked List trỏ tới nút mới"
+            },
+            {
+              "id": 87,
+              "answerNo": "C",
+              "content": "Sử dụng phép toán insert() của lớp Linked List"
+            },
+            {
+              "id": 88,
+              "answerNo": "D",
+              "content": "Tạo một nút mới và gán nút đầu tiên của Linked List trỏ tới nút mới"
+            }
+          ]
+        },
+        {
+          "id": 36,
+          "questionNo": 32,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để lấy ra phần tử đầu tiên từ Queue?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 141,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức pop() của lớp Queue"
+            },
+            {
+              "id": 142,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức dequeue() của lớp Queue"
+            },
+            {
+              "id": 143,
+              "answerNo": "C",
+              "content": "Sử dụng phương thức poll() của lớp Queue"
+            },
+            {
+              "id": 144,
+              "answerNo": "D",
+              "content": "Sử dụng phương thức remove() của lớp Queue"
+            }
+          ]
+        },
+        {
+          "id": 28,
+          "questionNo": 33,
+          "level": "HARD",
+          "topicText": "Linked List có khả năng thực hiện các phép toán như truy cập ngẫu nhiên, chèn và xoá phần tử ở đầu và cuối mảng một cách hiệu quả không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 109,
+              "answerNo": "A",
+              "content": "Chỉ có thể thực hiện phép toán chèn và xoá phần tử ở đầu và cuối mảng một cách hiệu quả"
+            },
+            {
+              "id": 110,
+              "answerNo": "B",
+              "content": "Không, Linked List chỉ phù hợp với các phép toán tuần tự"
+            },
+            {
+              "id": 111,
+              "answerNo": "C",
+              "content": "Có, Linked List có khả năng thực hiện các phép toán đó một cách hiệu quả"
+            },
+            {
+              "id": 112,
+              "answerNo": "D",
+              "content": "Chỉ có thể thực hiện phép toán truy cập ngẫu nhiên một cách hiệu quả"
+            }
+          ]
+        },
+        {
+          "id": 1036,
+          "questionNo": 34,
+          "level": "EASY",
+          "topicText": "Số lượng Node con tối đa của một Node trong cây nhị phân có thể có là ?",
+          "topicImage": "",
+          "answers": [
+            {
+              "id": 4117,
+              "answerNo": "A",
+              "content": "There is no limit"
+            },
+            {
+              "id": 4118,
+              "answerNo": "B",
+              "content": "3"
+            },
+            {
+              "id": 4119,
+              "answerNo": "C",
+              "content": "2"
+            },
+            {
+              "id": 4120,
+              "answerNo": "D",
+              "content": "1"
+            }
+          ]
+        },
+        {
+          "id": 17,
+          "questionNo": 35,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để tìm kiếm một chuỗi con trong chuỗi gốc trong ngôn ngữ lập trình C++?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 65,
+              "answerNo": "A",
+              "content": "Sử dụng hàm substring() của lớp string"
+            },
+            {
+              "id": 66,
+              "answerNo": "B",
+              "content": "Sử dụng hàm locate() của lớp string"
+            },
+            {
+              "id": 67,
+              "answerNo": "C",
+              "content": "Sử dụng hàm find() của lớp string"
+            },
+            {
+              "id": 68,
+              "answerNo": "D",
+              "content": "Sử dụng hàm search() của lớp string"
+            }
+          ]
+        },
+        {
+          "id": 27,
+          "questionNo": 36,
+          "level": "MEDIUM",
+          "topicText": "Để kiểm tra xem Linked List có trống hay không, ta phải thực hiện kiểm tra điều kiện nào?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 105,
+              "answerNo": "A",
+              "content": "Kiểm tra xem con trỏ đầu tiên có trỏ tới null hay không"
+            },
+            {
+              "id": 106,
+              "answerNo": "B",
+              "content": "Kiểm tra xem số lượng phần tử trong Linked List có bằng 1 hay không"
+            },
+            {
+              "id": 107,
+              "answerNo": "C",
+              "content": "Kiểm tra xem con trỏ cuối cùng có trỏ tới null hay không"
+            },
+            {
+              "id": 108,
+              "answerNo": "D",
+              "content": "Kiểm tra xem số lượng phần tử trong Linked List có bằng 0 hay không"
+            }
+          ]
+        },
+        {
+          "id": 35,
+          "questionNo": 37,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để thêm một phần tử vào Stack?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 137,
+              "answerNo": "A",
+              "content": "Sử dụng phương thức insert() của lớp Stack"
+            },
+            {
+              "id": 138,
+              "answerNo": "B",
+              "content": "Sử dụng phương thức add() của lớp Stack"
+            },
+            {
+              "id": 139,
+              "answerNo": "C",
+              "content": "Sử dụng phương thức push() của lớp Stack"
+            },
+            {
+              "id": 140,
+              "answerNo": "D",
+              "content": "Sử dụng phương thức append() của lớp Stack"
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "questionNo": 38,
+          "level": "HARD",
+          "topicText": "Làm thế nào để biểu diễn cấu trúc dữ liệu trong lập trình?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 33,
+              "answerNo": "A",
+              "content": "Sử dụng mã nguồn lập trình"
+            },
+            {
+              "id": 34,
+              "answerNo": "B",
+              "content": "Sử dụng các kiểu dữ liệu và cú pháp lập trình"
+            },
+            {
+              "id": 35,
+              "answerNo": "C",
+              "content": "Sử dụng biểu đồ sơ đồ"
+            },
+            {
+              "id": 36,
+              "answerNo": "D",
+              "content": "Sử dụng ngôn ngữ tự nhiên"
+            }
+          ]
+        },
+        {
+          "id": 34,
+          "questionNo": 39,
+          "level": "EASY",
+          "topicText": "Trong Queue, phần tử nào được truy cập trước cùng?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 133,
+              "answerNo": "A",
+              "content": "Phần tử cuối cùng"
+            },
+            {
+              "id": 134,
+              "answerNo": "B",
+              "content": "Phần tử ở giữa"
+            },
+            {
+              "id": 135,
+              "answerNo": "C",
+              "content": "Phần tử bất kỳ"
+            },
+            {
+              "id": 136,
+              "answerNo": "D",
+              "content": "Phần tử đầu tiên"
+            }
+          ]
+        },
+        {
+          "id": 25,
+          "questionNo": 40,
+          "level": "MEDIUM",
+          "topicText": "Làm thế nào để xoá một phần tử khỏi Linked List?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 97,
+              "answerNo": "A",
+              "content": "Sử dụng phép toán delete() để xoá phần tử"
+            },
+            {
+              "id": 98,
+              "answerNo": "B",
+              "content": "Tìm phần tử cần xoá và gán con trỏ trỏ tới phần tử sau nó"
+            },
+            {
+              "id": 99,
+              "answerNo": "C",
+              "content": "Tạo một nút trống và gán con trỏ trỏ tới nút trống"
+            },
+            {
+              "id": 100,
+              "answerNo": "D",
+              "content": "Sử dụng phương thức remove() của lớp Linked List"
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "questionNo": 41,
+          "level": "MEDIUM",
+          "topicText": "Độ phức tạp thời gian của thuật toán là gì?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 37,
+              "answerNo": "A",
+              "content": "Thời gian thực thi của thuật toán"
+            },
+            {
+              "id": 38,
+              "answerNo": "B",
+              "content": "Số lượng bước thực hiện trong thuật toán"
+            },
+            {
+              "id": 39,
+              "answerNo": "C",
+              "content": "Số lần thực hiện các phép toán trong thuật toán"
+            },
+            {
+              "id": 40,
+              "answerNo": "D",
+              "content": "Số lượng câu lệnh trong thuật toán"
+            }
+          ]
+        },
+        {
+          "id": 19,
+          "questionNo": 42,
+          "level": "HARD",
+          "topicText": "Làm thế nào để sắp xếp một mảng số nguyên theo thứ tự tăng dần trong ngôn ngữ lập trình C++?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 73,
+              "answerNo": "A",
+              "content": "Sử dụng thuật toán Quick Sort"
+            },
+            {
+              "id": 74,
+              "answerNo": "B",
+              "content": "Sử dụng thuật toán Merge Sort"
+            },
+            {
+              "id": 75,
+              "answerNo": "C",
+              "content": "Sử dụng thuật toán Bubble Sort"
+            },
+            {
+              "id": 76,
+              "answerNo": "D",
+              "content": "Sử dụng thuật toán Insertion Sort"
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "questionNo": 43,
+          "level": "EASY",
+          "topicText": "Độ phức tạp thời gian để truy cập phần tử trong một mảng là bao nhiêu?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 49,
+              "answerNo": "A",
+              "content": "O(log n)"
+            },
+            {
+              "id": 50,
+              "answerNo": "B",
+              "content": "O(n^2)"
+            },
+            {
+              "id": 51,
+              "answerNo": "C",
+              "content": "O(n)"
+            },
+            {
+              "id": 52,
+              "answerNo": "D",
+              "content": "O(1)"
+            }
+          ]
+        },
+        {
+          "id": 26,
+          "questionNo": 44,
+          "level": "MEDIUM",
+          "topicText": "Linked List có thể được duyệt theo thứ tự ngược lại không?",
+          "topicImage": null,
+          "answers": [
+            {
+              "id": 101,
+              "answerNo": "A",
+              "content": "Không, Linked List chỉ có thể được duyệt theo thứ tự từ đầu đến cuối"
+            },
+            {
+              "id": 102,
+              "answerNo": "B",
+              "content": "Chỉ khi có phần tử đầu tiên trong Linked List"
+            },
+            {
+              "id": 103,
+              "answerNo": "C",
+              "content": "Có, ta có thể duyệt Linked List theo thứ tự ngược lại"
+            },
+            {
+              "id": 104,
+              "answerNo": "D",
+              "content": "Chỉ khi có phần tử cuối cùng trong Linked List"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -23,7 +23,7 @@ public class Chapter extends BaseEntity {
     @Column(name = "[order]")
     private int order;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private Subject subject;
 
     @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL)

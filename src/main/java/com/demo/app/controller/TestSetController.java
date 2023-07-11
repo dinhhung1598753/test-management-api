@@ -23,17 +23,9 @@ public class TestSetController {
     public ResponseEntity<?> createTestSetFromTest(@PathVariable(name = "test-id") int testId,
                                                    @RequestParam final Integer testSetQuantity) throws InterruptedException {
         testSetService.createTestSetFromTest(testId, testSetQuantity);
-        Thread.sleep(5000);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ResponseMessage("Created Set of test successfully !"));
-    }
-
-    @GetMapping(path = "/list")
-    public ResponseEntity<?> getAllTestSet() {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(testSetService.getAllTestSet());
     }
 
     @GetMapping(path = "/word/export/{id}")
@@ -51,10 +43,11 @@ public class TestSetController {
                 .body(resource);
     }
 
-    @GetMapping(path = "/detail/{id}")
-    public ResponseEntity<?> getTestSetDetail(@PathVariable(name = "id") int testSetId) {
+    @GetMapping(path = "/detail/{test-id}/{test-no}")
+    public ResponseEntity<?> getTestSetDetail(@PathVariable(name = "test-id") Integer testId,
+                                              @PathVariable(name = "test-no") Integer testNo) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(testSetService.getTestSetDetail(testSetId));
+                .body(testSetService.getTestSetDetail(testId, testNo));
     }
 }

@@ -20,7 +20,7 @@ public class ClassDetailResponse {
     @Builder
     public static class StudentClassResponse{
 
-        private String fullname;
+        private String fullName;
 
         private String code;
 

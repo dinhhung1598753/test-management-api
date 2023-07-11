@@ -6,14 +6,12 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 
 public interface TestService {
-    TestDetailResponse createTestRandomQuestion(TestRequest request);
+    void createTestRandomQuestion(TestRequest request);
 
     @Transactional
     void createTestByChooseQuestions(TestQuestionRequest request);
 
     List<TestResponse> getAllTests();
-
-    TestDetailResponse getTestDetail(int testId);
 
     void disableTest(int testId);
 

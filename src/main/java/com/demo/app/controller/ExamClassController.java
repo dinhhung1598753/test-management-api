@@ -28,8 +28,8 @@ public class ExamClassController {
 
     @PostMapping("/create")
     @PreAuthorize("hasAnyRole('TEACHER')")
-    public ResponseEntity<?> createExamClass(@RequestBody ClassRequest request, Principal principal){
-        if (principal == null){
+    public ResponseEntity<?> createExamClass(@RequestBody ClassRequest request, Principal principal) {
+        if (principal == null) {
             throw new InvalidRoleException("You're not logged in !", HttpStatus.UNAUTHORIZED);
         }
         examClassService.createExamClass(request, principal);
@@ -40,8 +40,8 @@ public class ExamClassController {
 
     @PostMapping("/join")
     @PreAuthorize("hasAnyRole('STUDENT')")
-    public ResponseEntity<?> joinExamClassByCode(@RequestParam String classCode, Principal principal){
-        if (principal == null){
+    public ResponseEntity<?> joinExamClassByCode(@RequestParam String classCode, Principal principal) {
+        if (principal == null) {
             throw new InvalidRoleException("You are not logged in", HttpStatus.UNAUTHORIZED);
         }
         var examClass = examClassService.joinExamClassByCode(classCode, principal);
@@ -51,7 +51,7 @@ public class ExamClassController {
     }
 
     @PostMapping(path = "/import/students", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> importStudentExamClass(@RequestPart String classCode ,
+    public ResponseEntity<?> importStudentExamClass(@RequestPart String classCode,
                                                     @RequestPart MultipartFile file) throws IOException {
         examClassService.importClassStudents(classCode, file);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -59,14 +59,14 @@ public class ExamClassController {
     }
 
     @GetMapping(path = "/list")
-    public ResponseEntity<?> getAllExamClass(){
+    public ResponseEntity<?> getAllExamClass() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(examClassService.getAllEnabledExamClass());
     }
 
     @GetMapping(path = "/detail/{id}")
-    public ResponseEntity<?> getExamClassDetail(@PathVariable(name = "id") final Integer examClassId){
+    public ResponseEntity<?> getExamClassDetail(@PathVariable(name = "id") final Integer examClassId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(examClassService.getExamClassDetail(examClassId));
     }
@@ -81,8 +81,19 @@ public class ExamClassController {
                 .body(resource);
     }
 
+    @GetMapping(path = "/export/{code}/students")
+    public ResponseEntity<?> exportStudentBaseOnClass(@PathVariable(name = "code") String code) throws IOException {
+        System.out.println("Inside export");
+        var resource = new InputStreamResource(examClassService.exportStudentBaseOnClass(code));
+        var filename = "StudentList: " + code + ".xlsx";
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+                .body(resource);
+    }
+
     @DeleteMapping(path = "/disable/{id}")
-    public ResponseEntity<?> disableExamClass(@PathVariable(name = "id") int examClassId){
+    public ResponseEntity<?> disableExamClass(@PathVariable(name = "id") int examClassId) {
         examClassService.disableExamClass(examClassId);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)

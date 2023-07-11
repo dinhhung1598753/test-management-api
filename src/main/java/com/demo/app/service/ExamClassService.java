@@ -27,5 +27,7 @@ public interface ExamClassService {
 
     ByteArrayInputStream exportStudentTestToExcel(String code) throws IOException;
 
+    ByteArrayInputStream exportStudentBaseOnClass(String code) throws IOException;
+
     void disableExamClass(int examClassId);
 }

@@ -13,7 +13,10 @@ public interface TestSetRepository extends JpaRepository<TestSet, Integer> {
 
     Boolean existsByTestAndTestNoAndEnabledTrue(Test test, int testNo);
 
-    List<TestSet> findByEnabledIsTrue();
-
     Optional<TestSet> findByTestAndTestNoAndEnabledTrue(Test test, int testNo);
+
+    List<TestSet> findByEnabledIsTrueAndTest(Test test);
+
+    Optional<TestSet> findByTestIdAndTestNo(Integer testId, Integer testNo);
+
 }

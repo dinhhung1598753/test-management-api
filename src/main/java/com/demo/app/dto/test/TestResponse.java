@@ -2,6 +2,8 @@ package com.demo.app.dto.test;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -20,10 +22,14 @@ public class TestResponse {
 
     private String testTime;
 
+    private int duration;
+
+    private int questionQuantity;
+
     private String subjectCode;
 
     private String subjectTitle;
 
-    private int duration;
+    private List<Integer> testSetNos;
 
 }

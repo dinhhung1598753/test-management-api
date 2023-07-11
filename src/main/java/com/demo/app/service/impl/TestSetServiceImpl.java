@@ -5,6 +5,7 @@ import com.demo.app.dto.testset.TestSetResponse;
 import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.model.*;
 import com.demo.app.repository.TestRepository;
+import com.demo.app.repository.TestSetQuestionRepository;
 import com.demo.app.repository.TestSetRepository;
 import com.demo.app.service.TestSetService;
 import com.demo.app.util.word.WordUtils;
@@ -33,6 +34,8 @@ public class TestSetServiceImpl implements TestSetService {
 
     private final TestSetRepository testSetRepository;
 
+    private final TestSetQuestionRepository testSetQuestionRepository;
+
     private static final Map<Integer, String> answerNoText = Map.of(
             1, "A",
             2, "B",
@@ -42,7 +45,7 @@ public class TestSetServiceImpl implements TestSetService {
     @Override
     @Transactional
     public void createTestSetFromTest(int testId, Integer testSetQuantity) {
-        @SuppressWarnings("DefaultLocale") var test = testRepository.findById(testId)
+        @SuppressWarnings("DefaultLocale") var test = testRepository.findByIdAndEnabledIsTrue(testId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Test with id: %d not found !", testId),
                         HttpStatus.NOT_FOUND));
@@ -83,6 +86,7 @@ public class TestSetServiceImpl implements TestSetService {
                             .testSet(testset)
                             .question(question)
                             .build();
+
                     testSetQuestion.setTestSetQuestionAnswers(assignAnswersNumber(testSetQuestion, question.getAnswers()));
                     testSetQuestion.setBinaryAnswer(binaryAnswer(testSetQuestion.getTestSetQuestionAnswers()));
                     return testSetQuestion;
@@ -118,20 +122,9 @@ public class TestSetServiceImpl implements TestSetService {
     }
 
     @Override
-    public List<TestSetResponse> getAllTestSet() {
-        var testsets = testSetRepository.findByEnabledIsTrue();
-        return testsets.stream()
-                .map(this::mapTestSetToResponse)
-                .collect(Collectors.toList());
-    }
-
-
-    @Override
-    public TestSetDetailResponse getTestSetDetail(int testSetId) {
-        @SuppressWarnings("DefaultLocale") var testSet = testSetRepository.findById(testSetId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Test set with id %d not found !", testSetId),
-                        HttpStatus.NOT_FOUND));
+    public TestSetDetailResponse getTestSetDetail(Integer testId,Integer testNo) {
+        var testSet = testSetRepository.findByTestIdAndTestNo(testId, testNo)
+                .orElseThrow(() -> new EntityNotFoundException("TestSet not found !", HttpStatus.NOT_FOUND));
         return mapTestSetToDetailResponse(testSet);
     }
 
@@ -146,15 +139,14 @@ public class TestSetServiceImpl implements TestSetService {
     }
 
     private TestSetDetailResponse mapTestSetToDetailResponse(TestSet testSet) {
-        var questionResponses = testSet.getTestSetQuestions()
-                .stream()
+        var testSetQuestions = testSetQuestionRepository.findByTestSetAndEnabledIsTrue(testSet);
+        var questionResponses = testSetQuestions.parallelStream()
                 .map(testSetQuestion -> {
                     var questionResponse = mapper.map(
                             testSetQuestion.getQuestion(),
                             TestSetDetailResponse.TestSetQuestionResponse.class);
                     questionResponse.setQuestionNo(testSetQuestion.getQuestionNo());
-                    var answers = testSetQuestion.getTestSetQuestionAnswers()
-                            .iterator();
+                    var answers = testSetQuestion.getTestSetQuestionAnswers().iterator();
                     questionResponse.getAnswers()
                             .forEach(responseAnswer -> {
                                 var answer = answers.next();

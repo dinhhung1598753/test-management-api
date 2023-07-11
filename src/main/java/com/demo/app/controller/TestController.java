@@ -9,8 +9,7 @@ import com.demo.app.service.TestService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,9 +22,10 @@ public class TestController {
 
     @PostMapping(path = "/create/random")
     public ResponseEntity<?> createTest(@RequestBody @Valid final TestRequest request) throws EntityNotFoundException {
+        testService.createTestRandomQuestion(request);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(testService.createTestRandomQuestion(request));
+                .body(new ResponseMessage("Test random created successfully !"));
     }
 
     @PostMapping(path = "/create")
@@ -43,17 +43,10 @@ public class TestController {
                 .body(testService.getAllTests());
     }
 
-    @GetMapping(path = "/detail/{id}")
-    public ResponseEntity<?> getTestDetail(@PathVariable(name = "id") int testId){
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(testService.getTestDetail(testId));
-    }
-
-
     @SuppressWarnings("DefaultLocale")
     @PutMapping(path = "/update/{id}")
-    public  ResponseEntity<?> updateTest(@PathVariable(name = "id") int testId, @Valid final TestDetailRequest request){
+    public  ResponseEntity<?> updateTest(@PathVariable(name = "id") int testId,
+                                         @Valid final TestDetailRequest request){
         testService.updateTest(testId, request);
         return ResponseEntity
                 .status(HttpStatus.OK)
