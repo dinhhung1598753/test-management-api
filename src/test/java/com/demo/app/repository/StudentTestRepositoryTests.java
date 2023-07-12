@@ -32,10 +32,10 @@ public class StudentTestRepositoryTests {
     @Test
     public void testFindStudentTestsByStudentAndState(){
         var student = new Student();
-        student.setId(10);
-        var studentTests = studentTestRepository.findStudentTestsByStudentAndState(student, State.IN_PROGRESS);
-        Assertions.assertThat(studentTests).hasSizeGreaterThan(-1);
-        studentTests.forEach(System.out::println);
+        student.setId(1);
+        var studentTest = studentTestRepository.findStudentTestsByStudentAndStateAndExamClassId(student, State.IN_PROGRESS, 2);
+        Assertions.assertThat(studentTest).isNotNull();
+        System.out.println(studentTest);
     }
 
 }

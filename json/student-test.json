@@ -1,45 +1,67 @@
 {
   "testNo": 102,
+  "examClassId": 2,
   "questions": [
     {
-      "questionNo" : 1,
-      "answers" : [
+      "questionNo": 1,
+      "answers": [
         {
           "answerNo": 1,
-          "isSelected" : false
+          "isSelected": false
         },
         {
           "answerNo": 2,
-          "isSelected" : true
+          "isSelected": true
         },
         {
           "answerNo": 3,
-          "isSelected" : false
+          "isSelected": false
         },
         {
           "answerNo": 4,
-          "isSelected" : false
+          "isSelected": false
         }
       ]
     },
     {
-      "questionNo" : 2,
-      "answers" : [
+      "questionNo": 2,
+      "answers": [
         {
           "answerNo": 1,
-          "isSelected" : true
+          "isSelected": true
         },
         {
           "answerNo": 2,
-          "isSelected" : false
+          "isSelected": false
         },
         {
           "answerNo": 3,
-          "isSelected" : false
+          "isSelected": false
         },
         {
           "answerNo": 4,
-          "isSelected" : false
+          "isSelected": false
+        }
+      ]
+    },
+    {
+      "questionNo": 3,
+      "answers": [
+        {
+          "answerNo": 1,
+          "isSelected": false
+        },
+        {
+          "answerNo": 2,
+          "isSelected": true
+        },
+        {
+          "answerNo": 3,
+          "isSelected": false
+        },
+        {
+          "answerNo": 4,
+          "isSelected": false
         }
       ]
     }

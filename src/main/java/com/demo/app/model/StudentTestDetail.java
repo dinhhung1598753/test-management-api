@@ -16,9 +16,6 @@ public class StudentTestDetail extends BaseEntity {
     @Column(name = "selected_answer", length = 4)
     private String selectedAnswer;
 
-    @Column(name = "is_corrected")
-    private boolean isCorrected;
-
     @ManyToOne
     private StudentTest studentTest;
 

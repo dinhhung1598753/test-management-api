@@ -2,9 +2,12 @@ package com.demo.app.service.impl;
 
 import com.demo.app.dto.offline.OfflineAnswer;
 import com.demo.app.dto.offline.OfflineExam;
-import com.demo.app.dto.student_test.StudentTestDetailResponse;
+import com.demo.app.dto.studentTest.StudentTestFinishRequest;
+import com.demo.app.dto.studentTest.StudentTestDetailResponse;
+import com.demo.app.dto.studentTest.QuestionSelectedAnswer;
 import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.exception.InvalidRoleException;
+import com.demo.app.exception.InvalidVerificationTokenException;
 import com.demo.app.model.*;
 import com.demo.app.repository.*;
 import com.demo.app.service.StudentTestService;
@@ -44,6 +47,8 @@ public class StudentTestServiceImpl implements StudentTestService {
 
     private final TestSetRepository testSetRepository;
 
+    private final StudentTestDetailRepository studentTestDetailRepository;
+
     private final TestSetQuestionRepository testSetQuestionRepository;
 
     @Override
@@ -56,15 +61,14 @@ public class StudentTestServiceImpl implements StudentTestService {
                 .orElseThrow(() -> new InvalidRoleException(
                         "You don't have role to do this action!",
                         HttpStatus.FORBIDDEN));
-        var studentTests = studentTestRepository.findStudentTestsByStudentAndState(student, State.IN_PROGRESS);
-        if (studentTests.size() > 0){
-            var studentTest = studentTests.get(0);
+        var studentTest = studentTestRepository.findStudentTestsByStudentAndStateAndExamClassId(student, State.IN_PROGRESS, examClass.getId());
+        if (studentTest != null) {
             return mapTestSetToResponse(studentTest.getTestSet());
         }
         return attemptNewTest(examClass, student);
     }
 
-    private StudentTestDetailResponse attemptNewTest(ExamClass examClass, Student student){
+    private StudentTestDetailResponse attemptNewTest(ExamClass examClass, Student student) {
         var test = examClass.getTest();
         var pageable = PageRequest.of(0, 1);
         var testSet = testSetRepository.findRandomTestSetByTest(test.getId(), pageable)
@@ -120,13 +124,13 @@ public class StudentTestServiceImpl implements StudentTestService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Student %s not found", offlineExam.getStudentCode()),
                         HttpStatus.NOT_FOUND));
-        var questionAnswers = testset.getTestSetQuestions()
+        var questionAnswers = testSetQuestionRepository.findByTestSetAndEnabledIsTrue(testset)
                 .stream()
                 .collect(Collectors.toMap(
                         TestSetQuestion::getQuestionNo,
                         TestSetQuestion::getBinaryAnswer
                 ));
-        var mark = markStudentTest(offlineExam.getAnswers(), questionAnswers);
+        var mark = markStudentTestOffline(offlineExam.getAnswers(), questionAnswers);
         var studentTest = StudentTest.builder()
                 .student(student)
                 .testSet(testset)
@@ -146,7 +150,6 @@ public class StudentTestServiceImpl implements StudentTestService {
                             .studentTest(studentTest)
                             .selectedAnswer(offlineAnswer.getSelected())
                             .testSetQuestion(testSetQuestion)
-                            .isCorrected(offlineAnswer.isCorrected())
                             .build();
                 }).collect(Collectors.toList());
 
@@ -154,7 +157,7 @@ public class StudentTestServiceImpl implements StudentTestService {
         studentTestRepository.save(studentTest);
     }
 
-    private int markStudentTest(List<OfflineAnswer> offlineAnswers, Map<Integer, String> correctedAnswers) {
+    private int markStudentTestOffline(List<OfflineAnswer> offlineAnswers, Map<Integer, String> correctedAnswers) {
         return (int) offlineAnswers.parallelStream()
                 .peek(offlineAnswer -> {
                     String corrected = correctedAnswers.get(offlineAnswer.getQuestionNo());
@@ -165,6 +168,85 @@ public class StudentTestServiceImpl implements StudentTestService {
                     return corrected.equals(offlineAnswer.getSelected());
                 })
                 .count();
+    }
+
+    @Override
+    public void finishStudentTest(StudentTestFinishRequest request, Principal principal) throws InterruptedException {
+        if (principal == null)
+            throw new InvalidVerificationTokenException("Please login first !", HttpStatus.UNAUTHORIZED);
+        var student = studentRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new InvalidRoleException(
+                        "You don't have role to do this action!",
+                        HttpStatus.FORBIDDEN));
+        var studentTest = studentTestRepository.findStudentTestsByStudentAndStateAndExamClassId(
+                student,
+                State.IN_PROGRESS,
+                request.getExamClassId()
+        );
+        var binarySelectedAnswers = request.getQuestions()
+                .parallelStream()
+                .map(question -> {
+                    var stringBuilder = new StringBuilder();
+                    question.getAnswers()
+                            .forEach(answer -> stringBuilder.append(answer.getIsSelected() ? "1" : "0"));
+                    return QuestionSelectedAnswer.builder()
+                            .questionNo(question.getQuestionNo())
+                            .selectedAnswer(stringBuilder.toString())
+                            .build();
+                }).collect(Collectors.toList());
+
+        var markingThread = new Thread(() -> saveStudentTest(binarySelectedAnswers, studentTest));
+        var saveStudentTestThread = new Thread(() -> saveStudentTestDetail(binarySelectedAnswers, studentTest));
+        markingThread.start();
+        saveStudentTestThread.start();
+
+        markingThread.join();
+        saveStudentTestThread.join();
+
+    }
+
+    private void saveStudentTest(List<QuestionSelectedAnswer> questionSelectedAnswers,
+                                 StudentTest studentTest){
+        var testSet = studentTest.getTestSet();
+        var correctedAnswers = testSetQuestionRepository
+                .findByTestSetAndEnabledIsTrue(testSet)
+                .parallelStream()
+                .collect(Collectors.toMap(
+                        TestSetQuestion::getQuestionNo,
+                        TestSetQuestion::getBinaryAnswer
+                ));
+        var mark = markStudentTestOnline(questionSelectedAnswers, correctedAnswers);
+        studentTest.setMark(mark);
+        var grade = Math.round((double) mark / testSet.getTest().getQuestionQuantity() * 10) / 10;
+        studentTest.setGrade(grade);
+        studentTest.setState(State.FINISHED);
+        studentTestRepository.save(studentTest);
+    }
+
+    private void saveStudentTestDetail(List<QuestionSelectedAnswer> questionSelectedAnswers,
+                                       StudentTest studentTest){
+        var testSet = studentTest.getTestSet();
+        var studentTestDetails = questionSelectedAnswers
+                .parallelStream()
+                .map(selectedAnswer -> {
+                    var testSetQuestion = testSetQuestionRepository.findByTestSetAndQuestionNo(
+                            testSet,
+                            selectedAnswer.getQuestionNo());
+                    return StudentTestDetail.builder()
+                            .studentTest(studentTest)
+                            .selectedAnswer(selectedAnswer.getSelectedAnswer())
+                            .testSetQuestion(testSetQuestion)
+                            .build();
+                }).collect(Collectors.toList());
+        studentTestDetailRepository.saveAll(studentTestDetails);
+    }
+
+    private int markStudentTestOnline(List<QuestionSelectedAnswer> selectedAnswers, Map<Integer, String> correctedAnswers){
+        return (int) selectedAnswers.parallelStream()
+                .filter(selectedAnswer -> {
+                    String corrected = correctedAnswers.get(selectedAnswer.getQuestionNo());
+                    return corrected.equals(selectedAnswer.getSelectedAnswer());
+                }).count();
     }
 
 }
