@@ -15,4 +15,6 @@ public interface StudentTestRepository extends JpaRepository<StudentTest, Intege
 
     List<StudentTest> findByExamClassId(Integer examClassId);
 
+    List<StudentTest> findStudentTestsByStudentAndState(Student student, State state);
+
 }

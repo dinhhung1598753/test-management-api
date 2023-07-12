@@ -5,7 +5,6 @@ import com.demo.app.dto.offline.OfflineExam;
 import com.demo.app.dto.student_test.StudentTestDetailResponse;
 import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.exception.InvalidRoleException;
-import com.demo.app.exception.UserNotEnrolledException;
 import com.demo.app.model.*;
 import com.demo.app.repository.*;
 import com.demo.app.service.StudentTestService;
@@ -13,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +22,6 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,26 +48,33 @@ public class StudentTestServiceImpl implements StudentTestService {
 
     @Override
     public StudentTestDetailResponse attemptTest(String classCode, Principal principal) {
-        var student = studentRepository.findByUsername(principal.getName())
-                .orElseThrow(() -> new InvalidRoleException(
-                        "You don't have role to do this action!",
-                        HttpStatus.FORBIDDEN));
         var examClass = examClassRepository.findByCode(classCode)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Class with code %s not found !", classCode),
                         HttpStatus.NOT_FOUND));
-        if (!examClass.getStudents().contains(student)) {
-            throw new UserNotEnrolledException(
-                    String.format("You are not in class %s", examClass.getCode()),
-                    HttpStatus.FORBIDDEN);
+        var student = studentRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new InvalidRoleException(
+                        "You don't have role to do this action!",
+                        HttpStatus.FORBIDDEN));
+        var studentTests = studentTestRepository.findStudentTestsByStudentAndState(student, State.IN_PROGRESS);
+        if (studentTests.size() > 0){
+            var studentTest = studentTests.get(0);
+            return mapTestSetToResponse(studentTest.getTestSet());
         }
+        return attemptNewTest(examClass, student);
+    }
 
-        var testSets = examClass.getTest().getTestSets();
-        var testSet = getRandomTestSet(testSets);
+    private StudentTestDetailResponse attemptNewTest(ExamClass examClass, Student student){
+        var test = examClass.getTest();
+        var pageable = PageRequest.of(0, 1);
+        var testSet = testSetRepository.findRandomTestSetByTest(test.getId(), pageable)
+                .stream().toList().get(0);
         var studentTest = StudentTest.builder()
                 .student(student)
                 .testSet(testSet)
+                .testDate(LocalDate.now())
                 .state(State.IN_PROGRESS)
+                .examClassId(examClass.getId())
                 .build();
         studentTestRepository.save(studentTest);
         return mapTestSetToResponse(testSet);
@@ -93,12 +99,6 @@ public class StudentTestServiceImpl implements StudentTestService {
                 .testNo(testSet.getTestNo())
                 .questions(questions)
                 .build();
-    }
-
-    private TestSet getRandomTestSet(List<TestSet> testSets) {
-        var random = new Random();
-        var size = testSets.size();
-        return testSets.get(random.nextInt(size));
     }
 
     @Override
@@ -166,7 +166,5 @@ public class StudentTestServiceImpl implements StudentTestService {
                 })
                 .count();
     }
-
-
 
 }

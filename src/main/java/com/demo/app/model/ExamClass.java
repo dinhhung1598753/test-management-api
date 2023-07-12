@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Nationalized;
 
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "exam_class", uniqueConstraints = {
@@ -37,11 +37,11 @@ public class ExamClass extends BaseEntity{
     @ManyToOne
     private Subject subject;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "student_exam_class",
             joinColumns = @JoinColumn(name = "exam_class_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "student_id", referencedColumnName = "id"))
-    private List<Student> students;
+    private Set<Student> students;
 
     @ManyToOne
     private Test test;

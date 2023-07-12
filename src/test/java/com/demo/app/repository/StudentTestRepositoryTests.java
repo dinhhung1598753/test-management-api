@@ -29,4 +29,13 @@ public class StudentTestRepositoryTests {
         Assertions.assertThat(flag).isTrue();
     }
 
+    @Test
+    public void testFindStudentTestsByStudentAndState(){
+        var student = new Student();
+        student.setId(10);
+        var studentTests = studentTestRepository.findStudentTestsByStudentAndState(student, State.IN_PROGRESS);
+        Assertions.assertThat(studentTests).hasSizeGreaterThan(-1);
+        studentTests.forEach(System.out::println);
+    }
+
 }

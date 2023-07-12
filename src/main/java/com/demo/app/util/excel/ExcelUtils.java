@@ -152,7 +152,7 @@ public class ExcelUtils {
             var cell = rowTitle.createCell(colNum);
             cell.setCellValue(title);
             cell.setCellStyle(style);
-            sheet.setColumnWidth(colNum, title.length() * 265);
+            sheet.setColumnWidth(colNum, (30-title.length()) * 275);
         }
     }
 

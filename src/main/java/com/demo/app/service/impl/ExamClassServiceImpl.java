@@ -23,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,7 +56,7 @@ public class ExamClassServiceImpl implements ExamClassService {
         var examClass = mapper.map(request, ExamClass.class);
 
         examClass.setId(null);
-        examClass.setStudents(students);
+        examClass.setStudents(students.parallelStream().collect(Collectors.toSet()));
         examClass.setTeacher(teacher);
         examClass.setTest(test);
         examClass.setSubject(test.getSubject());
@@ -72,10 +71,13 @@ public class ExamClassServiceImpl implements ExamClassService {
         var student = studentRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new InvalidRoleException("You don't have role to do this action!", HttpStatus.FORBIDDEN));
         var examClass = examClassRepository.findByCode(classCode)
-                .orElseThrow(() -> new InvalidArgumentException("Class does not existed", HttpStatus.BAD_REQUEST));
-        if(examClass.getStudents() == null)
-            examClass.setStudents(new ArrayList<>());
-        examClass.getStudents().add(student);
+                .orElseThrow(() -> new EntityNotFoundException("Class does not existed", HttpStatus.BAD_REQUEST));
+        var objects = examClassRepository.findByJoinStudent(classCode);
+        var students = objects.parallelStream()
+                .map(object -> (Student) object[1])
+                .collect(Collectors.toSet());
+        students.add(student);
+        examClass.setStudents(students);
         return examClassRepository.save(examClass);
     }
 

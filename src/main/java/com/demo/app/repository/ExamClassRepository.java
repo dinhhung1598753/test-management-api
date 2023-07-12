@@ -27,4 +27,12 @@ public interface ExamClassRepository extends JpaRepository<ExamClass, Integer> {
             """)
     List<Object[]> findByJoinStudentAndStudentTestWhereId(@Param("exam_class_id") int examClassId);
 
+    @Query("""
+        select ec, s
+        from ExamClass ec
+        join fetch ec.students s
+        where ec.code = :exam_class_code
+    """)
+    List<Object[]> findByJoinStudent(@Param("exam_class_code") String classCode);
+
 }
