@@ -28,9 +28,10 @@ public class TestSetController {
                 .body(new ResponseMessage("Created Set of test successfully !"));
     }
 
-    @GetMapping(path = "/word/export/{id}")
-    public ResponseEntity<?> downloadTestSetWordFile(@PathVariable(name = "id") Integer testSetId) throws IOException {
-        var resource = new InputStreamResource(testSetService.exportTestSetToWord(testSetId));
+    @GetMapping(path = "/word/export/{testId}/{testNo}")
+    public ResponseEntity<?> downloadTestSetWordFile(@PathVariable(name = "testId") Integer testId,
+                                                     @PathVariable(name = "testNo") Integer testNo) throws IOException {
+        var resource = new InputStreamResource(testSetService.exportTestSetToWord(testId, testNo));
         var filename = "Test" + LocalDate.now() + ".docx";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);

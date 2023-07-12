@@ -129,10 +129,10 @@ public class TestSetServiceImpl implements TestSetService {
     }
 
     @Override
-    public ByteArrayInputStream exportTestSetToWord(int testSetId) throws IOException {
-        @SuppressWarnings("DefaultLocale") var testSet = testSetRepository.findById(testSetId)
+    public ByteArrayInputStream exportTestSetToWord(Integer testId, Integer testNo) throws IOException {
+        @SuppressWarnings("DefaultLocale") var testSet = testSetRepository.findByTestIdAndTestNo(testId, testNo)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Test set with id %d not found !", testSetId),
+                        "Test set not found !",
                         HttpStatus.NOT_FOUND));
         var response = mapTestSetToDetailResponse(testSet);
         return WordUtils.convertTestToWord(response);

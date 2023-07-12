@@ -13,5 +13,5 @@ public interface TestSetService {
 
     TestSetDetailResponse getTestSetDetail(Integer testId, Integer testNo);
 
-    ByteArrayInputStream exportTestSetToWord(int testSetId) throws IOException;
+    ByteArrayInputStream exportTestSetToWord(Integer testId, Integer testNo) throws IOException;
 }
