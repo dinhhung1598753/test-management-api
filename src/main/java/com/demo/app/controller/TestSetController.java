@@ -19,8 +19,8 @@ public class TestSetController {
 
     private final TestSetService testSetService;
 
-    @PostMapping(path = "/{test-id}/create")
-    public ResponseEntity<?> createTestSetFromTest(@PathVariable(name = "test-id") int testId,
+    @PostMapping(path = "/{testId}/create")
+    public ResponseEntity<?> createTestSetFromTest(@PathVariable(name = "testId") int testId,
                                                    @RequestParam final Integer testSetQuantity) throws InterruptedException {
         testSetService.createTestSetFromTest(testId, testSetQuantity);
         return ResponseEntity
@@ -43,9 +43,9 @@ public class TestSetController {
                 .body(resource);
     }
 
-    @GetMapping(path = "/detail/{test-id}/{test-no}")
-    public ResponseEntity<?> getTestSetDetail(@PathVariable(name = "test-id") Integer testId,
-                                              @PathVariable(name = "test-no") Integer testNo) {
+    @GetMapping(path = "/detail/{testId}/{testNo}")
+    public ResponseEntity<?> getTestSetDetail(@PathVariable(name = "testId") Integer testId,
+                                              @PathVariable(name = "testNo") Integer testNo) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(testSetService.getTestSetDetail(testId, testNo));
