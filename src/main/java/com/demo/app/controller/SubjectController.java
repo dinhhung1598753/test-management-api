@@ -2,6 +2,7 @@ package com.demo.app.controller;
 
 import com.demo.app.dto.chapter.ChapterRequest;
 import com.demo.app.dto.message.ResponseMessage;
+import com.demo.app.dto.subject.SubjectChaptersRequest;
 import com.demo.app.dto.subject.SubjectRequest;
 import com.demo.app.service.SubjectService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -57,6 +58,11 @@ public class SubjectController {
         String message = "Add subject successfully !";
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseMessage(message));
+    }
+
+    public ResponseEntity<?> addSubjectWithChapters(@RequestBody final SubjectChaptersRequest request) {
+
+        return null;
     }
 
     @Operation(
@@ -137,6 +143,12 @@ public class SubjectController {
         subjectService.updateSubject(subjectId, request);
         return new ResponseEntity<>(new ResponseMessage("Update subject successfully !"), HttpStatus.OK);
     }
+
+    @PutMapping(path = "/update/{id}/chapters")
+    public ResponseEntity<?> updateSubjectChapters(@PathVariable(name = "id") Integer subjectId){
+        return null;
+    }
+
     @Operation(
             description = "Delete subject",
             method = "DELETE",

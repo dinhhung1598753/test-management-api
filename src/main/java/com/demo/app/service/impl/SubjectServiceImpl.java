@@ -44,6 +44,8 @@ public class SubjectServiceImpl implements SubjectService {
         subjectRepository.save(subject);
     }
 
+    
+
     @Override
     public List<SubjectResponse> getAllSubjects() throws EntityNotFoundException{
         List<Subject> subjects = subjectRepository.findByEnabledIsTrue();

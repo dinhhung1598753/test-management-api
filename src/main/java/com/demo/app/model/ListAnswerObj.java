@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 public class ListAnswerObj {
 
-    private Integer stt;
+    private Integer index;
 
     private String answer;
 

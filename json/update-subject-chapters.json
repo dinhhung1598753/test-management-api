@@ -1,0 +1,16 @@
+{
+  "title": "Data structure and algorithms",
+  "code": "IT4110",
+  "description": "Cấu trúc dữ liệu giải thuật",
+  "credit": 3,
+  "chapters": [
+    {
+      "title": "Recursion",
+      "order": 1
+    },
+    {
+      "title": "Tree",
+      "order": 2
+    }
+  ]
+}

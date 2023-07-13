@@ -30,7 +30,6 @@ public class TestRequest {
     private String testTime;
 
     @Min(value = 1, message = "Duration quantity must be greater than 1 !")
-    @Max(value = 60, message = "Duration quantity must be fewer than 60 !")
     private int duration;
 
 }

@@ -159,10 +159,6 @@ public class StudentTestServiceImpl implements StudentTestService {
 
     private int markStudentTestOffline(List<OfflineAnswer> offlineAnswers, Map<Integer, String> correctedAnswers) {
         return (int) offlineAnswers.parallelStream()
-                .peek(offlineAnswer -> {
-                    String corrected = correctedAnswers.get(offlineAnswer.getQuestionNo());
-                    offlineAnswer.setCorrected(corrected.equals(offlineAnswer.getSelected()));
-                })
                 .filter(offlineAnswer -> {
                     String corrected = correctedAnswers.get(offlineAnswer.getQuestionNo());
                     return corrected.equals(offlineAnswer.getSelected());
