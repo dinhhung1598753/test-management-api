@@ -31,7 +31,7 @@ public class Subject extends BaseEntity {
     @Column(name = "credit")
     private int credit;
 
-    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "subject")
     private List<Chapter> chapters;
 
     @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL)

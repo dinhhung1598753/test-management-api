@@ -12,7 +12,7 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
 
     Boolean existsByCodeAndEnabledTrue(String code);
 
-    Optional<Subject> findByCode(String code);
+    Optional<Subject> findByCodeAndEnabledIsTrue(String code);
 
     List<Subject> findByEnabledIsTrue();
 }

@@ -44,7 +44,7 @@ public class TestServiceImpl implements TestService {
     @Override
     @Transactional
     public void createTestRandomQuestion(TestRequest request) throws EntityNotFoundException {
-        var subject = subjectRepository.findByCode(request.getSubjectCode())
+        var subject = subjectRepository.findByCodeAndEnabledIsTrue(request.getSubjectCode())
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Code: %s not found !", request.getSubjectCode()),
                         HttpStatus.NOT_FOUND));

@@ -65,6 +65,18 @@ public class ExamClassController {
                 .body(examClassService.getAllEnabledExamClass());
     }
 
+    @GetMapping(path = "/student/list")
+    public ResponseEntity<?> getStudentExamClass(Principal principal) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(examClassService.getStudentExamClass(principal));
+    }
+
+    @GetMapping(path = "/info/{id}")
+    public ResponseEntity<?> getExamClassInfo(@PathVariable(name = "id") Integer examClassId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(examClassService.getExamClassInfo(examClassId));
+    }
+
     @GetMapping(path = "/detail/{id}")
     public ResponseEntity<?> getExamClassDetail(@PathVariable(name = "id") final Integer examClassId) {
         return ResponseEntity.status(HttpStatus.OK)

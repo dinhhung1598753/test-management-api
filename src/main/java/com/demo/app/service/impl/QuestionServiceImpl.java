@@ -81,7 +81,7 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     @Transactional
     public void saveAllQuestions(MultipleQuestionRequest request) {
-        var subject = subjectRepository.findByCode(request.getSubjectCode())
+        var subject = subjectRepository.findByCodeAndEnabledIsTrue(request.getSubjectCode())
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Subject %s not found !", request.getSubjectCode()),
                         HttpStatus.NOT_FOUND
@@ -118,7 +118,7 @@ public class QuestionServiceImpl implements QuestionService {
         }
         var requests = ExcelUtils.convertExcelToDataTransferObject(file, QuestionExcelRequest.class);
         var questions = requests.parallelStream().map(request -> {
-            var subject = subjectRepository.findByCode(request.getSubjectCode())
+            var subject = subjectRepository.findByCodeAndEnabledIsTrue(request.getSubjectCode())
                     .orElseThrow(() -> new EntityNotFoundException(
                             String.format("Subject %s not found !", request.getSubjectCode()),
                             HttpStatus.NOT_FOUND
@@ -166,7 +166,7 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     @Transactional
     public List<QuestionResponse> getAllQuestionsBySubjectCode(String code) {
-        var subject = subjectRepository.findByCode(code).orElseThrow(
+        var subject = subjectRepository.findByCodeAndEnabledIsTrue(code).orElseThrow(
                 () -> new EntityNotFoundException(
                         String.format("Subject with code: %s not found !", code),
                         HttpStatus.NOT_FOUND));

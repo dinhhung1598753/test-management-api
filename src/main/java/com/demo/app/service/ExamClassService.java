@@ -1,6 +1,7 @@
 package com.demo.app.service;
 
 import com.demo.app.dto.examClass.ClassDetailResponse;
+import com.demo.app.dto.examClass.ClassInfoResponse;
 import com.demo.app.dto.examClass.ClassRequest;
 import com.demo.app.dto.examClass.ClassResponse;
 import com.demo.app.model.ExamClass;
@@ -24,6 +25,10 @@ public interface ExamClassService {
     List<ClassResponse> getAllEnabledExamClass();
 
     ClassDetailResponse getExamClassDetail(int examClassId);
+
+    List<ClassResponse> getStudentExamClass(Principal principal);
+
+    ClassInfoResponse getExamClassInfo(Integer examClassId);
 
     ByteArrayInputStream exportStudentTestToExcel(String code) throws IOException;
 

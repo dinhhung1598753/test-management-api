@@ -1,9 +1,6 @@
 package com.demo.app.service.impl;
 
-import com.demo.app.dto.examClass.ClassDetailResponse;
-import com.demo.app.dto.examClass.ClassRequest;
-import com.demo.app.dto.examClass.ClassResponse;
-import com.demo.app.dto.examClass.ClassStudentRequest;
+import com.demo.app.dto.examClass.*;
 import com.demo.app.dto.student.StudentClassResponse;
 import com.demo.app.dto.studentTest.StudentTestExcelResponse;
 import com.demo.app.exception.*;
@@ -67,7 +64,7 @@ public class ExamClassServiceImpl implements ExamClassService {
 
     @Override
     @Transactional
-    public ExamClass joinExamClassByCode(String classCode, Principal principal){
+    public ExamClass joinExamClassByCode(String classCode, Principal principal) {
         var student = studentRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new InvalidRoleException("You don't have role to do this action!", HttpStatus.FORBIDDEN));
         var examClass = examClassRepository.findByCode(classCode)
@@ -84,7 +81,7 @@ public class ExamClassServiceImpl implements ExamClassService {
     @Override
     @Transactional
     public void importClassStudents(String classCode, MultipartFile file) throws IOException {
-        if (ExcelUtils.notHaveExcelFormat(file)){
+        if (ExcelUtils.notHaveExcelFormat(file)) {
             throw new FileInputException(
                     "There are something wrong with file, please check file format is .xlsx !",
                     HttpStatus.CONFLICT);
@@ -109,7 +106,7 @@ public class ExamClassServiceImpl implements ExamClassService {
     }
 
     @Override
-    public ClassDetailResponse getExamClassDetail(int examClassId){
+    public ClassDetailResponse getExamClassDetail(int examClassId) {
         var objects = examClassRepository.findByJoinStudentAndStudentTestWhereId(examClassId);
         var studentClasses = objects.parallelStream().map(object -> {
             var student = (Student) object[1];
@@ -124,6 +121,30 @@ public class ExamClassServiceImpl implements ExamClassService {
         }).collect(Collectors.toList());
         return ClassDetailResponse.builder()
                 .students(studentClasses)
+                .build();
+    }
+
+    @Override
+    public List<ClassResponse> getStudentExamClass(Principal principal) {
+        if (principal == null) {
+            throw new InvalidRoleException("You must log in first !", HttpStatus.FORBIDDEN);
+        }
+        var student = studentRepository.findByUsername(principal.getName()).get();
+        var examClasses = examClassRepository.findByStudentIdAndEnabledIsTrue(student.getId());
+        return examClasses.stream()
+                .map(examClass -> mapper.map(examClass, ClassResponse.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public ClassInfoResponse getExamClassInfo(Integer examClassId){
+        var examClass = examClassRepository.findById(examClassId)
+                .orElseThrow(() -> new EntityNotFoundException("Exam class not found !", HttpStatus.NOT_FOUND));
+        var classResponse = mapper.map(examClass, ClassInfoResponse.ClassResponse.class);
+        var testResponse = mapper.map(examClass.getTest(), ClassInfoResponse.TestResponse.class);
+        return ClassInfoResponse.builder()
+                .examClass(classResponse)
+                .test(testResponse)
                 .build();
     }
 

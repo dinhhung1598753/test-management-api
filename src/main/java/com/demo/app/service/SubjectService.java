@@ -2,6 +2,7 @@ package com.demo.app.service;
 
 import com.demo.app.dto.chapter.ChapterRequest;
 import com.demo.app.dto.chapter.ChapterResponse;
+import com.demo.app.dto.subject.SubjectChaptersRequest;
 import com.demo.app.dto.subject.SubjectChaptersResponse;
 import com.demo.app.dto.subject.SubjectRequest;
 import com.demo.app.dto.subject.SubjectResponse;
@@ -13,6 +14,8 @@ import java.util.List;
 
 public interface SubjectService {
     void addSubject(SubjectRequest request) throws FieldExistedException;
+
+    void addSubjectChapters(SubjectChaptersRequest request);
 
     List<SubjectResponse> getAllSubjects() throws EntityNotFoundException;
 
@@ -34,6 +37,8 @@ public interface SubjectService {
     void addSubjectChapters(String code, List<ChapterRequest> request);
 
     void updateSubjectChapter(int chapterId, ChapterRequest request);
+
+    void updateSubjectWithChapters(int subjectId, SubjectChaptersRequest request);
 
     void disableChapter(int chapterId);
 }

@@ -1,6 +1,5 @@
 package com.demo.app.controller;
 
-import com.demo.app.dto.chapter.ChapterRequest;
 import com.demo.app.dto.message.ResponseMessage;
 import com.demo.app.dto.subject.SubjectChaptersRequest;
 import com.demo.app.dto.subject.SubjectRequest;
@@ -60,9 +59,11 @@ public class SubjectController {
                 .body(new ResponseMessage(message));
     }
 
+    @PostMapping(path = "/add/chapters")
     public ResponseEntity<?> addSubjectWithChapters(@RequestBody final SubjectChaptersRequest request) {
-
-        return null;
+        subjectService.addSubjectChapters(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ResponseMessage("Subject with chapters created successfully !"));
     }
 
     @Operation(
@@ -78,7 +79,7 @@ public class SubjectController {
                                     examples = @ExampleObject()))
             })
     @GetMapping(path = "/list")
-    public ResponseEntity<?> listSubject() {
+    public ResponseEntity<?> getAllSubject() {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(subjectService.getAllSubjects());
     }
@@ -145,8 +146,11 @@ public class SubjectController {
     }
 
     @PutMapping(path = "/update/{id}/chapters")
-    public ResponseEntity<?> updateSubjectChapters(@PathVariable(name = "id") Integer subjectId){
-        return null;
+    public ResponseEntity<?> updateSubjectChapters(@PathVariable(name = "id") Integer subjectId,
+                                                   @RequestBody SubjectChaptersRequest request){
+        subjectService.updateSubjectWithChapters(subjectId, request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseMessage("Subject with chapters updated successfully !"));
     }
 
     @Operation(
@@ -173,194 +177,5 @@ public class SubjectController {
         subjectService.disableSubject(subjectId);
         return new ResponseEntity<>(new ResponseMessage("Update subject successfully !"), HttpStatus.NO_CONTENT);
     }
-    @Operation(
-            description = "Delete subject",
-            method = "DELETE",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "No Content",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = List.class, description = "Return list of chapter on a subject"),
-                                    examples = @ExampleObject()
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Data not found",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ResponseMessage.class, description = "Data not found"),
-                                    examples = @ExampleObject()
-                            )
-                    )
-            }
-    )
-    @GetMapping(path = "/{code}/chapter/list")
-    public ResponseEntity<?> getAllSubjectChapters( @Parameter @PathVariable(name = "code") String code){
-        return ResponseEntity.ok().body(subjectService.getAllSubjectChapters(code));
-    }
-    @Operation(
-            description = "Add a new Chapter by data sent from client",
-            method = "POST",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "This is data sent by client",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ChapterRequest.class, description = "Information need to create a Chapter"),
-                            examples = @ExampleObject()
 
-                    )
-            ),
-            responses = {
-                    @ApiResponse(
-                            responseCode = "201",
-                            description = "New Subject is created successfully",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ResponseMessage.class, description = "Create a new Chapter"),
-                                    examples = @ExampleObject()
-                            )
-
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "This chapter is already taken",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ResponseMessage.class)
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Data not found",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ResponseMessage.class)
-                            )
-                    )
-            }
-    )
-    @PostMapping(path = "/{code}/chapter/add")
-    public ResponseEntity<?> addSubjectChapter(@Parameter @PathVariable(name = "code") String code, @RequestBody @Valid final ChapterRequest request){
-        subjectService.addSubjectChapter(code, request);
-        return new ResponseEntity<>(new ResponseMessage("Add subject's chapter successfully !"), HttpStatus.CREATED);
-    }
-    @Operation(
-            description = "Add a new Chapter by data sent from client",
-            method = "POST",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "This is data sent by client",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ChapterRequest.class, description = "Information need to create a Chapter"),
-                            examples = @ExampleObject()
-
-                    )
-            ),
-            responses = {
-                    @ApiResponse(
-                            responseCode = "201",
-                            description = "New Subject is created successfully",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ResponseMessage.class, description = "Create a new Chapter"),
-                                    examples = @ExampleObject()
-                            )
-
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "This chapter is already taken",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ResponseMessage.class)
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Data not found",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ResponseMessage.class)
-                            )
-                    )
-            }
-    )
-    @PostMapping(path = "/{code}/chapters/add")
-    public ResponseEntity<?> addSubjectChapters(@PathVariable(name = "code") String code, @RequestBody @Valid final List<ChapterRequest> request){
-        subjectService.addSubjectChapters(code, request);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new ResponseMessage("Add subject's chapters successfully !"));
-    }
-
-    @Operation(
-            description = "Update subject",
-            method = "PUT",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "This is data sent by client",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ChapterRequest.class, description = "Information need to update a Chapter"),
-                            examples = @ExampleObject()
-
-                    )
-            ),
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Updated successfully",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ResponseMessage.class, description = "Updated successfully"),
-                                    examples = @ExampleObject()
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Data not found",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ResponseMessage.class, description = "Data not found"),
-                                    examples = @ExampleObject()
-                            )
-                    )
-            }
-    )
-    @PutMapping(path = "/chapter/update/{id}")
-    public ResponseEntity<?> updateChapter(@Parameter @PathVariable(name = "id") int chapterId, @RequestBody @Valid final ChapterRequest request){
-        subjectService.updateSubjectChapter(chapterId, request);
-        return new ResponseEntity<>(new ResponseMessage("Update chapter successfully !"), HttpStatus.OK);
-    }
-
-    @Operation(
-            description = "Delete subject",
-            method = "DELETE",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Data not found",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ResponseMessage.class, description = "Data not found"),
-                                    examples = @ExampleObject()
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "delete successfully",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ResponseMessage.class, description = "delete successfully"),
-                                    examples = @ExampleObject()
-                            )
-                    )
-            }
-    )
-    @DeleteMapping(path = "/chapter/disable/{id}")
-    public ResponseEntity<?> disableChapter(@Parameter @PathVariable(name = "id") int chapterId){
-        subjectService.disableChapter(chapterId);
-        return new ResponseEntity<>(new ResponseMessage("Disable chapter successfully !"), HttpStatus.OK);
-    }
 }

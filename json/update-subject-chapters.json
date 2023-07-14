@@ -11,6 +11,10 @@
     {
       "title": "Tree",
       "order": 2
+    },
+    {
+      "title": "Graph",
+      "order": 3
     }
   ]
 }

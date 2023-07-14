@@ -47,8 +47,7 @@ def find_dest(pts):
     heightA = np.sqrt(((tr[0] - br[0]) ** 2) + ((tr[1] - br[1]) ** 2))
     heightB = np.sqrt(((tl[0] - bl[0]) ** 2) + ((tl[1] - bl[1]) ** 2))
     maxHeight = max(int(heightA), int(heightB))
-    destination_corners = [[0, 0], [maxWidth, 0],
-                           [maxWidth, maxHeight], [0, maxHeight]]
+    destination_corners = [[0, 0], [maxWidth, 0], [maxWidth, maxHeight], [0, maxHeight]]
     return order_points(destination_corners)
 
 
@@ -81,11 +80,11 @@ def load_model(num_classes=1, model_name="r50", checkpoint_path=None, device=Non
     return model
 
 
-CHECKPOINT_MODEL_PATH = r"Model/model_r50_iou_mix_2C020.pth"
+CHECKPOINT_MODEL_PATH = r"Model/model_mbv3_iou_mix_2C049.pth"
 
 trained_model = load_model(
     num_classes=2,
-    model_name="r50",
+    model_name="mbv3",
     checkpoint_path=CHECKPOINT_MODEL_PATH,
     device=device,
 )
@@ -125,9 +124,8 @@ def extract(image_true=None, trained_model=None, image_size=384, BUFFER=10):
     )
     r_H, r_W = out.shape
 
-    _out_extended = np.zeros(
-        (IMAGE_SIZE + r_H, IMAGE_SIZE + r_W), dtype=out.dtype)
-    _out_extended[half: half + IMAGE_SIZE, half: half + IMAGE_SIZE] = out * 255
+    _out_extended = np.zeros((IMAGE_SIZE + r_H, IMAGE_SIZE + r_W), dtype=out.dtype)
+    _out_extended[half : half + IMAGE_SIZE, half : half + IMAGE_SIZE] = out * 255
     out = _out_extended.copy()
 
     del _out_extended
@@ -135,8 +133,7 @@ def extract(image_true=None, trained_model=None, image_size=384, BUFFER=10):
 
     # Edge Detection.
     canny = cv2.Canny(out.astype(np.uint8), 225, 255)
-    canny = cv2.dilate(canny, cv2.getStructuringElement(
-        cv2.MORPH_ELLIPSE, (5, 5)))
+    canny = cv2.dilate(canny, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5)))
     contours, _ = cv2.findContours(canny, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
     page = sorted(contours, key=cv2.contourArea, reverse=True)[0]
 
@@ -195,7 +192,7 @@ def extract(image_true=None, trained_model=None, image_size=384, BUFFER=10):
 
         # adjust original image within the new 'image_extended'
         image_extended[
-            top_pad: top_pad + imH, left_pad: left_pad + imW, :
+            top_pad : top_pad + imH, left_pad : left_pad + imW, :
         ] = image_true
         image_extended = image_extended.astype(np.float32)
 
@@ -329,8 +326,7 @@ def crop_image(img):
     gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     blurred = cv2.GaussianBlur(gray_img, (9, 9), 0)
     img_canny = cv2.Canny(blurred, 0, 20)
-    cnts = cv2.findContours(
-        img_canny.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    cnts = cv2.findContours(img_canny.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
     ans_blocks = []
     x_old, y_old, w_old, h_old = 0, 0, 0, 0
@@ -348,7 +344,7 @@ def crop_image(img):
                     ans_blocks.append(
                         (
                             gray_img[
-                                y_curr: y_curr + h_curr, x_curr: x_curr + w_curr
+                                y_curr : y_curr + h_curr, x_curr : x_curr + w_curr
                             ],
                             [x_curr, y_curr, w_curr, h_curr],
                         )
@@ -361,7 +357,7 @@ def crop_image(img):
                     ans_blocks.append(
                         (
                             gray_img[
-                                y_curr: y_curr + h_curr, x_curr: x_curr + w_curr
+                                y_curr : y_curr + h_curr, x_curr : x_curr + w_curr
                             ],
                             [x_curr, y_curr, w_curr, h_curr],
                         )
@@ -478,7 +474,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="input")
     args = parser.parse_args()
 
-    path = './images/answer_sheets/exam-class1/' + args.input
+    path = "./images/answer_sheets/exam-class1/" + args.input
     image = cv2.imread(path, cv2.IMREAD_COLOR)[:, :, ::-1]
     document = extract(image_true=image, trained_model=trained_model)
     document = document / 255.0

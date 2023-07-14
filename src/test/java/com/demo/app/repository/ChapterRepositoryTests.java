@@ -30,7 +30,7 @@ public class ChapterRepositoryTests {
 
     @Test
     public void testFindBySubjectAndOrder(){
-        var subject = subjectRepository.findByCode("IT4110").get();
+        var subject = subjectRepository.findByCodeAndEnabledIsTrue("IT4110").get();
         var chapter = chapterRepository.findBySubjectAndOrder(subject, 1);
         Assertions.assertThat(chapter).isNotNull();
     }
