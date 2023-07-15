@@ -19,7 +19,7 @@ WORKDIR /app
 
 # Copy the compiled JAR file from the build stage
 COPY --from=build /app/target/Project_Design_I-0.0.1-SNAPSHOT.jar /app/app.jar
-
+COPY word /app/word
 # Expose the port that the application listens on
 EXPOSE 8000
 
