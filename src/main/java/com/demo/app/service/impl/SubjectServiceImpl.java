@@ -61,7 +61,7 @@ public class SubjectServiceImpl implements SubjectService {
         return subjects.stream()
                 .map(subject -> {
                     var response = mapper.map(subject, SubjectResponse.class);
-                    var chapters = subject.getChapters();
+                    var chapters = chapterRepository.findBySubjectIdAndEnabledTrue(subject.getId());
                     response.setChapterQuantity(chapters.size());
                     response.setQuestionQuantity(questionRepository.countByChapterIn(chapters));
                     return response;
@@ -102,26 +102,34 @@ public class SubjectServiceImpl implements SubjectService {
         var subject = subjectRepository.findByCodeAndEnabledIsTrue(code)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find any chapter with code %s", code), HttpStatus.NOT_FOUND));
         List<Chapter> chapters = chapterRepository.findBySubjectIdAndEnabledTrue(subject.getId());
-        return chapters.stream().map(chapter -> ChapterResponse.builder()
-                .id(chapter.getId())
-                .title(chapter.getTitle())
-                .order(chapter.getOrder())
-                .build()).collect(Collectors.toList());
+        return chapters.parallelStream()
+                .map(chapter -> ChapterResponse.builder()
+                        .id(chapter.getId())
+                        .title(chapter.getTitle())
+                        .order(chapter.getOrder())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<SubjectChaptersResponse> getAllSubjectsWithChapters() {
         var subjects = subjectRepository.findByEnabledIsTrue();
         return subjects.stream()
-                .map(subject -> mapper.map(subject, SubjectChaptersResponse.class))
-                .collect(Collectors.toList());
+                .map(subject -> {
+                    var response = mapper.map(subject, SubjectChaptersResponse.class);
+                    var chapters = chapterRepository.findBySubjectIdAndEnabledTrue(subject.getId());
+                    response.setChapterQuantity(chapters.size());
+                    response.setQuestionQuantity(questionRepository.countByChapterIn(chapters));
+                    return response;
+                }).collect(Collectors.toList());
     }
 
     @Override
     public SubjectChaptersResponse getSubjectWithChapter(String code) {
         var subject = subjectRepository.findByCodeAndEnabledIsTrue(code)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Subject %s not found !", code), HttpStatus.NOT_FOUND));
-        subject.getChapters().removeIf(chapter -> !chapter.getEnabled());
+        subject.getChapters()
+                .removeIf(chapter -> !chapter.getEnabled());
         return mapper.map(subject, SubjectChaptersResponse.class);
     }
 
@@ -129,7 +137,10 @@ public class SubjectServiceImpl implements SubjectService {
     @Transactional
     public void addSubjectChapter(String code, ChapterRequest request) throws EntityNotFoundException {
         var subject = subjectRepository.findByCodeAndEnabledIsTrue(code)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find any chapter with code %s", code), HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Cannot find any chapter with code %s", code),
+                        HttpStatus.NOT_FOUND)
+                );
         if (chapterRepository.existsBySubjectIdAndOrderAndEnabledTrue(subject.getId(), request.getOrder())) {
             throw new FieldExistedException("This chapter already existed in subject !", HttpStatus.BAD_REQUEST);
         }
@@ -145,7 +156,8 @@ public class SubjectServiceImpl implements SubjectService {
         var subject = subjectRepository.findByCodeAndEnabledIsTrue(code)
                 .orElseThrow(() -> new EntityNotFoundException(String.format(
                         "Cannot find any chapter with code %s", code),
-                        HttpStatus.NOT_FOUND));
+                        HttpStatus.NOT_FOUND)
+                );
         var chapters = request.parallelStream()
                 .peek(chapterRequest -> {
                     if (chapterRepository.existsBySubjectIdAndOrderAndEnabledTrue(
@@ -166,8 +178,11 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public void updateSubjectChapter(int chapterId, ChapterRequest request) {
-        @SuppressWarnings("DefaultLocale") var chapter = chapterRepository.findById(chapterId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find any chapter with id %d", chapterId), HttpStatus.NOT_FOUND));
+        var chapter = chapterRepository.findById(chapterId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Chapter not found !",
+                        HttpStatus.NOT_FOUND)
+                );
         chapter.setTitle(request.getTitle());
         chapter.setOrder(request.getOrder());
         chapterRepository.save(chapter);
@@ -176,35 +191,37 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     @Transactional
-    public void updateSubjectWithChapters(int subjectId, SubjectChaptersRequest request) {
-        var subject = subjectRepository.findById(subjectId)
-                .orElseThrow(() -> new EntityNotFoundException("Subject not found !", HttpStatus.NOT_FOUND));
-        var oldChapters = chapterRepository.findBySubjectIdAndEnabledTrue(subjectId).iterator();
+    public void updateSubjectWithChapters(String subjectCode, SubjectChaptersRequest request) {
+        var subject = subjectRepository.findByCodeAndEnabledIsTrue(subjectCode)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Subject not found !",
+                        HttpStatus.NOT_FOUND)
+                );
+        var oldChapters = chapterRepository.findBySubjectIdAndEnabledTrue(subject.getId())
+                .iterator();
         var newChapters = request.getChapters()
-                .stream()
-                .map(chapterRequest -> {
+                .parallelStream().map(chapterRequest -> {
                     var chapter = mapper.map(chapterRequest, Chapter.class);
                     chapter.setSubject(subject);
                     chapter.setId(oldChapters.next().getId());
                     return chapter;
-                })
-                .collect(Collectors.toList());
+                }).collect(Collectors.toList());
 
         subject.setTitle(request.getTitle());
         subject.setCode(request.getCode());
         subject.setCredit(request.getCredit());
         subject.setDescription(request.getDescription());
         subject.setChapters(newChapters);
-
         subjectRepository.save(subject);
     }
 
     @Override
     public void disableChapter(int chapterId) {
-        @SuppressWarnings("DefaultLocale") var chapter = chapterRepository.findById(chapterId).orElseThrow(
-                () -> new EntityNotFoundException(
-                        String.format("Cannot find any chapter with id %d", chapterId),
-                        HttpStatus.NOT_FOUND));
+        var chapter = chapterRepository.findById(chapterId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Chapter not found",
+                        HttpStatus.NOT_FOUND)
+                );
         chapter.setEnabled(false);
         chapterRepository.save(chapter);
     }

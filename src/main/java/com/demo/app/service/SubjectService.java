@@ -38,7 +38,7 @@ public interface SubjectService {
 
     void updateSubjectChapter(int chapterId, ChapterRequest request);
 
-    void updateSubjectWithChapters(int subjectId, SubjectChaptersRequest request);
+    void updateSubjectWithChapters(String subjectCode, SubjectChaptersRequest request);
 
     void disableChapter(int chapterId);
 }

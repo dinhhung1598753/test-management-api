@@ -93,17 +93,6 @@ public class ExamClassController {
                 .body(resource);
     }
 
-    @GetMapping(path = "/export/{code}/students")
-    public ResponseEntity<?> exportStudentBaseOnClass(@PathVariable(name = "code") String code) throws IOException {
-        System.out.println("Inside export");
-        var resource = new InputStreamResource(examClassService.exportStudentBaseOnClass(code));
-        var filename = "StudentList: " + code + ".xlsx";
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-                .body(resource);
-    }
-
     @DeleteMapping(path = "/disable/{id}")
     public ResponseEntity<?> disableExamClass(@PathVariable(name = "id") int examClassId) {
         examClassService.disableExamClass(examClassId);

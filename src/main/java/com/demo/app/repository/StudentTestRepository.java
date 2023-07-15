@@ -6,14 +6,14 @@ import com.demo.app.model.StudentTest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface StudentTestRepository extends JpaRepository<StudentTest, Integer> {
 
     Boolean existsByStudentAndState(Student student, State state);
 
-    List<StudentTest> findByExamClassId(Integer examClassId);
+    Optional<StudentTest> findByStudentAndExamClassId(Student student, Integer examClassId);
 
     StudentTest findStudentTestsByStudentAndStateAndExamClassId(Student student, State state, Integer examClassId);
 

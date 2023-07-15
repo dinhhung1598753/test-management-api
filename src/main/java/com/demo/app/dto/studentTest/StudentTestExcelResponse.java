@@ -10,11 +10,17 @@ import lombok.*;
 @AllArgsConstructor
 public class StudentTestExcelResponse implements Excelable {
 
-    private String examClassCode;
+    private String classCode;
 
     private String testDate;
 
     private Double grade;
+
+    private String state;
+
+    private Integer course;
+
+    private String email;
 
     private String fullName;
 

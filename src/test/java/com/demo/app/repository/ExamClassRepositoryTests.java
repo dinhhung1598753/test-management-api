@@ -10,9 +10,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.List;
-
-
 @DataJpaTest
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = ProjectDesignIApplication.class)
@@ -27,17 +24,6 @@ public class ExamClassRepositoryTests {
         String code = "34422";
         var examClass = examClassRepository.findByCode(code);
         Assertions.assertThat(examClass).isNotNull();
-    }
-
-    @Test
-    public void test(){
-        int examClassId = 2;
-        List<Object[]> objects = examClassRepository.findByJoinStudentAndStudentTestWhereId(examClassId);
-        objects.forEach(object -> {
-            System.out.println(object[0]);
-            System.out.println(object[1]);
-            System.out.println(object[2]);
-        });
     }
 
 }

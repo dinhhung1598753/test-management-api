@@ -1,9 +1,9 @@
 package com.demo.app.service.impl;
 
 import com.demo.app.dto.examClass.*;
-import com.demo.app.dto.student.StudentClassResponse;
 import com.demo.app.dto.studentTest.StudentTestExcelResponse;
 import com.demo.app.exception.*;
+import com.demo.app.model.State;
 import com.demo.app.model.Student;
 import com.demo.app.model.StudentTest;
 import com.demo.app.repository.*;
@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -107,18 +108,23 @@ public class ExamClassServiceImpl implements ExamClassService {
 
     @Override
     public ClassDetailResponse getExamClassDetail(int examClassId) {
-        var objects = examClassRepository.findByJoinStudentAndStudentTestWhereId(examClassId);
-        var studentClasses = objects.parallelStream().map(object -> {
-            var student = (Student) object[1];
-            var studentTest = (StudentTest) object[2];
-            return ClassDetailResponse.StudentClassResponse.builder()
-                    .fullName(student.getFullname())
-                    .code(student.getCode())
-                    .state(studentTest.getState().toString())
-                    .testDate(studentTest.getTestDate().toString())
-                    .grade(studentTest.getGrade())
-                    .build();
-        }).collect(Collectors.toList());
+        var objects = examClassRepository.findByJoinStudentWhereId(examClassId);
+        var studentClasses = objects.parallelStream()
+                .map(object -> {
+                    var student = (Student) object[1];
+                    var studentTest = studentTestRepository.findByStudentAndExamClassId(student, examClassId)
+                            .orElse(StudentTest.builder().state(State.NOT_ATTEMPT)
+                                    .testDate(LocalDate.of(2000, 1, 1))
+                                    .build());
+
+                    return ClassDetailResponse.StudentClassResponse.builder()
+                            .fullName(student.getFullname())
+                            .code(student.getCode())
+                            .state(studentTest.getState().toString())
+                            .testDate(studentTest.getTestDate().toString())
+                            .grade(studentTest.getGrade())
+                            .build();
+                }).collect(Collectors.toList());
         return ClassDetailResponse.builder()
                 .students(studentClasses)
                 .build();
@@ -137,7 +143,7 @@ public class ExamClassServiceImpl implements ExamClassService {
     }
 
     @Override
-    public ClassInfoResponse getExamClassInfo(Integer examClassId){
+    public ClassInfoResponse getExamClassInfo(Integer examClassId) {
         var examClass = examClassRepository.findById(examClassId)
                 .orElseThrow(() -> new EntityNotFoundException("Exam class not found !", HttpStatus.NOT_FOUND));
         var classResponse = mapper.map(examClass, ClassInfoResponse.ClassResponse.class);
@@ -154,41 +160,26 @@ public class ExamClassServiceImpl implements ExamClassService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Exam class " + code + " not found !",
                         HttpStatus.NOT_FOUND));
-        var studentTests = studentTestRepository.findByExamClassId(examClass.getId());
-        var studentTestExcelResponses = studentTests.parallelStream()
-                .map(studentTest -> {
-                    var student = studentTest.getStudent();
+        var examClassStudents = examClassRepository.findByJoinStudentWhereId(examClass.getId());
+        var studentTestExcelResponses = examClassStudents.parallelStream()
+                .map(examClassStudent -> {
+                    var student = (Student) examClassStudent[1];
+                    var studentTest = studentTestRepository.findByStudentAndExamClassId(student, examClass.getId())
+                            .orElse(StudentTest.builder().state(State.NOT_ATTEMPT)
+                                    .testDate(LocalDate.of(2000, 1, 1))
+                                    .build());
                     return StudentTestExcelResponse.builder()
-                            .examClassCode(code)
+                            .classCode(code)
                             .testDate(studentTest.getTestDate().toString())
                             .fullName(student.getFullname())
                             .grade(studentTest.getGrade())
                             .studentCode(student.getCode())
+                            .state(studentTest.getState().toString())
+                            .course(student.getCourse())
+                            .email(student.getUser().getEmail())
                             .build();
                 }).collect(Collectors.toList());
         return ExcelUtils.convertContentsToExcel(studentTestExcelResponses);
-    }
-
-    @Override
-    public ByteArrayInputStream exportStudentBaseOnClass(String code) throws IOException {
-        var examClass = examClassRepository.findByCode(code)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Exam class " + code + " not found !",
-                        HttpStatus.NOT_FOUND));
-        var studentClass = examClass.getStudents();
-        var studentClassExcelResponses = studentClass.parallelStream()
-                .map(student -> StudentClassResponse.builder()
-                        .fullName(student.getFullname())
-                        .code(student.getCode())
-                        .email(student.getUser().getEmail())
-                        .phoneNumber(student.getPhoneNumber())
-                        .birthday(student.getBirthday().toString())
-                        .gender(student.getGender().toString())
-                        .course(student.getCourse())
-                        .build())
-                .collect(Collectors.toList());
-        return ExcelUtils.convertContentsToExcel(studentClassExcelResponses);
-
     }
 
     @Override

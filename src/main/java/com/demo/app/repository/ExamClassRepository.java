@@ -19,15 +19,6 @@ public interface ExamClassRepository extends JpaRepository<ExamClass, Integer> {
     Optional<ExamClass> findByCode(String classCode);
 
     @Query("""
-            select ec, s, st
-            from ExamClass ec
-            join fetch ec.students s
-            inner join StudentTest st on st.student.id = s.id
-            where ec.id = :exam_class_id and st.examClassId = :exam_class_id
-            """)
-    List<Object[]> findByJoinStudentAndStudentTestWhereId(@Param("exam_class_id") int examClassId);
-
-    @Query("""
             select ec
             from ExamClass ec
             join fetch ec.students s
@@ -43,4 +34,11 @@ public interface ExamClassRepository extends JpaRepository<ExamClass, Integer> {
     """)
     List<Object[]> findByJoinStudent(@Param("exam_class_code") String classCode);
 
+    @Query("""
+        select ec, s
+        from ExamClass ec
+        join fetch ec.students s
+        where ec.id = :exam_class_id
+    """)
+    List<Object[]> findByJoinStudentWhereId(@Param("exam_class_id") Integer examClassId);
 }

@@ -22,6 +22,10 @@ public class SubjectChaptersResponse {
 
     private int credit;
 
+    private long chapterQuantity;
+
+    private long questionQuantity;
+
     private List<ChapterResponse> chapters;
 
 }

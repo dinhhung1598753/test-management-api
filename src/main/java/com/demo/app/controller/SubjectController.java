@@ -80,20 +80,23 @@ public class SubjectController {
             })
     @GetMapping(path = "/list")
     public ResponseEntity<?> getAllSubject() {
+        var subjectResponses = subjectService.getAllSubjects();
         return ResponseEntity.status(HttpStatus.OK)
-                .body(subjectService.getAllSubjects());
+                .body(subjectResponses);
     }
 
     @GetMapping(path = "/chapters")
     public ResponseEntity<?> listSubjectWithChapters() {
+        var subjectChapterResponses = subjectService.getAllSubjectsWithChapters();
         return ResponseEntity.status(HttpStatus.OK)
-                .body(subjectService.getAllSubjectsWithChapters());
+                .body(subjectChapterResponses);
     }
 
     @GetMapping(path = "/{code}")
     public ResponseEntity<?> subjectWithChapters(@PathVariable String code){
+        var subjectChapterResponse = subjectService.getSubjectWithChapter(code);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(subjectService.getSubjectWithChapter(code));
+                .body(subjectChapterResponse);
     }
 
     @Operation(
@@ -145,10 +148,10 @@ public class SubjectController {
         return new ResponseEntity<>(new ResponseMessage("Update subject successfully !"), HttpStatus.OK);
     }
 
-    @PutMapping(path = "/update/{id}/chapters")
-    public ResponseEntity<?> updateSubjectChapters(@PathVariable(name = "id") Integer subjectId,
+    @PutMapping(path = "/update/{code}/chapters")
+    public ResponseEntity<?> updateSubjectChapters(@PathVariable(name = "code") String subjectCode,
                                                    @RequestBody SubjectChaptersRequest request){
-        subjectService.updateSubjectWithChapters(subjectId, request);
+        subjectService.updateSubjectWithChapters(subjectCode, request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseMessage("Subject with chapters updated successfully !"));
     }
