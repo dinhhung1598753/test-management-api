@@ -174,7 +174,7 @@ public class ExcelUtils {
                         .peek(field -> field.setAccessible(true))
                         .collect(Collectors.toMap(Field::getName, field -> {
                             try {
-                                return field.get(object).toString();
+                                return field.get(object) == null ? "null" : field.get(object).toString();
                             } catch (IllegalAccessException e) {
                                 throw new FileInputException(e.getMessage(), HttpStatus.EXPECTATION_FAILED);
                             }

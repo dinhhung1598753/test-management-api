@@ -2,7 +2,7 @@ package com.demo.app.controller;
 
 import com.demo.app.dto.examClass.ClassRequest;
 import com.demo.app.dto.message.ResponseMessage;
-import com.demo.app.exception.InvalidRoleException;
+import com.demo.app.exception.UserNotSignInException;
 import com.demo.app.service.ExamClassService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class ExamClassController {
     @PreAuthorize("hasAnyRole('TEACHER')")
     public ResponseEntity<?> createExamClass(@RequestBody ClassRequest request, Principal principal) {
         if (principal == null) {
-            throw new InvalidRoleException("You're not logged in !", HttpStatus.UNAUTHORIZED);
+            throw new UserNotSignInException("You're not logged in !", HttpStatus.UNAUTHORIZED);
         }
         examClassService.createExamClass(request, principal);
         return ResponseEntity
@@ -42,7 +42,7 @@ public class ExamClassController {
     @PreAuthorize("hasAnyRole('STUDENT')")
     public ResponseEntity<?> joinExamClassByCode(@RequestParam String classCode, Principal principal) {
         if (principal == null) {
-            throw new InvalidRoleException("You are not logged in", HttpStatus.UNAUTHORIZED);
+            throw new UserNotSignInException("You're not logged in !", HttpStatus.UNAUTHORIZED);
         }
         var examClass = examClassService.joinExamClassByCode(classCode, principal);
         return ResponseEntity

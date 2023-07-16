@@ -39,7 +39,7 @@ public class StudentTestDetailResponse {
         @Builder
         public static class StudentTestAnswer {
 
-            private int answerNo;
+            private String answerNo;
 
             private String content;
 

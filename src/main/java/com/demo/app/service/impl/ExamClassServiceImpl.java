@@ -179,13 +179,16 @@ public class ExamClassServiceImpl implements ExamClassService {
                             .email(student.getUser().getEmail())
                             .build();
                 }).collect(Collectors.toList());
+        if (studentTestExcelResponses.size() == 0){
+            studentTestExcelResponses.add(StudentTestExcelResponse.builder().build());
+        }
         return ExcelUtils.convertContentsToExcel(studentTestExcelResponses);
     }
 
     @Override
     public void disableExamClass(int examClassId) {
-        @SuppressWarnings("DefaultLocale") var examClass = examClassRepository.findById(examClassId).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Exam Class with id: %d not found !", examClassId), HttpStatus.NOT_FOUND)
+         var examClass = examClassRepository.findById(examClassId).orElseThrow(
+                () -> new EntityNotFoundException("Exam class not found !", HttpStatus.NOT_FOUND)
         );
         examClass.setEnabled(false);
         examClassRepository.save(examClass);

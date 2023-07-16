@@ -8,6 +8,7 @@ import com.demo.app.repository.TestRepository;
 import com.demo.app.repository.TestSetQuestionRepository;
 import com.demo.app.repository.TestSetRepository;
 import com.demo.app.service.TestSetService;
+import com.demo.app.util.constant.Constant;
 import com.demo.app.util.word.WordUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -35,12 +35,6 @@ public class TestSetServiceImpl implements TestSetService {
     private final TestSetRepository testSetRepository;
 
     private final TestSetQuestionRepository testSetQuestionRepository;
-
-    private static final Map<Integer, String> answerNoText = Map.of(
-            1, "A",
-            2, "B",
-            3, "C",
-            4, "D");
 
     @Override
     @Transactional
@@ -151,7 +145,7 @@ public class TestSetServiceImpl implements TestSetService {
                             .forEach(responseAnswer -> {
                                 var answer = answers.next();
                                 responseAnswer.setContent(answer.getAnswer().getContent());
-                                responseAnswer.setAnswerNo(answerNoText.get(answer.getAnswerNo()));
+                                responseAnswer.setAnswerNo(Constant.answerNoText.get(answer.getAnswerNo()));
                             });
                     return questionResponse;
                 })

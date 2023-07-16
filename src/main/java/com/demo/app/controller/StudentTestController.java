@@ -4,6 +4,7 @@ import com.demo.app.dto.message.ResponseMessage;
 import com.demo.app.dto.studentTest.StudentTestFinishRequest;
 import com.demo.app.dto.studentTest.TestImageResponse;
 import com.demo.app.exception.FileInputException;
+import com.demo.app.exception.UserNotSignInException;
 import com.demo.app.service.FileStorageService;
 import com.demo.app.service.StudentTestService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -54,6 +55,9 @@ public class StudentTestController {
     @GetMapping(path = "/attempt")
     @PreAuthorize("hasAnyRole('STUDENT')")
     public ResponseEntity<?> attemptTest(@RequestParam String classCode, Principal principal) {
+        if (principal == null){
+            throw new UserNotSignInException("You are not logged in !", HttpStatus.UNAUTHORIZED);
+        }
         var response = studentTestService.attemptTest(classCode, principal);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(response);

@@ -75,4 +75,11 @@ public class RestExceptionHandler {
         return new ErrorResponse(status, ex.getMessage());
     }
 
+    @ExceptionHandler(UserNotSignInException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleUserNotSignInException(UserNotSignInException ex){
+        HttpStatus status = ex.getStatus();
+        return new ErrorResponse(status, ex.getMessage());
+    }
+
 }

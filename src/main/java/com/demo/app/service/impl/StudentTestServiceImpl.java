@@ -11,6 +11,7 @@ import com.demo.app.exception.InvalidVerificationTokenException;
 import com.demo.app.model.*;
 import com.demo.app.repository.*;
 import com.demo.app.service.StudentTestService;
+import com.demo.app.util.constant.Constant;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +54,7 @@ public class StudentTestServiceImpl implements StudentTestService {
 
     @Override
     public StudentTestDetailResponse attemptTest(String classCode, Principal principal) {
+
         var examClass = examClassRepository.findByCode(classCode)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Class with code %s not found !", classCode),
@@ -61,7 +63,11 @@ public class StudentTestServiceImpl implements StudentTestService {
                 .orElseThrow(() -> new InvalidRoleException(
                         "You don't have role to do this action!",
                         HttpStatus.FORBIDDEN));
-        var studentTest = studentTestRepository.findStudentTestsByStudentAndStateAndExamClassId(student, State.IN_PROGRESS, examClass.getId());
+        var studentTest = studentTestRepository.findStudentTestsByStudentAndStateAndExamClassId(
+                student,
+                State.IN_PROGRESS,
+                examClass.getId()
+        );
         if (studentTest != null) {
             return mapTestSetToResponse(studentTest.getTestSet());
         }
@@ -95,7 +101,10 @@ public class StudentTestServiceImpl implements StudentTestService {
                     var answers = question.getAnswers().iterator();
                     testSetQuestion.getTestSetQuestionAnswers()
                             .forEach(questionAnswer ->
-                                    answers.next().setAnswerNo(questionAnswer.getAnswerNo()));
+                                    answers.next().setAnswerNo(
+                                            Constant.answerNoText
+                                                    .get(questionAnswer.getAnswerNo()))
+                            );
                     return question;
                 })
                 .toList();
@@ -168,8 +177,9 @@ public class StudentTestServiceImpl implements StudentTestService {
 
     @Override
     public void finishStudentTest(StudentTestFinishRequest request, Principal principal) throws InterruptedException {
-        if (principal == null)
+        if (principal == null) {
             throw new InvalidVerificationTokenException("Please login first !", HttpStatus.UNAUTHORIZED);
+        }
         var student = studentRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new InvalidRoleException(
                         "You don't have role to do this action!",
@@ -202,7 +212,7 @@ public class StudentTestServiceImpl implements StudentTestService {
     }
 
     private void saveStudentTest(List<QuestionSelectedAnswer> questionSelectedAnswers,
-                                 StudentTest studentTest){
+                                 StudentTest studentTest) {
         var testSet = studentTest.getTestSet();
         var correctedAnswers = testSetQuestionRepository
                 .findByTestSetAndEnabledIsTrue(testSet)
@@ -220,7 +230,7 @@ public class StudentTestServiceImpl implements StudentTestService {
     }
 
     private void saveStudentTestDetail(List<QuestionSelectedAnswer> questionSelectedAnswers,
-                                       StudentTest studentTest){
+                                       StudentTest studentTest) {
         var testSet = studentTest.getTestSet();
         var studentTestDetails = questionSelectedAnswers
                 .parallelStream()
@@ -237,7 +247,7 @@ public class StudentTestServiceImpl implements StudentTestService {
         studentTestDetailRepository.saveAll(studentTestDetails);
     }
 
-    private int markStudentTestOnline(List<QuestionSelectedAnswer> selectedAnswers, Map<Integer, String> correctedAnswers){
+    private int markStudentTestOnline(List<QuestionSelectedAnswer> selectedAnswers, Map<Integer, String> correctedAnswers) {
         return (int) selectedAnswers.parallelStream()
                 .filter(selectedAnswer -> {
                     String corrected = correctedAnswers.get(selectedAnswer.getQuestionNo());
