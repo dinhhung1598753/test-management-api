@@ -2,7 +2,7 @@ package com.demo.app.config.jwt;
 
 import com.demo.app.dto.message.ErrorResponse;
 import com.demo.app.exception.EntityNotFoundException;
-import com.demo.app.exception.ExpiredTokenException;
+import com.demo.app.exception.InvalidTokenException;
 import com.demo.app.repository.TokenRepository;
 import com.demo.app.service.impl.UserDetailsServiceImpl;
 import com.demo.app.util.jwt.JwtUtils;
@@ -60,7 +60,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
-        } catch (ExpiredTokenException | EntityNotFoundException ex){
+        } catch (InvalidTokenException | EntityNotFoundException ex){
             var errorResponse = new ErrorResponse(ex.getStatus(), ex.getMessage());
             response.setStatus(ex.getStatus().value());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);

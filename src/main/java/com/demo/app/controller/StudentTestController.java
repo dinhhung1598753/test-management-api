@@ -4,6 +4,7 @@ import com.demo.app.dto.message.ResponseMessage;
 import com.demo.app.dto.studentTest.StudentTestFinishRequest;
 import com.demo.app.dto.studentTest.TestImageResponse;
 import com.demo.app.exception.FileInputException;
+import com.demo.app.exception.InvalidVerificationTokenException;
 import com.demo.app.exception.UserNotSignInException;
 import com.demo.app.service.FileStorageService;
 import com.demo.app.service.StudentTestService;
@@ -67,7 +68,9 @@ public class StudentTestController {
     @PreAuthorize("hasAnyRole('STUDENT')")
     public ResponseEntity<?> finishTest(@RequestBody StudentTestFinishRequest request,
                                         Principal principal) throws InterruptedException {
-
+        if (principal == null) {
+            throw new InvalidVerificationTokenException("Please login first !", HttpStatus.UNAUTHORIZED);
+        }
         studentTestService.finishStudentTest(request, principal);
         return null;
     }

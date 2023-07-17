@@ -7,7 +7,6 @@ import com.demo.app.dto.studentTest.StudentTestDetailResponse;
 import com.demo.app.dto.studentTest.QuestionSelectedAnswer;
 import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.exception.InvalidRoleException;
-import com.demo.app.exception.InvalidVerificationTokenException;
 import com.demo.app.model.*;
 import com.demo.app.repository.*;
 import com.demo.app.service.StudentTestService;
@@ -24,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -177,9 +177,6 @@ public class StudentTestServiceImpl implements StudentTestService {
 
     @Override
     public void finishStudentTest(StudentTestFinishRequest request, Principal principal) throws InterruptedException {
-        if (principal == null) {
-            throw new InvalidVerificationTokenException("Please login first !", HttpStatus.UNAUTHORIZED);
-        }
         var student = studentRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new InvalidRoleException(
                         "You don't have role to do this action!",
@@ -193,11 +190,17 @@ public class StudentTestServiceImpl implements StudentTestService {
                 .parallelStream()
                 .map(question -> {
                     var stringBuilder = new StringBuilder();
-                    question.getAnswers()
-                            .forEach(answer -> stringBuilder.append(answer.getIsSelected() ? "1" : "0"));
+                    var sortedAnswerNoText = Constant.answerNoText
+                            .entrySet()
+                            .stream()
+                            .sorted(Map.Entry.comparingByKey())
+                            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                                    (oldValue, newValue) -> oldValue, HashMap::new));
+                    sortedAnswerNoText.forEach(
+                            (no, text) -> stringBuilder.append(question.getSelectedAnswerNo().contains(text) ? "1" : "0"));
                     return QuestionSelectedAnswer.builder()
-                            .questionNo(question.getQuestionNo())
                             .selectedAnswer(stringBuilder.toString())
+                            .questionNo(question.getQuestionNo())
                             .build();
                 }).collect(Collectors.toList());
 

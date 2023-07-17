@@ -1,6 +1,6 @@
 package com.demo.app.util.jwt;
 
-import com.demo.app.exception.ExpiredTokenException;
+import com.demo.app.exception.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -36,7 +36,7 @@ public class JwtUtils {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) throws ExpiredTokenException {
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) throws InvalidTokenException {
         final var claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
@@ -48,8 +48,8 @@ public class JwtUtils {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-        } catch (ExpiredJwtException ex){
-            throw new ExpiredTokenException("Access Token has been expired !", HttpStatus.UNAUTHORIZED);
+        } catch (Exception ex){
+            throw new InvalidTokenException("This token has expired or invalid !", HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -75,7 +75,7 @@ public class JwtUtils {
                 .compact();
     }
 
-    public boolean isTokenExpired(String token) throws ExpiredTokenException {
+    public boolean isTokenExpired(String token) throws InvalidTokenException {
         return extractExpiration(token).before(Date.from(Instant.now()));
     }
 

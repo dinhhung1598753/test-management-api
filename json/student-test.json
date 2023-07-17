@@ -4,66 +4,15 @@
   "questions": [
     {
       "questionNo": 1,
-      "answers": [
-        {
-          "answerNo": 1,
-          "isSelected": false
-        },
-        {
-          "answerNo": 2,
-          "isSelected": true
-        },
-        {
-          "answerNo": 3,
-          "isSelected": false
-        },
-        {
-          "answerNo": 4,
-          "isSelected": false
-        }
-      ]
+      "selectedAnswerNo" : "A"
     },
     {
       "questionNo": 2,
-      "answers": [
-        {
-          "answerNo": 1,
-          "isSelected": true
-        },
-        {
-          "answerNo": 2,
-          "isSelected": false
-        },
-        {
-          "answerNo": 3,
-          "isSelected": false
-        },
-        {
-          "answerNo": 4,
-          "isSelected": false
-        }
-      ]
+      "selectedAnswerNo" : "B"
     },
     {
       "questionNo": 3,
-      "answers": [
-        {
-          "answerNo": 1,
-          "isSelected": false
-        },
-        {
-          "answerNo": 2,
-          "isSelected": true
-        },
-        {
-          "answerNo": 3,
-          "isSelected": false
-        },
-        {
-          "answerNo": 4,
-          "isSelected": false
-        }
-      ]
+      "selectedAnswerNo" : "C"
     }
   ]
 }

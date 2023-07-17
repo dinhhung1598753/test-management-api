@@ -26,20 +26,8 @@ public class StudentTestFinishRequest {
 
         private Integer questionNo;
 
-        private List<AnswerFinishRequest> answers;
+        private String selectedAnswerNo;
 
-        @Getter
-        @Setter
-        @NoArgsConstructor
-        @AllArgsConstructor
-        @ToString
-        @Builder
-        public static class AnswerFinishRequest {
-
-            private Integer answerNo;
-
-            private Boolean isSelected;
-        }
     }
 
 }
