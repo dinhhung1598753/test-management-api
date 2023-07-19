@@ -112,11 +112,10 @@ public class ExamClassServiceImpl implements ExamClassService {
         var studentClasses = objects.parallelStream()
                 .map(object -> {
                     var student = (Student) object[1];
-                    var studentTest = studentTestRepository.findByStudentAndExamClassId(student, examClassId)
+                    var studentTest = studentTestRepository.findFirstByStudentAndExamClassIdOrderByUpdatedAtDesc(student, examClassId)
                             .orElse(StudentTest.builder().state(State.NOT_ATTEMPT)
                                     .testDate(LocalDate.of(2000, 1, 1))
                                     .build());
-
                     return ClassDetailResponse.StudentClassResponse.builder()
                             .fullName(student.getFullname())
                             .code(student.getCode())
@@ -164,7 +163,7 @@ public class ExamClassServiceImpl implements ExamClassService {
         var studentTestExcelResponses = examClassStudents.parallelStream()
                 .map(examClassStudent -> {
                     var student = (Student) examClassStudent[1];
-                    var studentTest = studentTestRepository.findByStudentAndExamClassId(student, examClass.getId())
+                    var studentTest = studentTestRepository.findFirstByStudentAndExamClassIdOrderByUpdatedAtDesc(student, examClass.getId())
                             .orElse(StudentTest.builder().state(State.NOT_ATTEMPT)
                                     .testDate(LocalDate.of(2000, 1, 1))
                                     .build());

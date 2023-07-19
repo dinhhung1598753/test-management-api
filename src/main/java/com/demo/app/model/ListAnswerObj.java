@@ -9,9 +9,9 @@ import lombok.*;
 @AllArgsConstructor
 public class ListAnswerObj {
 
-    private Integer index;
+    private Integer answerNo;
 
-    private String answer;
+    private String isSelected;
 
 
 }

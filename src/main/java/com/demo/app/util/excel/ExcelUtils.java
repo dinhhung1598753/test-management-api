@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.function.Supplier;
@@ -52,8 +51,8 @@ public class ExcelUtils {
     }
 
     private static List<Map<String, String>> getExcelContents(MultipartFile file) throws IOException {
-        try (InputStream inputStream = file.getInputStream();
-             Workbook workbook = WorkbookFactory.create(inputStream)) {
+        try (var inputStream = file.getInputStream();
+             var workbook = WorkbookFactory.create(inputStream)) {
             var evaluator = workbook.getCreationHelper()
                     .createFormulaEvaluator();
             var sheet = workbook.getSheetAt(FIRST_SHEET);

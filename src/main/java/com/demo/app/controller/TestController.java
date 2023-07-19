@@ -73,6 +73,7 @@ public class TestController {
                 CMD = String.format(CMD, pathImg);
                 try {
                     File fileTxt = new File("result.txt");
+
                     if(fileTxt.exists() && !fileTxt.isDirectory()) {
                         fileTxt.delete();
                     }
@@ -80,7 +81,7 @@ public class TestController {
                     if(fileJson.exists() && !fileJson.isDirectory()) {
                         fileJson.delete();
                     }
-                    Process process = Runtime.getRuntime().exec(CMD);
+                    Runtime.getRuntime().exec(CMD);
                     while (true) {
                         File f = new File("result.txt");
                         if (f.exists()) return;

@@ -21,6 +21,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -32,9 +35,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StudentTestServiceImpl implements StudentTestService {
 
-    private static final String OFFLINE_EXAM_JSON_PATH = "data.json";
+    private static final String PYTHON_JSON_RESPONSE_FILE = "data.json";
 
-    private static final String STUDENT_CODE_HEADER = "20";
+    private static final String PYTHON_RESULT_FILE = "result.txt";
 
     private final ObjectMapper objectMapper;
 
@@ -54,7 +57,6 @@ public class StudentTestServiceImpl implements StudentTestService {
 
     @Override
     public StudentTestDetailResponse attemptTest(String classCode, Principal principal) {
-
         var examClass = examClassRepository.findByCode(classCode)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Class with code %s not found !", classCode),
@@ -115,67 +117,6 @@ public class StudentTestServiceImpl implements StudentTestService {
     }
 
     @Override
-    @Transactional
-    public void markingOfflineAnswer() throws IOException {
-        var offlineExam = objectMapper.readValue(
-                new File(OFFLINE_EXAM_JSON_PATH),
-                OfflineExam.class);
-        var examClass = examClassRepository.findByCode(offlineExam.getClassCode())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Class %s not found !", offlineExam.getClassCode()),
-                        HttpStatus.NOT_FOUND));
-        var testset = testSetRepository.findByTestAndTestNoAndEnabledTrue(examClass.getTest(), offlineExam.getTestNo())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Test %s not found !", offlineExam.getTestNo()),
-                        HttpStatus.NOT_FOUND));
-        String studentCode = STUDENT_CODE_HEADER + offlineExam.getStudentCode();
-        var student = studentRepository.findByCode(studentCode)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Student %s not found", offlineExam.getStudentCode()),
-                        HttpStatus.NOT_FOUND));
-        var questionAnswers = testSetQuestionRepository.findByTestSetAndEnabledIsTrue(testset)
-                .stream()
-                .collect(Collectors.toMap(
-                        TestSetQuestion::getQuestionNo,
-                        TestSetQuestion::getBinaryAnswer
-                ));
-        var mark = markStudentTestOffline(offlineExam.getAnswers(), questionAnswers);
-        var studentTest = StudentTest.builder()
-                .student(student)
-                .testSet(testset)
-                .mark(mark)
-                .grade((double) mark / questionAnswers.size())
-                .testDate(LocalDate.now())
-                .examClassId(examClass.getId())
-                .state(State.FINISHED)
-                .build();
-        var studentTestDetails = offlineExam.getAnswers()
-                .parallelStream()
-                .map(offlineAnswer -> {
-                    var testSetQuestion = testSetQuestionRepository.findByTestSetAndQuestionNo(
-                            testset,
-                            offlineAnswer.getQuestionNo());
-                    return StudentTestDetail.builder()
-                            .studentTest(studentTest)
-                            .selectedAnswer(offlineAnswer.getSelected())
-                            .testSetQuestion(testSetQuestion)
-                            .build();
-                }).collect(Collectors.toList());
-
-        studentTest.setStudentTestDetails(studentTestDetails);
-        studentTestRepository.save(studentTest);
-    }
-
-    private int markStudentTestOffline(List<OfflineAnswer> offlineAnswers, Map<Integer, String> correctedAnswers) {
-        return (int) offlineAnswers.parallelStream()
-                .filter(offlineAnswer -> {
-                    String corrected = correctedAnswers.get(offlineAnswer.getQuestionNo());
-                    return corrected.equals(offlineAnswer.getSelected());
-                })
-                .count();
-    }
-
-    @Override
     public void finishStudentTest(StudentTestFinishRequest request, Principal principal) throws InterruptedException {
         var student = studentRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new InvalidRoleException(
@@ -188,22 +129,11 @@ public class StudentTestServiceImpl implements StudentTestService {
         );
         var binarySelectedAnswers = request.getQuestions()
                 .parallelStream()
-                .map(question -> {
-                    var stringBuilder = new StringBuilder();
-                    var sortedAnswerNoText = Constant.answerNoText
-                            .entrySet()
-                            .stream()
-                            .sorted(Map.Entry.comparingByKey())
-                            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-                                    (oldValue, newValue) -> oldValue, HashMap::new));
-                    sortedAnswerNoText.forEach(
-                            (no, text) -> stringBuilder.append(question.getSelectedAnswerNo().contains(text) ? "1" : "0"));
-                    return QuestionSelectedAnswer.builder()
-                            .selectedAnswer(stringBuilder.toString())
-                            .questionNo(question.getQuestionNo())
-                            .build();
-                }).collect(Collectors.toList());
-
+                .map(question -> QuestionSelectedAnswer.builder()
+                        .selectedAnswer(convertSelectedTextToBinary(question.getSelectedAnswerNo()))
+                        .questionNo(question.getQuestionNo())
+                        .build())
+                .collect(Collectors.toList());
         var markingThread = new Thread(() -> saveStudentTest(binarySelectedAnswers, studentTest));
         var saveStudentTestThread = new Thread(() -> saveStudentTestDetail(binarySelectedAnswers, studentTest));
         markingThread.start();
@@ -250,12 +180,102 @@ public class StudentTestServiceImpl implements StudentTestService {
         studentTestDetailRepository.saveAll(studentTestDetails);
     }
 
+    private String convertSelectedTextToBinary(String selectedAnswerNo) {
+        var stringBuilder = new StringBuilder();
+        var sortedAnswerNoText = Constant.answerNoText
+                .entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue, HashMap::new));
+        sortedAnswerNoText.forEach(
+                (no, text) -> stringBuilder.append(selectedAnswerNo.contains(text) ? "1" : "0"));
+        return stringBuilder.toString();
+    }
+
     private int markStudentTestOnline(List<QuestionSelectedAnswer> selectedAnswers, Map<Integer, String> correctedAnswers) {
         return (int) selectedAnswers.parallelStream()
                 .filter(selectedAnswer -> {
                     String corrected = correctedAnswers.get(selectedAnswer.getQuestionNo());
                     return corrected.equals(selectedAnswer.getSelectedAnswer());
                 }).count();
+    }
+
+    @Override
+    public void autoMarkingStudentTest(String classCode) throws IOException {
+        try (var paths = Files.list(Paths.get("images/answer_sheets/" + classCode))) {
+            var fileNames = paths.parallel().filter(path -> !Files.isDirectory(path))
+                    .map(Path::getFileName)
+                    .map(Path::toString)
+                    .collect(Collectors.toSet());
+            fileNames.forEach(System.out::println);
+        }
+    }
+
+    private synchronized void runModelPython(String imageName) throws IOException {
+        Boolean flag = false;
+        Files.deleteIfExists(Paths.get(PYTHON_JSON_RESPONSE_FILE));
+        Files.deleteIfExists(Paths.get(PYTHON_RESULT_FILE));
+        String commandLine = String.format("cmd /c python main.py %s", imageName);
+        Runtime.getRuntime().exec(commandLine);
+
+    }
+
+    @Transactional
+    public void markingOfflineAnswer() throws IOException {
+        var offlineExam = objectMapper.readValue(new File(PYTHON_JSON_RESPONSE_FILE), OfflineExam.class);
+        var examClass = examClassRepository.findByCode(offlineExam.getClassCode())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Class %s not found !", offlineExam.getClassCode()),
+                        HttpStatus.NOT_FOUND));
+        var testset = testSetRepository.findByTestAndTestNoAndEnabledTrue(examClass.getTest(), offlineExam.getTestNo())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Test %s not found !", offlineExam.getTestNo()),
+                        HttpStatus.NOT_FOUND));
+        var student = studentRepository.findByCode(offlineExam.getStudentCode())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Student %s not found", offlineExam.getStudentCode()),
+                        HttpStatus.NOT_FOUND));
+        var questionAnswers = testSetQuestionRepository.findByTestSetAndEnabledIsTrue(testset)
+                .stream()
+                .collect(Collectors.toMap(
+                        TestSetQuestion::getQuestionNo,
+                        TestSetQuestion::getBinaryAnswer
+                ));
+        var mark = markStudentTestOffline(offlineExam.getAnswers(), questionAnswers);
+        var studentTest = StudentTest.builder()
+                .student(student)
+                .testSet(testset)
+                .mark(mark)
+                .grade((double) mark / questionAnswers.size())
+                .testDate(LocalDate.now())
+                .examClassId(examClass.getId())
+                .state(State.FINISHED)
+                .build();
+        var studentTestDetails = offlineExam.getAnswers()
+                .parallelStream()
+                .map(offlineAnswer -> {
+                    var testSetQuestion = testSetQuestionRepository.findByTestSetAndQuestionNo(
+                            testset,
+                            offlineAnswer.getQuestionNo());
+                    return StudentTestDetail.builder()
+                            .studentTest(studentTest)
+                            .selectedAnswer(offlineAnswer.getSelected())
+                            .testSetQuestion(testSetQuestion)
+                            .build();
+                }).collect(Collectors.toList());
+
+        studentTest.setStudentTestDetails(studentTestDetails);
+        studentTestRepository.save(studentTest);
+    }
+
+    private int markStudentTestOffline(List<OfflineAnswer> offlineAnswers, Map<Integer, String> correctedAnswers) {
+        return (int) offlineAnswers.parallelStream()
+                .filter(offlineAnswer -> {
+                    String corrected = correctedAnswers.get(offlineAnswer.getQuestionNo());
+                    return corrected.equals(offlineAnswer.getSelected());
+                })
+                .count();
     }
 
 }

@@ -10,7 +10,7 @@ public interface StudentTestService {
 
     StudentTestDetailResponse attemptTest(String classCode, Principal principal);
 
-    void markingOfflineAnswer() throws IOException;
-
     void finishStudentTest(StudentTestFinishRequest request, Principal principal) throws InterruptedException;
+
+    void autoMarkingStudentTest(String classCode) throws IOException;
 }

@@ -1,6 +1,5 @@
 package com.demo.app.dto.studentTest;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.util.List;
@@ -44,8 +43,6 @@ public class StudentTestDetailResponse {
 
             private String content;
 
-            @JsonProperty("isSelected")
-            private boolean isSelected;
         }
     }
 

@@ -11,10 +11,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MyObject {
-    private String class_code;
-    private String student_code;
-    private String exam_code;
-    private List<ListAnswerObj> list_answer;
+    private String classCode;
+    private String studentCode;
+    private String examCode;
+    private List<ListAnswerObj> questions;
 
 }
 
