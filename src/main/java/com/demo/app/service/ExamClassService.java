@@ -28,7 +28,7 @@ public interface ExamClassService {
 
     List<ClassResponse> getStudentExamClass(Principal principal);
 
-    ClassInfoResponse getExamClassInfo(Integer examClassId);
+    ClassInfoResponse getExamClassInfo(Integer examClassId, Principal principal);
 
     ByteArrayInputStream exportStudentTestToExcel(String code) throws IOException;
 

@@ -56,6 +56,7 @@ public class StudentTestServiceImpl implements StudentTestService {
     private final TestSetQuestionRepository testSetQuestionRepository;
 
     @Override
+    @Transactional
     public StudentTestDetailResponse attemptTest(String classCode, Principal principal) {
         var examClass = examClassRepository.findByCode(classCode)
                 .orElseThrow(() -> new EntityNotFoundException(
@@ -155,11 +156,19 @@ public class StudentTestServiceImpl implements StudentTestService {
                         TestSetQuestion::getBinaryAnswer
                 ));
         var mark = markStudentTestOnline(questionSelectedAnswers, correctedAnswers);
-        studentTest.setMark(mark);
         var grade = Math.round((double) mark / testSet.getTest().getQuestionQuantity() * 10) / 10;
+        studentTest.setMark(mark);
         studentTest.setGrade(grade);
         studentTest.setState(State.FINISHED);
         studentTestRepository.save(studentTest);
+    }
+
+    private int markStudentTestOnline(List<QuestionSelectedAnswer> selectedAnswers, Map<Integer, String> correctedAnswers) {
+        return (int) selectedAnswers.parallelStream()
+                .filter(selectedAnswer -> {
+                    String corrected = correctedAnswers.get(selectedAnswer.getQuestionNo());
+                    return corrected.equals(selectedAnswer.getSelectedAnswer());
+                }).count();
     }
 
     private void saveStudentTestDetail(List<QuestionSelectedAnswer> questionSelectedAnswers,
@@ -180,27 +189,6 @@ public class StudentTestServiceImpl implements StudentTestService {
         studentTestDetailRepository.saveAll(studentTestDetails);
     }
 
-    private String convertSelectedTextToBinary(String selectedAnswerNo) {
-        var stringBuilder = new StringBuilder();
-        var sortedAnswerNoText = Constant.answerNoText
-                .entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByKey())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-                        (oldValue, newValue) -> oldValue, HashMap::new));
-        sortedAnswerNoText.forEach(
-                (no, text) -> stringBuilder.append(selectedAnswerNo.contains(text) ? "1" : "0"));
-        return stringBuilder.toString();
-    }
-
-    private int markStudentTestOnline(List<QuestionSelectedAnswer> selectedAnswers, Map<Integer, String> correctedAnswers) {
-        return (int) selectedAnswers.parallelStream()
-                .filter(selectedAnswer -> {
-                    String corrected = correctedAnswers.get(selectedAnswer.getQuestionNo());
-                    return corrected.equals(selectedAnswer.getSelectedAnswer());
-                }).count();
-    }
-
     @Override
     public void autoMarkingStudentTest(String classCode) throws IOException {
         try (var paths = Files.list(Paths.get("images/answer_sheets/" + classCode))) {
@@ -208,22 +196,30 @@ public class StudentTestServiceImpl implements StudentTestService {
                     .map(Path::getFileName)
                     .map(Path::toString)
                     .collect(Collectors.toSet());
-            fileNames.forEach(System.out::println);
+            fileNames.forEach(fileName -> {
+                System.out.println(fileName);
+                try {
+                    var response = runModelPython(fileName);
+                    Thread.sleep(500);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            });
         }
     }
 
-    private synchronized void runModelPython(String imageName) throws IOException {
-        Boolean flag = false;
+    private OfflineExam runModelPython(String imageName) throws IOException, InterruptedException {
         Files.deleteIfExists(Paths.get(PYTHON_JSON_RESPONSE_FILE));
         Files.deleteIfExists(Paths.get(PYTHON_RESULT_FILE));
         String commandLine = String.format("cmd /c python main.py %s", imageName);
-        Runtime.getRuntime().exec(commandLine);
-
+        var process = Runtime.getRuntime().exec(commandLine);
+        process.waitFor();
+        return objectMapper.readValue(new File(PYTHON_JSON_RESPONSE_FILE), OfflineExam.class);
     }
 
-    @Transactional
-    public void markingOfflineAnswer() throws IOException {
-        var offlineExam = objectMapper.readValue(new File(PYTHON_JSON_RESPONSE_FILE), OfflineExam.class);
+    private void markingOfflineAnswer(OfflineExam offlineExam) {
         var examClass = examClassRepository.findByCode(offlineExam.getClassCode())
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Class %s not found !", offlineExam.getClassCode()),
@@ -260,7 +256,7 @@ public class StudentTestServiceImpl implements StudentTestService {
                             offlineAnswer.getQuestionNo());
                     return StudentTestDetail.builder()
                             .studentTest(studentTest)
-                            .selectedAnswer(offlineAnswer.getSelected())
+                            .selectedAnswer(offlineAnswer.getIsSelected())
                             .testSetQuestion(testSetQuestion)
                             .build();
                 }).collect(Collectors.toList());
@@ -273,9 +269,22 @@ public class StudentTestServiceImpl implements StudentTestService {
         return (int) offlineAnswers.parallelStream()
                 .filter(offlineAnswer -> {
                     String corrected = correctedAnswers.get(offlineAnswer.getQuestionNo());
-                    return corrected.equals(offlineAnswer.getSelected());
+                    return corrected.equals(offlineAnswer.getIsSelected());
                 })
                 .count();
+    }
+
+    private String convertSelectedTextToBinary(String selectedAnswerNo) {
+        var stringBuilder = new StringBuilder();
+        var sortedAnswerNoText = Constant.answerNoText
+                .entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue, HashMap::new));
+        sortedAnswerNoText.forEach(
+                (no, text) -> stringBuilder.append(selectedAnswerNo.contains(text) ? "1" : "0"));
+        return stringBuilder.toString();
     }
 
 }

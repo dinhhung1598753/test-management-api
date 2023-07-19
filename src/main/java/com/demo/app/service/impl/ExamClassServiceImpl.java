@@ -142,11 +142,17 @@ public class ExamClassServiceImpl implements ExamClassService {
     }
 
     @Override
-    public ClassInfoResponse getExamClassInfo(Integer examClassId) {
+    public ClassInfoResponse getExamClassInfo(Integer examClassId, Principal principal) {
+        var student = studentRepository.findByUsername(principal.getName()).get();
         var examClass = examClassRepository.findById(examClassId)
                 .orElseThrow(() -> new EntityNotFoundException("Exam class not found !", HttpStatus.NOT_FOUND));
+        var studentTest = studentTestRepository.findFirstByStudentAndExamClassIdOrderByUpdatedAtDesc(student, examClassId)
+                .orElse(StudentTest.builder()
+                        .state(State.NOT_ATTEMPT)
+                        .build());
         var classResponse = mapper.map(examClass, ClassInfoResponse.ClassResponse.class);
         var testResponse = mapper.map(examClass.getTest(), ClassInfoResponse.TestResponse.class);
+        testResponse.setState(studentTest.getState().toString());
         return ClassInfoResponse.builder()
                 .examClass(classResponse)
                 .test(testResponse)

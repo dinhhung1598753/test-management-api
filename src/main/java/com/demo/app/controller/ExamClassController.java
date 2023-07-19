@@ -72,9 +72,12 @@ public class ExamClassController {
     }
 
     @GetMapping(path = "/info/{id}")
-    public ResponseEntity<?> getExamClassInfo(@PathVariable(name = "id") Integer examClassId) {
+    public ResponseEntity<?> getExamClassInfo(@PathVariable(name = "id") Integer examClassId, Principal principal) {
+        if (principal == null || principal.getName().equals("anonymousUser")){
+            throw new UserNotSignInException("You are not logged in", HttpStatus.UNAUTHORIZED);
+        }
         return ResponseEntity.status(HttpStatus.OK)
-                .body(examClassService.getExamClassInfo(examClassId));
+                .body(examClassService.getExamClassInfo(examClassId, principal));
     }
 
     @GetMapping(path = "/detail/{id}")

@@ -493,20 +493,20 @@ if __name__ == "__main__":
 
     array_result = []
     for key, value in enumerate(list_answer):
-        item = {"answerNo": int(key) + 1, "isSelected": value}
+        item = {"questionNo": int(key) + 1, "isSelected": value}
         array_result.append(item)
     if len(result_info) == 2:
         result = {
             "studentCode": result_info["student_code"],
-            "examCode": result_info["exam_code"],
-            "questions": array_result,
+            "classCode": result_info["exam_code"],
+            "answers": array_result,
         }
     elif len(result_info) == 3:
         result = {
             "classCode": result_info["class_code"],
             "studentCode": result_info["student_code"],
-            "examCode": result_info["exam_code"],
-            "questions": array_result,
+            "testNo": result_info["exam_code"],
+            "answers": array_result,
         }
     # Ghi dữ liệu từ điển vào tệp tin JSON
     with open("data.json", "w") as file:

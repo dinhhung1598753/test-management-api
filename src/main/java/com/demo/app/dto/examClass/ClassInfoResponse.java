@@ -30,7 +30,6 @@ public class ClassInfoResponse {
         private int duration;
 
         private String state;
-
     }
 
     @Getter

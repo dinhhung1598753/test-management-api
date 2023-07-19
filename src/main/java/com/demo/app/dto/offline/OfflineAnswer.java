@@ -11,8 +11,8 @@ import lombok.ToString;
 @ToString
 public class OfflineAnswer {
 
-    private int questionNo;
+    private Integer questionNo;
 
-    private String selected;
+    private String isSelected;
 
 }

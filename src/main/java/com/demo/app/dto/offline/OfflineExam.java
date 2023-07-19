@@ -17,7 +17,7 @@ public class OfflineExam {
 
     private String studentCode;
 
-    private int testNo;
+    private Integer testNo;
 
     private List<OfflineAnswer> answers;
 }
