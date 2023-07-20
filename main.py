@@ -473,50 +473,56 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process some integers.")
     parser.add_argument("input", help="input")
     args = parser.parse_args()
+    input_list = args.input.split(",")
+    for i, pathImg in enumerate(input_list):
+        path = "./images/answer_sheets/exam-class1/" + pathImg
+        image = cv2.imread(path, cv2.IMREAD_COLOR)[:, :, ::-1]
+        document = extract(image_true=image, trained_model=trained_model)
+        document = document / 255.0
+        img = cv2.resize(document, (1056, 1500), interpolation=cv2.INTER_AREA)
 
-    path = "./images/answer_sheets/exam-class1/" + args.input
-    image = cv2.imread(path, cv2.IMREAD_COLOR)[:, :, ::-1]
-    document = extract(image_true=image, trained_model=trained_model)
-    document = document / 255.0
-    img = cv2.resize(document, (1056, 1500), interpolation=cv2.INTER_AREA)
+        # ========================== Cắt ảnh sbd và mdt ===============================
+        img_resize = crop_image_info(img)
+        result_info = predictInfo(img=img_resize, model=model)
 
-    # ========================== Cắt ảnh sbd và mdt ===============================
-    img_resize = crop_image_info(img)
-    result_info = predictInfo(img=img_resize, model=model)
+        # ========================== Lấy đáp án ===============================
+        result_answer = crop_image(cv2.convertScaleAbs(img * 255))
+        list_answer = []
+        for i, answer in enumerate(result_answer):
+            selected_answer = predictAns(img=answer, model=model)
+            list_answer = list_answer + selected_answer
 
-    # ========================== Lấy đáp án ===============================
-    result_answer = crop_image(cv2.convertScaleAbs(img * 255))
-    list_answer = []
-    for i, answer in enumerate(result_answer):
-        selected_answer = predictAns(img=answer, model=model)
-        list_answer = list_answer + selected_answer
+        array_result = []
+        for key, value in enumerate(list_answer):
+            item = {"questionNo": int(key) + 1, "isSelected": value}
+            array_result.append(item)
+        if len(result_info) == 2:
+            result = {
+                "studentCode": result_info["student_code"],
+                "classCode": result_info["exam_code"],
+                "answers": array_result,
+            }
+        elif len(result_info) == 3:
+            result = {
+                "classCode": result_info["class_code"],
+                "studentCode": result_info["student_code"],
+                "testNo": result_info["exam_code"],
+                "answers": array_result,
+            }
 
-    array_result = []
-    for key, value in enumerate(list_answer):
-        item = {"questionNo": int(key) + 1, "isSelected": value}
-        array_result.append(item)
-    if len(result_info) == 2:
-        result = {
-            "studentCode": result_info["student_code"],
-            "classCode": result_info["exam_code"],
-            "answers": array_result,
-        }
-    elif len(result_info) == 3:
-        result = {
-            "classCode": result_info["class_code"],
-            "studentCode": result_info["student_code"],
-            "testNo": result_info["exam_code"],
-            "answers": array_result,
-        }
-    # Ghi dữ liệu từ điển vào tệp tin JSON
-    with open("data.json", "w") as file:
-        json.dump(result, file)
+        file_path = f"json/{pathImg}/data.json"
+        dir_path = os.path.dirname(file_path)
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+        # Ghi dữ liệu từ điển vào tệp tin JSON
+        with open(file_path, "w") as file:
+            json.dump(result, file)
 
-    f = open("result.txt", "w")
-    f.write("OK")
-    f.close()
+        f = open("result.txt", "w")
+        f.write("OK")
+        f.close()
 
-    # ========================================= Đo thời gian ==========================
-    # end_time = time.time()
-    # execution_time = end_time - start_time
-    # print("Thời gian thực thi: ", execution_time, " giây")
+        # ========================================= Đo thời gian ==========================
+        # end_time = time.time()
+        # execution_time = end_time - start_time
+        # print("Thời gian thực thi: ", execution_time, " giây")

@@ -20,4 +20,16 @@ public class OfflineExam {
     private Integer testNo;
 
     private List<OfflineAnswer> answers;
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @ToString
+    public static class OfflineAnswer {
+
+        private Integer questionNo;
+
+        private String isSelected;
+
+    }
 }

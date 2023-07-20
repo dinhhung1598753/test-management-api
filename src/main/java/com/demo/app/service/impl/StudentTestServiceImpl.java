@@ -1,6 +1,5 @@
 package com.demo.app.service.impl;
 
-import com.demo.app.dto.offline.OfflineAnswer;
 import com.demo.app.dto.offline.OfflineExam;
 import com.demo.app.dto.studentTest.StudentTestFinishRequest;
 import com.demo.app.dto.studentTest.StudentTestDetailResponse;
@@ -14,6 +13,7 @@ import com.demo.app.util.constant.Constant;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.FileUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -22,13 +22,15 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,8 +38,6 @@ import java.util.stream.Collectors;
 public class StudentTestServiceImpl implements StudentTestService {
 
     private static final String PYTHON_JSON_RESPONSE_FILE = "data.json";
-
-    private static final String PYTHON_RESULT_FILE = "result.txt";
 
     private final ObjectMapper objectMapper;
 
@@ -103,11 +103,10 @@ public class StudentTestServiceImpl implements StudentTestService {
                     question.setQuestionNo(testSetQuestion.getQuestionNo());
                     var answers = question.getAnswers().iterator();
                     testSetQuestion.getTestSetQuestionAnswers()
-                            .forEach(questionAnswer ->
-                                    answers.next().setAnswerNo(
-                                            Constant.answerNoText
-                                                    .get(questionAnswer.getAnswerNo()))
-                            );
+                            .forEach(questionAnswer -> {
+                                var answerNo = Constant.answerNoText.get(questionAnswer.getAnswerNo());
+                                answers.next().setAnswerNo(answerNo);
+                            });
                     return question;
                 })
                 .toList();
@@ -156,9 +155,10 @@ public class StudentTestServiceImpl implements StudentTestService {
                         TestSetQuestion::getBinaryAnswer
                 ));
         var mark = markStudentTestOnline(questionSelectedAnswers, correctedAnswers);
-        var grade = Math.round((double) mark / testSet.getTest().getQuestionQuantity() * 10) / 10;
+        var grade = new DecimalFormat("#.0")
+                .format((double) mark / testSet.getTest().getQuestionQuantity() * 10);
         studentTest.setMark(mark);
-        studentTest.setGrade(grade);
+        studentTest.setGrade(Double.parseDouble(grade));
         studentTest.setState(State.FINISHED);
         studentTestRepository.save(studentTest);
     }
@@ -192,31 +192,44 @@ public class StudentTestServiceImpl implements StudentTestService {
     @Override
     public void autoMarkingStudentTest(String classCode) throws IOException {
         try (var paths = Files.list(Paths.get("images/answer_sheets/" + classCode))) {
-            var fileNames = paths.parallel().filter(path -> !Files.isDirectory(path))
-                    .map(Path::getFileName)
-                    .map(Path::toString)
+            var fileNames = paths.parallel()
+                    .filter(path -> !Files.isDirectory(path))
+                    .map(path -> path.getFileName().toString())
                     .collect(Collectors.toSet());
-            fileNames.forEach(fileName -> {
-                System.out.println(fileName);
+            var executor = Executors.newFixedThreadPool(5);
+            fileNames.forEach(fileName -> executor.execute(() -> {
                 try {
+                    System.out.println(fileName);
                     var response = runModelPython(fileName);
-                    Thread.sleep(500);
+                    System.out.println(response);
+                    markingOfflineAnswer(response);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-            });
+            }));
+            executor.shutdown();
+            try {
+                if (!executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS)) {
+                    executor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executor.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
         }
     }
 
     private OfflineExam runModelPython(String imageName) throws IOException, InterruptedException {
-        Files.deleteIfExists(Paths.get(PYTHON_JSON_RESPONSE_FILE));
-        Files.deleteIfExists(Paths.get(PYTHON_RESULT_FILE));
         String commandLine = String.format("cmd /c python main.py %s", imageName);
         var process = Runtime.getRuntime().exec(commandLine);
         process.waitFor();
-        return objectMapper.readValue(new File(PYTHON_JSON_RESPONSE_FILE), OfflineExam.class);
+        var responseFilePath = "json/" + imageName + "/" + PYTHON_JSON_RESPONSE_FILE;
+        var fileDataJson = new File(responseFilePath);
+        var offlineExam = objectMapper.readValue(fileDataJson, OfflineExam.class);
+        FileUtils.deleteDirectory(fileDataJson.getParentFile());
+        return offlineExam;
     }
 
     private void markingOfflineAnswer(OfflineExam offlineExam) {
@@ -224,7 +237,7 @@ public class StudentTestServiceImpl implements StudentTestService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Class %s not found !", offlineExam.getClassCode()),
                         HttpStatus.NOT_FOUND));
-        var testset = testSetRepository.findByTestAndTestNoAndEnabledTrue(examClass.getTest(), offlineExam.getTestNo())
+        var testSet = testSetRepository.findByTestAndTestNoAndEnabledTrue(examClass.getTest(), offlineExam.getTestNo())
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Test %s not found !", offlineExam.getTestNo()),
                         HttpStatus.NOT_FOUND));
@@ -232,19 +245,22 @@ public class StudentTestServiceImpl implements StudentTestService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Student %s not found", offlineExam.getStudentCode()),
                         HttpStatus.NOT_FOUND));
-        var questionAnswers = testSetQuestionRepository.findByTestSetAndEnabledIsTrue(testset)
+        var test = testSet.getTest();
+        var questionAnswers = testSetQuestionRepository.findByTestSetAndEnabledIsTrue(testSet)
                 .stream()
                 .collect(Collectors.toMap(
                         TestSetQuestion::getQuestionNo,
                         TestSetQuestion::getBinaryAnswer
                 ));
         var mark = markStudentTestOffline(offlineExam.getAnswers(), questionAnswers);
+        var grade = new DecimalFormat("#.0")
+                .format((double) mark / test.getQuestionQuantity() * 10);
         var studentTest = StudentTest.builder()
                 .student(student)
-                .testSet(testset)
+                .testSet(testSet)
                 .mark(mark)
-                .grade((double) mark / questionAnswers.size())
-                .testDate(LocalDate.now())
+                .grade(Double.parseDouble(grade))
+                .testDate(test.getTestDay())
                 .examClassId(examClass.getId())
                 .state(State.FINISHED)
                 .build();
@@ -252,7 +268,7 @@ public class StudentTestServiceImpl implements StudentTestService {
                 .parallelStream()
                 .map(offlineAnswer -> {
                     var testSetQuestion = testSetQuestionRepository.findByTestSetAndQuestionNo(
-                            testset,
+                            testSet,
                             offlineAnswer.getQuestionNo());
                     return StudentTestDetail.builder()
                             .studentTest(studentTest)
@@ -265,8 +281,13 @@ public class StudentTestServiceImpl implements StudentTestService {
         studentTestRepository.save(studentTest);
     }
 
-    private int markStudentTestOffline(List<OfflineAnswer> offlineAnswers, Map<Integer, String> correctedAnswers) {
+    private int markStudentTestOffline(List<OfflineExam.OfflineAnswer> offlineAnswers,
+                                       Map<Integer, String> correctedAnswers) {
         return (int) offlineAnswers.parallelStream()
+                .peek(offlineAnswer -> {
+                    var selectedText = offlineAnswer.getIsSelected();
+                    offlineAnswer.setIsSelected(convertSelectedTextToBinary(selectedText));
+                })
                 .filter(offlineAnswer -> {
                     String corrected = correctedAnswers.get(offlineAnswer.getQuestionNo());
                     return corrected.equals(offlineAnswer.getIsSelected());
@@ -282,8 +303,8 @@ public class StudentTestServiceImpl implements StudentTestService {
                 .sorted(Map.Entry.comparingByKey())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
                         (oldValue, newValue) -> oldValue, HashMap::new));
-        sortedAnswerNoText.forEach(
-                (no, text) -> stringBuilder.append(selectedAnswerNo.contains(text) ? "1" : "0"));
+        sortedAnswerNoText.forEach((no, text) ->
+                stringBuilder.append(selectedAnswerNo.contains(text) ? "1" : "0"));
         return stringBuilder.toString();
     }
 

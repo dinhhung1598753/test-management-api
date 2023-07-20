@@ -67,6 +67,9 @@ public class ExamClassController {
 
     @GetMapping(path = "/student/list")
     public ResponseEntity<?> getStudentExamClass(Principal principal) {
+        if (principal == null) {
+            throw new UserNotSignInException("You are not logged in !", HttpStatus.UNAUTHORIZED);
+        }
         return ResponseEntity.status(HttpStatus.OK)
                 .body(examClassService.getStudentExamClass(principal));
     }

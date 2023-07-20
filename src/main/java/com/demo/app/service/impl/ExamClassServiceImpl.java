@@ -131,9 +131,6 @@ public class ExamClassServiceImpl implements ExamClassService {
 
     @Override
     public List<ClassResponse> getStudentExamClass(Principal principal) {
-        if (principal == null) {
-            throw new InvalidRoleException("You must log in first !", HttpStatus.FORBIDDEN);
-        }
         var student = studentRepository.findByUsername(principal.getName()).get();
         var examClasses = examClassRepository.findByStudentIdAndEnabledIsTrue(student.getId());
         return examClasses.stream()
