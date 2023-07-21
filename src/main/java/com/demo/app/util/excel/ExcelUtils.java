@@ -25,12 +25,12 @@ public class ExcelUtils {
 
     private static final DataFormatter FORMATTER = new DataFormatter();
 
-    private static final String TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    private static final String EXCEL_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
     private static final int FIRST_SHEET = 0;
 
     public static boolean notHaveExcelFormat(MultipartFile file) {
-        return !Objects.equals(file.getContentType(), TYPE);
+        return !Objects.equals(file.getContentType(), EXCEL_TYPE);
     }
 
     /**

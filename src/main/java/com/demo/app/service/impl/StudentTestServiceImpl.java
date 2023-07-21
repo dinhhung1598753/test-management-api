@@ -104,7 +104,7 @@ public class StudentTestServiceImpl implements StudentTestService {
                     var answers = question.getAnswers().iterator();
                     testSetQuestion.getTestSetQuestionAnswers()
                             .forEach(questionAnswer -> {
-                                var answerNo = Constant.answerNoText.get(questionAnswer.getAnswerNo());
+                                var answerNo = Constant.ANSWER_TEXTS.get(questionAnswer.getAnswerNo());
                                 answers.next().setAnswerNo(answerNo);
                             });
                     return question;
@@ -297,7 +297,7 @@ public class StudentTestServiceImpl implements StudentTestService {
 
     private String convertSelectedTextToBinary(String selectedAnswerNo) {
         var stringBuilder = new StringBuilder();
-        var sortedAnswerNoText = Constant.answerNoText
+        var sortedAnswerNoText = Constant.ANSWER_TEXTS
                 .entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByKey())

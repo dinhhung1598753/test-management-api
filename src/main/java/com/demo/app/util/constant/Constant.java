@@ -4,10 +4,10 @@ import java.util.Map;
 
 public class Constant {
 
-    public static final Map<Integer, String> answerNoText = Map.of(
+    public static final Map<Integer, String> ANSWER_TEXTS = Map.of(
             1, "A",
             2, "B",
             3, "C",
-            4, "D");
-
+            4, "D"
+    );
 }

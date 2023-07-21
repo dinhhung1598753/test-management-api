@@ -55,7 +55,7 @@ public class QuestionServiceImpl implements QuestionService {
         var question = mapRequestToQuestion(request);
         var saved = questionRepository.save(question);
         if (file != null) {
-            uploadLocalQuestionImage(saved, file);
+            uploadS3QuestionImage(saved, file);
             questionRepository.save(saved);
         }
     }

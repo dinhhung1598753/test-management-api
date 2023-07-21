@@ -145,7 +145,7 @@ public class TestSetServiceImpl implements TestSetService {
                             .forEach(responseAnswer -> {
                                 var answer = answers.next();
                                 responseAnswer.setContent(answer.getAnswer().getContent());
-                                responseAnswer.setAnswerNo(Constant.answerNoText.get(answer.getAnswerNo()));
+                                responseAnswer.setAnswerNo(Constant.ANSWER_TEXTS.get(answer.getAnswerNo()));
                             });
                     return questionResponse;
                 })

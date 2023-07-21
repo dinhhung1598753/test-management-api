@@ -1,7 +1,6 @@
 package com.demo.app.service.impl;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.demo.app.service.S3Service;
 import lombok.RequiredArgsConstructor;
@@ -20,14 +19,11 @@ public class S3ServiceImpl implements S3Service {
     @Value("${aws.s3.bucket.name}")
     private String bucketName;
 
-
-
     @Override
     public String uploadFile(String keyName, MultipartFile file) throws IOException {
         var metadata = new ObjectMetadata();
         metadata.setContentLength(file.getSize());
         s3Client.putObject(bucketName, keyName, file.getInputStream(), metadata);
-        s3Client.setObjectAcl(bucketName, keyName, CannedAccessControlList.PublicRead);
         return s3Client.getUrl(bucketName, keyName).toString();
     }
 
