@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface AnswerRepository extends JpaRepository<Answer, Integer> {
 
-    List<Answer> findByQuestion(Question question);
+    List<Answer> findByQuestionAndEnabledIsTrue(Question question);
 
 }

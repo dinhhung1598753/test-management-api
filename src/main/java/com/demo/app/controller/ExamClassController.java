@@ -4,6 +4,7 @@ import com.demo.app.dto.examClass.ClassRequest;
 import com.demo.app.dto.message.ResponseMessage;
 import com.demo.app.exception.UserNotSignInException;
 import com.demo.app.service.ExamClassService;
+import com.demo.app.util.excel.ExcelUtils;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
@@ -76,7 +77,7 @@ public class ExamClassController {
 
     @GetMapping(path = "/info/{id}")
     public ResponseEntity<?> getExamClassInfo(@PathVariable(name = "id") Integer examClassId, Principal principal) {
-        if (principal == null || principal.getName().equals("anonymousUser")){
+        if (principal == null || principal.getName().equals("anonymousUser")) {
             throw new UserNotSignInException("You are not logged in", HttpStatus.UNAUTHORIZED);
         }
         return ResponseEntity.status(HttpStatus.OK)
@@ -107,5 +108,12 @@ public class ExamClassController {
                 .body(new ResponseMessage("Disabled exam class successfully !"));
     }
 
+    @PostMapping(path = "/test",
+            consumes = {
+                    MediaType.MULTIPART_FORM_DATA_VALUE
+                    , MediaType.APPLICATION_JSON_VALUE})
+    private void test(@RequestPart() MultipartFile file) throws IOException {
+        ExcelUtils.readExternalExcelFile(file);
+    }
 
 }

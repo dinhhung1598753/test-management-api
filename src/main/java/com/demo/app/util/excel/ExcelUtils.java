@@ -50,6 +50,11 @@ public class ExcelUtils {
                 }).collect(Collectors.toList());
     }
 
+    public static void readExternalExcelFile(MultipartFile file) throws IOException {
+        var test = getExcelContents(file);
+        test.forEach(l -> l.forEach((k, v) -> System.out.println(k + " - " + v)));
+    }
+
     private static List<Map<String, String>> getExcelContents(MultipartFile file) throws IOException {
         try (var inputStream = file.getInputStream();
              var workbook = WorkbookFactory.create(inputStream)) {

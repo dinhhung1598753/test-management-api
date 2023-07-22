@@ -28,6 +28,6 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
 
     int countByChapterIn(List<Chapter> chapters);
 
-    List<Question> findByChapterIn(List<Chapter> chapters);
+    List<Question> findByEnabledIsTrueAndChapterIn(List<Chapter> chapters);
 
 }

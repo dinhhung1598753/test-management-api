@@ -1,5 +1,6 @@
 package com.demo.app.dto.test;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -27,5 +28,9 @@ public class TestQuestionRequest {
 
     @Min(value = 1, message = "Duration must be greater than 0 !")
     private int duration;
+
+    @Min(value = 1,message = "Total point must be greater than 0")
+    @Max(value = 10, message = "Total point must be less than 10")
+    private Integer totalPoint;
 
 }

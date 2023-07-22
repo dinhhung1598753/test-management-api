@@ -170,7 +170,7 @@ public class QuestionServiceImpl implements QuestionService {
                 () -> new EntityNotFoundException(
                         String.format("Subject with code: %s not found !", code),
                         HttpStatus.NOT_FOUND));
-        var questions = questionRepository.findByChapterIn(subject.getChapters());
+        var questions = questionRepository.findByEnabledIsTrueAndChapterIn(subject.getChapters());
         return questions.parallelStream()
                 .map(question -> {
                     var chapter = question.getChapter();
@@ -185,16 +185,13 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     @Transactional
     public void updateQuestion(int questionId, SingleQuestionRequest request, MultipartFile file) throws IOException {
-        @SuppressWarnings("DefaultLocale") var question = questionRepository.findById(questionId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Not found any question with id: %d !", questionId),
-                        HttpStatus.NOT_FOUND));
-        @SuppressWarnings("DefaultLocale") var chapter = chapterRepository.findById(request.getChapterId())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Not found any question with id: %d !", questionId),
-                        HttpStatus.NOT_FOUND));
+        var question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new EntityNotFoundException("Question not found !", HttpStatus.NOT_FOUND));
+        var chapter = chapterRepository.findById(request.getChapterId())
+                .orElseThrow(() -> new EntityNotFoundException("Chapter not found !", HttpStatus.NOT_FOUND));
+        var level = Question.Level.valueOf(request.getLevel().toUpperCase());
 
-        question.setLevel(Question.Level.valueOf(request.getLevel()));
+        question.setLevel(level);
         question.setTopicText(request.getTopicText());
         question.setChapter(chapter);
 
@@ -235,11 +232,11 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     @Transactional
     public void disableQuestion(int questionId) {
-        @SuppressWarnings("DefaultLocale") var question = questionRepository.findById(questionId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Not found any question with id: %d !", questionId),
-                        HttpStatus.NOT_FOUND));
+        var question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new EntityNotFoundException("Question not found !", HttpStatus.NOT_FOUND));
         question.setEnabled(false);
+        question.getAnswers()
+                .forEach(chapter -> chapter.setEnabled(false));
         questionRepository.save(question);
     }
 

@@ -147,6 +147,7 @@ public class StudentTestServiceImpl implements StudentTestService {
     private void saveStudentTest(List<QuestionSelectedAnswer> questionSelectedAnswers,
                                  StudentTest studentTest) {
         var testSet = studentTest.getTestSet();
+        var test = testSet.getTest();
         var correctedAnswers = testSetQuestionRepository
                 .findByTestSetAndEnabledIsTrue(testSet)
                 .parallelStream()
@@ -156,7 +157,7 @@ public class StudentTestServiceImpl implements StudentTestService {
                 ));
         var mark = markStudentTestOnline(questionSelectedAnswers, correctedAnswers);
         var grade = new DecimalFormat("#.0")
-                .format((double) mark / testSet.getTest().getQuestionQuantity() * 10);
+                .format((double) mark / testSet.getTest().getQuestionQuantity() * test.getTotalPoint());
         studentTest.setMark(mark);
         studentTest.setGrade(Double.parseDouble(grade));
         studentTest.setState(State.FINISHED);
@@ -254,7 +255,7 @@ public class StudentTestServiceImpl implements StudentTestService {
                 ));
         var mark = markStudentTestOffline(offlineExam.getAnswers(), questionAnswers);
         var grade = new DecimalFormat("#.0")
-                .format((double) mark / test.getQuestionQuantity() * 10);
+                .format((double) mark / test.getQuestionQuantity() * test.getTotalPoint());
         var studentTest = StudentTest.builder()
                 .student(student)
                 .testSet(testSet)

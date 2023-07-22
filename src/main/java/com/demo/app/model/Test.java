@@ -26,6 +26,9 @@ public class Test extends BaseEntity {
     @Column(name = "question_quantity")
     private int questionQuantity;
 
+    @Column(name = "total_point")
+    private int totalPoint;
+
     @Column(name = "duration")
     private int duration;
 

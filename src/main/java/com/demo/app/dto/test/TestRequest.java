@@ -29,6 +29,10 @@ public class TestRequest {
     @NotBlank(message = "Please enter test time !")
     private String testTime;
 
+    @Min(value = 1,message = "Total point must be greater than 0")
+    @Max(value = 10, message = "Total point must be less than 10")
+    private Integer totalPoint;
+
     @Min(value = 1, message = "Duration quantity must be greater than 1 !")
     private int duration;
 

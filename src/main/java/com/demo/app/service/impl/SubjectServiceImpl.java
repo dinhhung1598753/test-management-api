@@ -127,7 +127,10 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public SubjectChaptersResponse getSubjectWithChapter(String code) {
         var subject = subjectRepository.findByCodeAndEnabledIsTrue(code)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Subject %s not found !", code), HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Subject %s not found !", code),
+                        HttpStatus.NOT_FOUND)
+                );
         subject.getChapters()
                 .removeIf(chapter -> !chapter.getEnabled());
         return mapper.map(subject, SubjectChaptersResponse.class);

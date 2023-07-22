@@ -78,7 +78,7 @@ public class TestSetServiceImpl implements TestSetService {
                             .testSet(testset)
                             .question(question)
                             .build();
-                    var answers = answerRepository.findByQuestion(question);
+                    var answers = answerRepository.findByQuestionAndEnabledIsTrue(question);
                     var testSetQuestionAnswers = assignAnswersNumber(testSetQuestion, answers);
                     var binaryAnswer = binaryAnswer(testSetQuestionAnswers);
                     testSetQuestion.setTestSetQuestionAnswers(testSetQuestionAnswers);

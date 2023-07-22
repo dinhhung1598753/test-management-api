@@ -18,6 +18,7 @@ from ultralytics import YOLO
 import argparse
 import json
 import time
+from PIL import Image
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -288,8 +289,8 @@ def remove_elements_info(arr):
         item = arr[i]
         result.append(item)
         j = i + 1
-        while j < len(arr) and abs(item[1] - arr[j][1]) <= 5:
-            if arr[j][3] > item[3]:
+        while j < len(arr) and abs(item[0] - arr[j][0]) <= 5:
+            if arr[j][5] > item[5]:
                 result.pop()  # Loại bỏ phần tử đã thêm trước đó
                 break
             j += 1
@@ -304,8 +305,8 @@ def remove_elements_answer(arr):
         item = arr[i]
         result.append(item)
         j = i + 1
-        while j < len(arr) and abs(item[0] - arr[j][0]) <= 5:
-            if arr[j][3] > item[3]:
+        while j < len(arr) and abs(item[1] - arr[j][1]) <= 5:
+            if arr[j][5] > item[5]:
                 result.pop()  # Loại bỏ phần tử đã thêm trước đó
                 break
             j += 1
@@ -370,7 +371,7 @@ def crop_image(img):
         sorted_ans_blocks_resize = []
         for i, sorted_ans_block in enumerate(sorted_ans_blocks):
             img2 = sorted_ans_block[0]
-            # cv2.imwrite(f"cauhoi{i+1}.jpg", img2)
+
             height, width = img2.shape
             size = (width, height)
             ratio = height / width
@@ -384,7 +385,40 @@ def crop_image(img):
         return sorted_ans_blocks_resize, size
 
 
-def predictAns(img, model, index, size):
+def getCoordinates(x1, y1, x2, y2, class1):
+    point1 = x1
+    point2 = y1
+    point3 = y1
+    point4 = y2
+    if class1 == "":
+        point1 = x1
+        point2 = y1
+        point3 = x1
+        point4 = y1
+    elif class1 == "A":
+        point1 = x1
+        point2 = y1
+        point3 = x1 + int((x2 - x1) / 4) - 15
+        point4 = y1 + int((y2 - y1))
+    elif class1 == "B":
+        point1 = x1 + 40
+        point2 = y1
+        point3 = x1 + int((x2 - x1) / 4) + 25
+        point4 = y1 + int((y2 - y1))
+    elif class1 == "C":
+        point1 = x1 + 80
+        point2 = y1
+        point3 = x1 + int((x2 - x1) / 4) + 70
+        point4 = y1 + int((y2 - y1))
+    elif class1 == "D":
+        point1 = x1 + 122
+        point2 = y1
+        point3 = x1 + int((x2 - x1) / 4) + 113
+        point4 = y1 + int((y2 - y1))
+    return point1, point2, point3, point4
+
+
+def predictAns(img, model, index, size, filename):
     imProcess = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
     results = model.predict(imProcess)
     data = results[0].boxes.data
@@ -397,32 +431,37 @@ def predictAns(img, model, index, size):
         class1 = int(data[5])
         conf = float(data[4])
         conf = round(conf, 3)
-        list_label.append((y1, x1, class1, conf))
-        cv2.rectangle(imProcess, (x1, y1), (x2, y2), (0, 255, 0), 1)
-        cv2.putText(
-            imProcess,
-            str(getClass(class1)),
-            (x1 - 20, y1),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.4,
-            (255, 0, 0),
-            1,
-            cv2.LINE_AA,
-        )
-    # print(size)
-    print(list_label)
-    imgResize = cv2.resize(imProcess, size, interpolation=cv2.INTER_AREA)
-    cv2.imwrite(
-        f"./images/answer_sheets/handle-exam-class1/cauhoi{index+1}.jpg", imgResize
-    )
-    cv2.waitKey(0)
-
-    list_label = sorted(list_label, key=lambda x: x[0])
+        list_label.append((x1, y1, x2, y2, class1, conf))
+    list_label = sorted(list_label, key=lambda x: x[1])
     list_label = remove_elements_answer(list_label)
     array_answer = []
     for i, answer in enumerate(list_label):
-        class_answer = getClass(answer[2])
+        class_answer = getClass(answer[4])
         array_answer.append(class_answer)
+        x1 = answer[0]
+        y1 = answer[1]
+        x2 = answer[2]
+        y2 = answer[3]
+        class_answer = answer[4]
+        for char in str(getClass(class_answer)):
+            point1, point2, point3, point4 = getCoordinates(x1, y1, x2, y2, char)
+            cv2.rectangle(imProcess, (point1, point2), (point3, point4), (0, 255, 0), 1)
+            cv2.putText(
+                imProcess,
+                str(char),
+                (point1, point2),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.4,
+                (255, 0, 0),
+                1,
+                cv2.LINE_AA,
+            )
+    imgResize = cv2.resize(imProcess, size, interpolation=cv2.INTER_AREA)
+    filename = filename.split(".")[0]
+    cv2.imwrite(
+        f"./images/answer_sheets/handle-{args.input}/cautraloi{index+1}-{filename}.jpg",
+        imgResize,
+    )
     return array_answer
 
 
@@ -438,13 +477,68 @@ def crop_image_info(img):
     cropped_image = cv2.convertScaleAbs(cropped_image * 255)
     gray_img = cv2.cvtColor(cropped_image, cv2.COLOR_BGR2GRAY)
     img_resize = cv2.resize(gray_img, (640, 640), interpolation=cv2.INTER_AREA)
-    # cv2.imshow("img_info", img_resize)
-    # cv2.imwrite("mdt.jpg", gray_img)
-    # cv2.waitKey(0)
     return img_resize
 
 
-def predictInfo(img, model):
+def getCoordinatesInfo(x1, y1, x2, y2, class1):
+    point1 = x1
+    point2 = y1
+    point3 = y1
+    point4 = y2
+    if class1 == "0":
+        point1 = x1
+        point2 = y1
+        point3 = x2
+        point4 = y1 + int((y2 - y1) / 9)
+    elif class1 == "1":
+        point1 = x1
+        point2 = y1 + 38
+        point3 = x2
+        point4 = y1 + int((y2 - y1) / 9) + 38
+    elif class1 == "2":
+        point1 = x1
+        point2 = y1 + 38 * 2
+        point3 = x2
+        point4 = y1 + int((y2 - y1) / 9) + 38 * 2
+    elif class1 == "3":
+        point1 = x1
+        point2 = y1 + 38 * 3
+        point3 = x2
+        point4 = y1 + int((y2 - y1) / 9) + 38 * 3
+    elif class1 == "4":
+        point1 = x1
+        point2 = y1 + 38 * 4
+        point3 = x2
+        point4 = y1 + int((y2 - y1) / 9) + 38 * 4
+    elif class1 == "5":
+        point1 = x1
+        point2 = y1 + 38 * 5
+        point3 = x2
+        point4 = y1 + int((y2 - y1) / 9) + 38 * 5
+    elif class1 == "6":
+        point1 = x1
+        point2 = y1 + 38 * 6
+        point3 = x2
+        point4 = y1 + int((y2 - y1) / 9) + 38 * 6
+    elif class1 == "7":
+        point1 = x1
+        point2 = y1 + 38 * 7
+        point3 = x2
+        point4 = y1 + int((y2 - y1) / 9) + 38 * 7
+    elif class1 == "8":
+        point1 = x1
+        point2 = y1 + 38 * 8
+        point3 = x2
+        point4 = y1 + int((y2 - y1) / 9) + 38 * 8
+    elif class1 == "9":
+        point1 = x1
+        point2 = y1 + 38 * 9
+        point3 = x2
+        point4 = y1 + int((y2 - y1) / 9) + 38 * 9
+    return point1, point2, point3, point4
+
+
+def predictInfo(img, model, filename):
     imProcess = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
     results = model.predict(imProcess)
     data = results[0].boxes.data
@@ -457,29 +551,38 @@ def predictInfo(img, model):
         class1 = int(data[5])
         conf = float(data[4])
         conf = round(conf, 3)
-        list_label.append((y1, x1, class1, conf))
-        cv2.rectangle(imProcess, (x1, y1), (x2, y2), (0, 255, 0), 1)
+        list_label.append((x1, y1, x2, y2, class1, conf))
+    list_label = sorted(list_label, key=lambda x: x[0])
+    list_label = remove_elements_info(list_label)
+    dict_info = {}
+    for i, info in enumerate(list_label):
+        class_info = getClass(info[4])
+        dict_info[f"{i+1}"] = class_info
+        x1 = info[0]
+        y1 = info[1]
+        x2 = info[2]
+        y2 = info[3]
+        class_info = info[4]
+        point1, point2, point3, point4 = getCoordinatesInfo(
+            x1, y1, x2, y2, getClass(class_info)
+        )
+        cv2.rectangle(
+            imProcess,
+            (point1, point2),
+            (point3, point4),
+            (0, 255, 0),
+            1,
+        )
         cv2.putText(
             imProcess,
-            str(getClass(class1)),
-            (x1 + 8, y1),
+            str(getClass(class_info)),
+            (point1, point2),
             cv2.FONT_HERSHEY_SIMPLEX,
-            0.5,
+            0.4,
             (255, 0, 0),
             1,
             cv2.LINE_AA,
         )
-    imgResize = cv2.resize(imProcess, (506, 500), interpolation=cv2.INTER_AREA)
-    cv2.imwrite("./images/answer_sheets/handle-exam-class1/mdt.jpg", imgResize)
-    # cv2.waitKey(0)
-
-    list_label = sorted(list_label, key=lambda x: x[1])
-    list_label = remove_elements_info(list_label)
-
-    dict_info = {}
-    for i, info in enumerate(list_label):
-        class_info = getClass(info[2])
-        dict_info[f"{i+1}"] = class_info
     if len(dict_info) > 15:
         class_code = "".join(list(dict_info.values())[:6])
         student_code = "".join(list(dict_info.values())[6:-3])
@@ -493,15 +596,54 @@ def predictInfo(img, model):
         student_code = "".join(list(dict_info.values())[:6])
         exam_code = "".join(list(dict_info.values())[-3:])
         result_info = {"student_code": student_code, "exam_code": exam_code}
-
+    imgResize = cv2.resize(imProcess, (506, 500), interpolation=cv2.INTER_AREA)
+    filename = filename.split(".")[0]
+    cv2.imwrite(
+        f"./images/answer_sheets/handle-{args.input}/thongtin-{filename}.jpg", imgResize
+    )
     return result_info
 
 
+def mergeImages(filename):
+    im1 = Image.open(f"./images/answer_sheets/handle-{args.input}/{filename}").convert(
+        "RGB"
+    )
+    filename_cut = filename.split(".")[0]
+    im2 = Image.open(
+        f"./images/answer_sheets/handle-{args.input}/thongtin-{filename_cut}.jpg"
+    ).convert("RGB")
+    im3 = Image.open(
+        f"./images/answer_sheets/handle-{args.input}/cautraloi1-{filename_cut}.jpg"
+    ).convert("RGB")
+    im4 = Image.open(
+        f"./images/answer_sheets/handle-{args.input}/cautraloi2-{filename_cut}.jpg"
+    ).convert("RGB")
+    im5 = Image.open(
+        f"./images/answer_sheets/handle-{args.input}/cautraloi3-{filename_cut}.jpg"
+    ).convert("RGB")
+
+    im1.paste(im2, (550, 0))
+    im1.paste(im3, (75, 510))
+    im1.paste(im4, (380, 510))
+    im1.paste(im5, (690, 510))
+    im1.save(f"./images/answer_sheets/handle-{args.input}/handle-{filename_cut}.jpg")
+    os.remove(f"./images/answer_sheets/handle-{args.input}/{filename}")
+    os.remove(f"./images/answer_sheets/handle-{args.input}/thongtin-{filename_cut}.jpg")
+    os.remove(
+        f"./images/answer_sheets/handle-{args.input}/cautraloi1-{filename_cut}.jpg"
+    )
+    os.remove(
+        f"./images/answer_sheets/handle-{args.input}/cautraloi2-{filename_cut}.jpg"
+    )
+    os.remove(
+        f"./images/answer_sheets/handle-{args.input}/cautraloi3-{filename_cut}.jpg"
+    )
+
+
 if __name__ == "__main__":
-    # ========================================= Đo thời gian ==========================
+    # ========================================= Đo thời gian =========================================
     # start_time = time.time()
-    # total = sum(range(10**6))
-    # ========================== PREDICT =========================================
+    # ================================= Khai báo và load model =========================================
     pWeight = "./Model/best1007.pt"
     model = YOLO(pWeight)
 
@@ -509,30 +651,49 @@ if __name__ == "__main__":
         os.remove("result.txt")
     if os.path.exists("data.json"):
         os.remove("data.json")
-
+    # ================================= Khai báo tham số truyền vào cmd  =========================================
     parser = argparse.ArgumentParser(description="Process some integers.")
     parser.add_argument("input", help="input")
     args = parser.parse_args()
-    input_list = args.input.split(",")
-    for i, pathImg in enumerate(input_list):
-        path = "./images/answer_sheets/exam-class1/" + pathImg
-        image = cv2.imread(path, cv2.IMREAD_COLOR)[:, :, ::-1]
+
+    # ================================= Tạo folder ảnh gốc và ảnh đã qua xử lý  =========================================
+    folder_path = f"./images/answer_sheets/{args.input}"
+    folder_path_handle = f"./images/answer_sheets/handle-{args.input}"
+    # if not os.path.exists(folder_path):
+    #     try:
+    #         os.makedirs(folder_path)
+    #     except OSError:
+    #         print(f"Lỗi: Không thể tạo thư mục {folder_path}.")
+    if not os.path.exists(folder_path_handle):
+        try:
+            os.makedirs(folder_path_handle)
+        except OSError:
+            print(f"Lỗi: Không thể tạo thư mục {folder_path}.")
+
+    # ========================================= Chương trình chính ==================================
+    for filename in os.listdir(folder_path):
+        if filename.lower().endswith((".jpg", ".jpeg", ".png")):
+            image_path = os.path.join(folder_path, filename)
+
+        image = cv2.imread(image_path, cv2.IMREAD_COLOR)[:, :, ::-1]
         document = extract(image_true=image, trained_model=trained_model)
         document = document / 255.0
         img = cv2.resize(document, (1056, 1500), interpolation=cv2.INTER_AREA)
-        cv2.imwrite(f"./images/answer_sheets/handle-exam-class1/{pathImg}", img * 255)
+        cv2.imwrite(f"./images/answer_sheets/handle-{args.input}/{filename}", img * 255)
 
         # ========================== Cắt ảnh sbd và mdt ===============================
         img_resize = crop_image_info(img)
-        result_info = predictInfo(img=img_resize, model=model)
+        result_info = predictInfo(img=img_resize, model=model, filename=filename)
 
-        # ========================== Lấy đáp án ===============================
+        # =========================================== Lấy đáp án =======================================
         result_answer, size = crop_image(cv2.convertScaleAbs(img * 255))
         list_answer = []
         for i, answer in enumerate(result_answer):
-            selected_answer = predictAns(img=answer, model=model, index=i, size=size)
+            selected_answer = predictAns(
+                img=answer, model=model, index=i, size=size, filename=filename
+            )
             list_answer = list_answer + selected_answer
-
+        # ========================================== Format file json ====================================
         array_result = []
         for key, value in enumerate(list_answer):
             item = {"questionNo": int(key) + 1, "isSelected": value}
@@ -550,9 +711,10 @@ if __name__ == "__main__":
                 "testNo": result_info["exam_code"],
                 "answers": array_result,
             }
-
-        file_path = f"json/{pathImg}/data.json"
+        # ========================================== Ghi file json và txt ====================================
+        file_path = f"json/{filename}/data.json"
         dir_path = os.path.dirname(file_path)
+
         if not os.path.exists(dir_path):
             os.makedirs(dir_path)
         # Ghi dữ liệu từ điển vào tệp tin JSON
@@ -562,8 +724,8 @@ if __name__ == "__main__":
         f = open("result.txt", "w")
         f.write("OK")
         f.close()
+        # ======================================================= Ghép ảnh =========================================
+        mergeImages(filename)
 
         # ========================================= Đo thời gian ==========================
-        # end_time = time.time()
-        # execution_time = end_time - start_time
-        # print("Thời gian thực thi: ", execution_time, " giây")
+        # print("Thời gian thực thi: ", time.time() - start_time, " giây")

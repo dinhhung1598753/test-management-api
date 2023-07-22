@@ -29,9 +29,9 @@ public class QuestionController {
     @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> addQuestion(@RequestPart() String jsonRequest,
                                          @RequestPart(required = false) MultipartFile file) throws IOException {
-        var bytes = jsonRequest.getBytes(StandardCharsets.ISO_8859_1);
-        String decodedJson = new String(bytes, StandardCharsets.UTF_8);
-        var request = mapper.readValue(decodedJson, SingleQuestionRequest.class);
+        var request = mapper.readValue(
+                decodeCharset(jsonRequest),
+                SingleQuestionRequest.class);
         questionService.saveQuestion(request, file);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -61,11 +61,15 @@ public class QuestionController {
     }
 
 
-    @PutMapping(path = "/update/{id}")
+    @PutMapping(path = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateQuestion(@PathVariable(name = "id") int questionId,
                                             @RequestPart String jsonRequest,
                                             @RequestPart(required = false) MultipartFile file) throws IOException {
-        var request = mapper.readValue(jsonRequest, SingleQuestionRequest.class);
+        var request = mapper.readValue(
+                decodeCharset(jsonRequest),
+                SingleQuestionRequest.class
+        );
+        System.out.println(request);
         questionService.updateQuestion(questionId, request, file);
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -79,5 +83,10 @@ public class QuestionController {
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .body(new ResponseMessage("Disable question successfully !"));
+    }
+
+    private String decodeCharset(String jsonRequest){
+        var bytes = jsonRequest.getBytes(StandardCharsets.ISO_8859_1);
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 }
