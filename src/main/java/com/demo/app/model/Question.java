@@ -28,7 +28,7 @@ public class Question extends BaseEntity {
     @Column(name = "level")
     private Level level;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private Chapter chapter;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -39,4 +39,5 @@ public class Question extends BaseEntity {
         MEDIUM,
         HARD
     }
+
 }

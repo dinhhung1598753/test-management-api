@@ -22,9 +22,14 @@ public class TestRepositoryTests {
     @Test
     public void testFindByEnabledIsTrue(){
 
-        var tests = testRepository.findByEnabledIsTrue();
-        var test = tests.get(0);
-        System.out.println(test.toString());
+        var test = testRepository.findByIdAndEnabledIsTrue(38).orElse(null);
+
+        assert test != null;
+        System.out.println(test);
+        test.getQuestions().forEach(System.out::println);
+        test.getQuestions().forEach(question ->
+                question.getAnswers().forEach(System.out::println));
         Assertions.assertThat(test.getEnabled()).isTrue();
     }
+
 }

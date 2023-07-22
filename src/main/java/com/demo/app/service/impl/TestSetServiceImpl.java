@@ -4,9 +4,7 @@ import com.demo.app.dto.testset.TestSetDetailResponse;
 import com.demo.app.dto.testset.TestSetResponse;
 import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.model.*;
-import com.demo.app.repository.TestRepository;
-import com.demo.app.repository.TestSetQuestionRepository;
-import com.demo.app.repository.TestSetRepository;
+import com.demo.app.repository.*;
 import com.demo.app.service.TestSetService;
 import com.demo.app.util.constant.Constant;
 import com.demo.app.util.word.WordUtils;
@@ -32,6 +30,8 @@ public class TestSetServiceImpl implements TestSetService {
 
     private final TestRepository testRepository;
 
+    private final AnswerRepository answerRepository;
+
     private final TestSetRepository testSetRepository;
 
     private final TestSetQuestionRepository testSetQuestionRepository;
@@ -39,10 +39,8 @@ public class TestSetServiceImpl implements TestSetService {
     @Override
     @Transactional
     public void createTestSetFromTest(int testId, Integer testSetQuantity) {
-        @SuppressWarnings("DefaultLocale") var test = testRepository.findByIdAndEnabledIsTrue(testId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Test with id: %d not found !", testId),
-                        HttpStatus.NOT_FOUND));
+        var test = testRepository.findByIdAndEnabledIsTrue(testId)
+                .orElseThrow(() -> new EntityNotFoundException("Test not found !", HttpStatus.NOT_FOUND));
         var executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         for (var i = 1; i <= testSetQuantity; ++i) {
             var digit = i;
@@ -63,26 +61,28 @@ public class TestSetServiceImpl implements TestSetService {
         }
         executor.shutdown();
         try {
-            if (!executor.awaitTermination(800, TimeUnit.MILLISECONDS)) {
+            if (!executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS)) {
                 executor.shutdownNow();
             }
         } catch (InterruptedException e) {
             executor.shutdownNow();
+            Thread.currentThread().interrupt();
         }
     }
 
-
     private List<TestSetQuestion> assignQuestionsNumber(TestSet testset, List<Question> questions) {
         Collections.shuffle(questions);
-        var testSetQuestions = questions.stream()
+        var testSetQuestions = questions.parallelStream()
                 .map(question -> {
                     var testSetQuestion = TestSetQuestion.builder()
                             .testSet(testset)
                             .question(question)
                             .build();
-
-                    testSetQuestion.setTestSetQuestionAnswers(assignAnswersNumber(testSetQuestion, question.getAnswers()));
-                    testSetQuestion.setBinaryAnswer(binaryAnswer(testSetQuestion.getTestSetQuestionAnswers()));
+                    var answers = answerRepository.findByQuestion(question);
+                    var testSetQuestionAnswers = assignAnswersNumber(testSetQuestion, answers);
+                    var binaryAnswer = binaryAnswer(testSetQuestionAnswers);
+                    testSetQuestion.setTestSetQuestionAnswers(testSetQuestionAnswers);
+                    testSetQuestion.setBinaryAnswer(binaryAnswer);
                     return testSetQuestion;
                 })
                 .collect(Collectors.toList());
@@ -94,7 +94,7 @@ public class TestSetServiceImpl implements TestSetService {
 
     private List<TestSetQuestionAnswer> assignAnswersNumber(TestSetQuestion testSetQuestion, List<Answer> answers) {
         Collections.shuffle(answers);
-        var testSetAnswers = answers.parallelStream()
+        var testSetAnswers = answers.stream()
                 .map(answer -> TestSetQuestionAnswer.builder()
                         .answer(answer)
                         .testSetQuestion(testSetQuestion)
@@ -116,7 +116,7 @@ public class TestSetServiceImpl implements TestSetService {
     }
 
     @Override
-    public TestSetDetailResponse getTestSetDetail(Integer testId,Integer testNo) {
+    public TestSetDetailResponse getTestSetDetail(Integer testId, Integer testNo) {
         var testSet = testSetRepository.findByTestIdAndTestNo(testId, testNo)
                 .orElseThrow(() -> new EntityNotFoundException("TestSet not found !", HttpStatus.NOT_FOUND));
         return mapTestSetToDetailResponse(testSet);

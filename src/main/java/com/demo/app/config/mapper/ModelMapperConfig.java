@@ -38,9 +38,11 @@ public class ModelMapperConfig {
             @Override
             protected LocalDate convert(String source) {
                 var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
                 return LocalDate.parse(source, formatter);
             }
         };
+
         mapper.createTypeMap(String.class, LocalDate.class);
         mapper.addConverter(converter);
         mapper.getTypeMap(String.class, LocalDate.class)
