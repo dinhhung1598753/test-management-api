@@ -1,6 +1,7 @@
 package com.demo.app.service;
 
 import com.demo.app.dto.offline.OfflineExam;
+import com.demo.app.dto.offline.OfflineExamRequest;
 import com.demo.app.dto.studentTest.StudentTestDetailResponse;
 import com.demo.app.dto.studentTest.StudentTestFinishRequest;
 
@@ -16,5 +17,5 @@ public interface StudentTestService {
 
     List<OfflineExam> autoReadStudentOfflineExam(String classCode) throws IOException, InterruptedException;
 
-    void markStudentOfflineTest(OfflineExam offlineExam);
+    void markStudentOfflineTest(OfflineExamRequest request);
 }

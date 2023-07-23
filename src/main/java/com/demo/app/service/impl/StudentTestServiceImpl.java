@@ -1,6 +1,7 @@
 package com.demo.app.service.impl;
 
 import com.demo.app.dto.offline.OfflineExam;
+import com.demo.app.dto.offline.OfflineExamRequest;
 import com.demo.app.dto.studentTest.QuestionSelectedAnswer;
 import com.demo.app.dto.studentTest.StudentTestDetailResponse;
 import com.demo.app.dto.studentTest.StudentTestFinishRequest;
@@ -83,8 +84,7 @@ public class StudentTestServiceImpl implements StudentTestService {
         var testSet = testSetRepository.findRandomTestSetByTest(test.getId(), pageable)
                 .stream().toList().get(0);
         var studentTest = StudentTest.builder()
-                .student(student)
-                .testSet(testSet)
+                .student(student).testSet(testSet)
                 .testDate(LocalDate.now())
                 .state(State.IN_PROGRESS)
                 .examClassId(examClass.getId())
@@ -117,7 +117,8 @@ public class StudentTestServiceImpl implements StudentTestService {
     }
 
     @Override
-    public void finishStudentTest(StudentTestFinishRequest request, Principal principal) throws InterruptedException {
+    public void finishStudentTest(StudentTestFinishRequest request,
+                                  Principal principal) throws InterruptedException {
         var student = studentRepository.findByUsernameAndEnabledIsTrue(principal.getName())
                 .orElseThrow(() -> new InvalidRoleException(
                         "You don't have role to do this action!",
@@ -127,48 +128,52 @@ public class StudentTestServiceImpl implements StudentTestService {
                 State.IN_PROGRESS,
                 request.getExamClassId()
         );
-        var binarySelectedAnswers = request.getQuestions()
-                .parallelStream()
-                .map(question -> QuestionSelectedAnswer.builder()
-                        .selectedAnswer(convertSelectedTextToBinary(question.getSelectedAnswerNo()))
-                        .questionNo(question.getQuestionNo())
-                        .build())
-                .collect(Collectors.toList());
-        var markingThread = new Thread(() -> saveStudentTest(binarySelectedAnswers, studentTest));
-        var saveStudentTestThread = new Thread(() -> saveStudentTestDetail(binarySelectedAnswers, studentTest));
-        markingThread.start();
-        saveStudentTestThread.start();
-
-        markingThread.join();
-        saveStudentTestThread.join();
-
-    }
-
-    private void saveStudentTest(List<QuestionSelectedAnswer> questionSelectedAnswers,
-                                 StudentTest studentTest) {
         var testSet = studentTest.getTestSet();
         var test = testSet.getTest();
+        var binarySelectedAnswers = request.getQuestions()
+                .parallelStream().map(question -> {
+                    var convertedSelected = convertSelectedTextToBinary(question.getSelectedAnswerNo());
+                    return QuestionSelectedAnswer.builder()
+                            .selectedAnswer(convertedSelected)
+                            .questionNo(question.getQuestionNo())
+                            .build();
+                }).collect(Collectors.toList());
         var correctedAnswers = testSetQuestionRepository
                 .findByTestSetAndEnabledIsTrue(testSet)
-                .parallelStream()
-                .collect(Collectors.toMap(
+                .parallelStream().collect(Collectors.toMap(
                         TestSetQuestion::getQuestionNo,
                         TestSetQuestion::getBinaryAnswer
                 ));
-        var mark = markStudentTestOnline(questionSelectedAnswers, correctedAnswers);
-        var grade = new DecimalFormat("#.0")
-                .format((double) mark / testSet.getTest().getQuestionQuantity() * test.getTotalPoint());
+        var mark = markStudentTestOnline(binarySelectedAnswers, correctedAnswers);
+        var grade = ((double) mark / test.getQuestionQuantity()) * test.getTotalPoint();
+        var roundedGrade = new DecimalFormat("#.0").format(grade);
+        var markingThread = new Thread(
+                () -> saveStudentTest(studentTest, mark, Double.parseDouble(roundedGrade))
+        );
+        var saveStudentTestThread = new Thread(
+                () -> saveStudentTestDetail(binarySelectedAnswers, studentTest)
+        );
+        markingThread.start();
+        saveStudentTestThread.start();
+        markingThread.join();
+        saveStudentTestThread.join();
+    }
+
+    private void saveStudentTest(StudentTest studentTest, Integer mark, Double grade) {
         studentTest.setMark(mark);
-        studentTest.setGrade(Double.parseDouble(grade));
+        studentTest.setGrade(grade);
         studentTest.setState(State.FINISHED);
         studentTestRepository.save(studentTest);
     }
 
-    private int markStudentTestOnline(List<QuestionSelectedAnswer> selectedAnswers, Map<Integer, String> correctedAnswers) {
-        return (int) selectedAnswers.parallelStream()
+    private int markStudentTestOnline(List<QuestionSelectedAnswer> binarySelectedAnswers,
+                                      Map<Integer, String> correctedAnswers) {
+        return (int) binarySelectedAnswers.parallelStream()
                 .filter(selectedAnswer -> {
                     String corrected = correctedAnswers.get(selectedAnswer.getQuestionNo());
-                    return corrected.equals(selectedAnswer.getSelectedAnswer());
+                    var isCorrected = selectedAnswer.getSelectedAnswer().equals(corrected);
+                    selectedAnswer.setIsCorrected(isCorrected);
+                    return isCorrected;
                 }).count();
     }
 
@@ -182,9 +187,10 @@ public class StudentTestServiceImpl implements StudentTestService {
                             testSet,
                             selectedAnswer.getQuestionNo());
                     return StudentTestDetail.builder()
-                            .studentTest(studentTest)
                             .selectedAnswer(selectedAnswer.getSelectedAnswer())
+                            .isCorrected(selectedAnswer.getIsCorrected())
                             .testSetQuestion(testSetQuestion)
+                            .studentTest(studentTest)
                             .build();
                 }).collect(Collectors.toList());
         studentTestDetailRepository.saveAll(studentTestDetails);
@@ -229,22 +235,22 @@ public class StudentTestServiceImpl implements StudentTestService {
 
     @Override
     @Transactional
-    public void markStudentOfflineTest(OfflineExam offlineExam) {
-        var examClass = examClassRepository.findByCodeAndEnabledIsTrue(offlineExam.getClassCode())
+    public void markStudentOfflineTest(OfflineExamRequest request) {
+        var examClass = examClassRepository.findByCodeAndEnabledIsTrue(request.getClassCode())
                 .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Class %s not found !", offlineExam.getClassCode()),
+                        String.format("Class %s not found !", request.getClassCode()),
                         HttpStatus.NOT_FOUND)
                 );
         var testSet = testSetRepository.findByTestAndTestNoAndEnabledTrue(
-                        examClass.getTest(),
-                        offlineExam.getTestNo()
-                ).orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Test %s not found !", offlineExam.getTestNo()),
-                        HttpStatus.NOT_FOUND)
+                examClass.getTest(),
+                request.getTestNo()
+        ).orElseThrow(() -> new EntityNotFoundException(
+                String.format("Test %s not found !", request.getTestNo()),
+                HttpStatus.NOT_FOUND)
         );
-        var student = studentRepository.findByCodeAndEnabledIsTrue(offlineExam.getStudentCode())
+        var student = studentRepository.findByCodeAndEnabledIsTrue(request.getStudentCode())
                 .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Student %s not found !", offlineExam.getStudentCode()),
+                        String.format("Student %s not found !", request.getStudentCode()),
                         HttpStatus.NOT_FOUND)
                 );
         var test = testSet.getTest();
@@ -254,26 +260,26 @@ public class StudentTestServiceImpl implements StudentTestService {
                         TestSetQuestion::getQuestionNo,
                         TestSetQuestion::getBinaryAnswer
                 ));
-        var mark = markStudentTestOffline(offlineExam.getAnswers(), questionAnswers);
-        var grade = (double) mark / test.getQuestionQuantity() * test.getTotalPoint();
+
+        var mark = markStudentTestOffline(request.getAnswers(), questionAnswers);
+        var grade = ((double) mark / test.getQuestionQuantity()) * test.getTotalPoint();
         var roundedGrade = new DecimalFormat("#.0").format(grade);
+        grade = Double.parseDouble(roundedGrade);
         var studentTest = StudentTest.builder()
-                .student(student)
-                .testSet(testSet)
-                .mark(mark)
-                .grade(Double.parseDouble(roundedGrade))
+                .student(student).testSet(testSet)
+                .mark(mark).grade(grade)
                 .testDate(test.getTestDay())
                 .examClassId(examClass.getId())
                 .state(State.FINISHED)
                 .build();
-        var studentTestDetails = offlineExam.getAnswers()
-                .parallelStream()
-                .map(offlineAnswer -> {
+        var studentTestDetails = request.getAnswers()
+                .parallelStream().map(offlineAnswer -> {
                     var testSetQuestion = testSetQuestionRepository
                             .findByTestSetAndQuestionNo(testSet, offlineAnswer.getQuestionNo());
                     return StudentTestDetail.builder()
                             .studentTest(studentTest)
                             .selectedAnswer(offlineAnswer.getIsSelected())
+                            .isCorrected(offlineAnswer.getIsCorrected())
                             .testSetQuestion(testSetQuestion)
                             .build();
                 }).collect(Collectors.toList());
@@ -282,7 +288,7 @@ public class StudentTestServiceImpl implements StudentTestService {
         studentTestRepository.save(studentTest);
     }
 
-    private int markStudentTestOffline(List<OfflineExam.OfflineAnswer> offlineAnswers,
+    private int markStudentTestOffline(List<OfflineExamRequest.OfflineAnswer> offlineAnswers,
                                        Map<Integer, String> correctedAnswers) {
         return (int) offlineAnswers.parallelStream()
                 .peek(offlineAnswer -> {
@@ -291,7 +297,9 @@ public class StudentTestServiceImpl implements StudentTestService {
                 })
                 .filter(offlineAnswer -> {
                     String corrected = correctedAnswers.get(offlineAnswer.getQuestionNo());
-                    return corrected.equals(offlineAnswer.getIsSelected());
+                    var isCorrected = offlineAnswer.getIsSelected().equals(corrected);
+                    offlineAnswer.setIsCorrected(isCorrected);
+                    return isCorrected;
                 })
                 .count();
     }
@@ -299,8 +307,7 @@ public class StudentTestServiceImpl implements StudentTestService {
     private String convertSelectedTextToBinary(String selectedAnswerNo) {
         var stringBuilder = new StringBuilder();
         var sortedAnswerNoText = Constant.ANSWER_TEXTS
-                .entrySet()
-                .stream()
+                .entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
                         (oldValue, newValue) -> oldValue, HashMap::new));

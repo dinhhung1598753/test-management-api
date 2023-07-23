@@ -1,7 +1,7 @@
 package com.demo.app.controller;
 
 import com.demo.app.dto.message.ResponseMessage;
-import com.demo.app.dto.offline.OfflineExam;
+import com.demo.app.dto.offline.OfflineExamRequest;
 import com.demo.app.dto.studentTest.StudentTestFinishRequest;
 import com.demo.app.dto.studentTest.TestImageResponse;
 import com.demo.app.exception.FileInputException;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/api/v1/student-test")
+@RequestMapping(path = "/api/v1/studentTest")
 @RequiredArgsConstructor
 @Tag(name = "Student-Test", description = "Manage Student's Test and Marking")
 public class StudentTestController {
@@ -57,7 +57,7 @@ public class StudentTestController {
     @GetMapping(path = "/attempt")
     @PreAuthorize("hasAnyRole('STUDENT')")
     public ResponseEntity<?> attemptTest(@RequestParam String classCode, Principal principal) {
-        if (principal == null){
+        if (principal == null) {
             throw new UserNotSignInException("You are not logged in !", HttpStatus.UNAUTHORIZED);
         }
         var response = studentTestService.attemptTest(classCode, principal);
@@ -79,16 +79,15 @@ public class StudentTestController {
     @GetMapping(path = "/auto/read")
     public ResponseEntity<?> autoReadStudentOfflineExam(@RequestParam String classCode)
             throws IOException, InterruptedException {
-         var offlineExams = studentTestService.autoReadStudentOfflineExam(classCode);
+        var offlineExams = studentTestService.autoReadStudentOfflineExam(classCode);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(offlineExams);
     }
 
     @PostMapping(path = "/auto/mark")
-    public ResponseEntity<?> markStudentTest(@RequestBody List<OfflineExam> offlineExams){
-        offlineExams.forEach(offlineExam -> offlineExam.getAnswers().removeIf(answer -> answer.getIsSelected().isBlank()));
-        offlineExams.forEach(System.out::println);
+    public ResponseEntity<?> markStudentTest(@RequestBody List<OfflineExamRequest> requests) {
+        requests.parallelStream().forEach(studentTestService::markStudentOfflineTest);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(offlineExams);
+                .body(requests);
     }
 }

@@ -93,7 +93,7 @@ public class ExamClassServiceImpl implements ExamClassService {
         var codes = requests.parallelStream()
                 .map(ClassStudentRequest::getCode)
                 .collect(Collectors.toList());
-        var students = studentRepository.findByEnabledIsTrueAndCodeIn(codes);
+        var students = studentRepository.findByCodeIn(codes);
         examClass.getStudents().addAll(students);
         examClassRepository.save(examClass);
     }

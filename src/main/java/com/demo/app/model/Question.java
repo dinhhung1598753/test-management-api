@@ -16,7 +16,7 @@ import java.util.List;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 public class Question extends BaseEntity {
 
-    @Column(name = "topic_text")
+    @Column(name = "topic_text", length = Integer.MAX_VALUE)
     @Nationalized
     private String topicText;
 

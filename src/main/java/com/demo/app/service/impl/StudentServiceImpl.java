@@ -165,7 +165,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     private void checkIfPhoneNumberExists(String phoneNumber) throws FieldExistedException {
-        if (studentRepository.existsByPhoneNumberAndEnabledIsTrue(phoneNumber)) {
+        if (studentRepository.existsByPhoneNumber(phoneNumber)) {
             throw new FieldExistedException("Phone number already taken!", HttpStatus.CONFLICT);
         }
     }
@@ -177,7 +177,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     private void checkIfCodeExists(String code) throws FieldExistedException {
-        if (studentRepository.existsByCodeAndEnabledIsTrue(code)) {
+        if (studentRepository.existsByCode(code)) {
             throw new FieldExistedException("Code already taken!", HttpStatus.CONFLICT);
         }
     }

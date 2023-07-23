@@ -13,11 +13,18 @@ import java.util.Optional;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Integer>, JpaSpecificationExecutor<Student> {
-    Boolean existsByPhoneNumberAndEnabledIsTrue(String phoneNumber);
 
-    Boolean existsByCodeAndEnabledIsTrue(String code);
+    Boolean existsByPhoneNumber(String phoneNumber);
 
-    Optional<Student> findByCodeAndEnabledIsTrue(String code);
+    Boolean existsByCode(String code);
+
+    @Query("""
+            select s
+            from Student s
+            join User u on s.user.id = u.id
+            where u.enabled = true and s.code = :code
+            """)
+    Optional<Student> findByCodeAndEnabledIsTrue(@Param("code") String code);
 
     @Query("select s from Student s join User u on s.user.id = u.id where u.enabled = :enabled")
     List<Student> findByEnabled(@Param("enabled") Boolean enabled);
@@ -25,10 +32,10 @@ public interface StudentRepository extends JpaRepository<Student, Integer>, JpaS
     @Query("""
             select s from Student s
             join User u on s.user.id = u.id
-            where u.username = :username and s.enabled = true
+            where u.username = :username and u.enabled = true
             """)
     Optional<Student> findByUsernameAndEnabledIsTrue(String username);
 
-    List<Student> findByEnabledIsTrueAndCodeIn(List<String> code);
+    List<Student> findByCodeIn(List<String> code);
 
 }

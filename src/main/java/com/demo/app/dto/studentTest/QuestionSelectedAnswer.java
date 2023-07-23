@@ -14,4 +14,6 @@ public class QuestionSelectedAnswer {
 
     private String selectedAnswer;
 
+    private Boolean isCorrected;
+
 }
