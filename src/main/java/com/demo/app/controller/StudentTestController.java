@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/api/v1/studentTest")
+@RequestMapping(path = "/api/v1/student-test")
 @RequiredArgsConstructor
 @Tag(name = "Student-Test", description = "Manage Student's Test and Marking")
 public class StudentTestController {
@@ -37,7 +37,7 @@ public class StudentTestController {
             consumes = {MediaType.APPLICATION_JSON_VALUE,
                     MediaType.MULTIPART_FORM_DATA_VALUE}
     )
-    public ResponseEntity<?> uploadStudentTestImages(@RequestParam(name = "exam-class") String classCode,
+    public ResponseEntity<?> uploadStudentTestImages(@RequestParam(name = "examClassCode") String classCode,
                                                      @RequestPart(name = "files") List<MultipartFile> files) throws FileInputException, IOException {
         fileStorageService.checkIfFileIsImageFormat(files);
         var path = fileStorageService.createClassDirectory("answer_sheets/" + classCode);
