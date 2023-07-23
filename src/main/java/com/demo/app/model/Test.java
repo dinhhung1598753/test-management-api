@@ -24,13 +24,13 @@ public class Test extends BaseEntity {
     private LocalTime testTime;
 
     @Column(name = "question_quantity")
-    private int questionQuantity;
+    private Integer questionQuantity;
 
     @Column(name = "total_point")
-    private int totalPoint;
+    private Integer totalPoint;
 
     @Column(name = "duration")
-    private int duration;
+    private Integer duration;
 
     @OneToMany(mappedBy = "test", cascade = CascadeType.ALL)
     private List<TestSet> testSets;

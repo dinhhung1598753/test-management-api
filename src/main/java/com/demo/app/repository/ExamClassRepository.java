@@ -12,11 +12,11 @@ import java.util.Optional;
 @Repository
 public interface ExamClassRepository extends JpaRepository<ExamClass, Integer> {
 
-    boolean existsByCode(String code);
+    boolean existsByCodeAndEnabledIsTrue(String code);
 
     List<ExamClass> findByEnabled(Boolean enabled);
 
-    Optional<ExamClass> findByCode(String classCode);
+    Optional<ExamClass> findByCodeAndEnabledIsTrue(String classCode);
 
     @Query("""
             select ec
@@ -30,15 +30,15 @@ public interface ExamClassRepository extends JpaRepository<ExamClass, Integer> {
         select ec, s
         from ExamClass ec
         join fetch ec.students s
-        where ec.code = :exam_class_code
+        where ec.code = :exam_class_code and s.enabled = true
     """)
-    List<Object[]> findByJoinStudent(@Param("exam_class_code") String classCode);
+    List<Object[]> findByJoinStudentAndEnabledIsTrue(@Param("exam_class_code") String classCode);
 
     @Query("""
         select ec, s
         from ExamClass ec
         join fetch ec.students s
-        where ec.id = :exam_class_id
+        where ec.id = :exam_class_id and s.enabled = true
     """)
-    List<Object[]> findByJoinStudentWhereId(@Param("exam_class_id") Integer examClassId);
+    List<Object[]> findByJoinStudentWhereIdAndEnabledIsTrue(@Param("exam_class_id") Integer examClassId);
 }

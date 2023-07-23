@@ -13,8 +13,15 @@ public interface StudentTestRepository extends JpaRepository<StudentTest, Intege
 
     Boolean existsByStudentAndState(Student student, State state);
 
-    Optional<StudentTest> findFirstByStudentAndExamClassIdOrderByUpdatedAtDesc(Student student, Integer examClassId);
+    Optional<StudentTest> findFirstByStudentAndExamClassIdAndEnabledIsTrueOrderByUpdatedAtDesc(
+            Student student,
+            Integer examClassId
+    );
 
-    StudentTest findStudentTestsByStudentAndStateAndExamClassId(Student student, State state, Integer examClassId);
+    StudentTest findStudentTestsByStudentAndStateAndExamClassIdAndEnabledIsTrue(
+            Student student,
+            State state,
+            Integer examClassId
+    );
 
 }

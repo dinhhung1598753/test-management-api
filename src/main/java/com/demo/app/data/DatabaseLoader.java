@@ -41,7 +41,7 @@ public class DatabaseLoader implements CommandLineRunner {
     }
  
     private void initializeAdminUser(){
-        if (!userRepository.existsByUsername("admin")) {
+        if (!userRepository.existsByUsernameAndEnabledIsTrue("admin")) {
             var roles = roleRepository.findAll();
             User user = User.builder()
                     .username("admin")

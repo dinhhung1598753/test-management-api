@@ -44,7 +44,7 @@ public class UserRepositoryTests {
 
     @Test
     public void testExistsByUsername(){
-        boolean existed = userRepository.existsByUsername("admin");
+        boolean existed = userRepository.existsByUsernameAndEnabledIsTrue("admin");
         Assertions.assertThat(existed).isTrue();
     }
 

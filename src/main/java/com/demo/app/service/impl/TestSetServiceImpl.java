@@ -117,14 +117,14 @@ public class TestSetServiceImpl implements TestSetService {
 
     @Override
     public TestSetDetailResponse getTestSetDetail(Integer testId, Integer testNo) {
-        var testSet = testSetRepository.findByTestIdAndTestNo(testId, testNo)
+        var testSet = testSetRepository.findByTestIdAndTestNoAndEnabledIsTrue(testId, testNo)
                 .orElseThrow(() -> new EntityNotFoundException("TestSet not found !", HttpStatus.NOT_FOUND));
         return mapTestSetToDetailResponse(testSet);
     }
 
     @Override
     public ByteArrayInputStream exportTestSetToWord(Integer testId, Integer testNo) throws IOException {
-        @SuppressWarnings("DefaultLocale") var testSet = testSetRepository.findByTestIdAndTestNo(testId, testNo)
+        @SuppressWarnings("DefaultLocale") var testSet = testSetRepository.findByTestIdAndTestNoAndEnabledIsTrue(testId, testNo)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Test set not found !",
                         HttpStatus.NOT_FOUND));

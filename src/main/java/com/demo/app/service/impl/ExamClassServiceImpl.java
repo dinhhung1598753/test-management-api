@@ -43,7 +43,7 @@ public class ExamClassServiceImpl implements ExamClassService {
     @Override
     @Transactional
     public void createExamClass(ClassRequest request, Principal principal) {
-        if (examClassRepository.existsByCode(request.getCode())) {
+        if (examClassRepository.existsByCodeAndEnabledIsTrue(request.getCode())) {
             throw new FieldExistedException("Class's code already taken !", HttpStatus.CONFLICT);
         }
         var teacher = teacherRepository.findByUsername(principal.getName())
@@ -66,11 +66,11 @@ public class ExamClassServiceImpl implements ExamClassService {
     @Override
     @Transactional
     public ExamClass joinExamClassByCode(String classCode, Principal principal) {
-        var student = studentRepository.findByUsername(principal.getName())
+        var student = studentRepository.findByUsernameAndEnabledIsTrue(principal.getName())
                 .orElseThrow(() -> new InvalidRoleException("You don't have role to do this action!", HttpStatus.FORBIDDEN));
-        var examClass = examClassRepository.findByCode(classCode)
+        var examClass = examClassRepository.findByCodeAndEnabledIsTrue(classCode)
                 .orElseThrow(() -> new EntityNotFoundException("Class does not existed", HttpStatus.BAD_REQUEST));
-        var objects = examClassRepository.findByJoinStudent(classCode);
+        var objects = examClassRepository.findByJoinStudentAndEnabledIsTrue(classCode);
         var students = objects.parallelStream()
                 .map(object -> (Student) object[1])
                 .collect(Collectors.toSet());
@@ -88,12 +88,12 @@ public class ExamClassServiceImpl implements ExamClassService {
                     HttpStatus.CONFLICT);
         }
         var requests = ExcelUtils.convertExcelToDataTransferObject(file, ClassStudentRequest.class);
-        var examClass = examClassRepository.findByCode(classCode)
+        var examClass = examClassRepository.findByCodeAndEnabledIsTrue(classCode)
                 .orElseThrow(() -> new InvalidArgumentException("Class does not existed", HttpStatus.BAD_REQUEST));
         var codes = requests.parallelStream()
                 .map(ClassStudentRequest::getCode)
                 .collect(Collectors.toList());
-        var students = studentRepository.findByCodeIn(codes);
+        var students = studentRepository.findByEnabledIsTrueAndCodeIn(codes);
         examClass.getStudents().addAll(students);
         examClassRepository.save(examClass);
     }
@@ -108,11 +108,11 @@ public class ExamClassServiceImpl implements ExamClassService {
 
     @Override
     public ClassDetailResponse getExamClassDetail(int examClassId) {
-        var objects = examClassRepository.findByJoinStudentWhereId(examClassId);
+        var objects = examClassRepository.findByJoinStudentWhereIdAndEnabledIsTrue(examClassId);
         var studentClasses = objects.parallelStream()
                 .map(object -> {
                     var student = (Student) object[1];
-                    var studentTest = studentTestRepository.findFirstByStudentAndExamClassIdOrderByUpdatedAtDesc(student, examClassId)
+                    var studentTest = studentTestRepository.findFirstByStudentAndExamClassIdAndEnabledIsTrueOrderByUpdatedAtDesc(student, examClassId)
                             .orElse(StudentTest.builder().state(State.NOT_ATTEMPT)
                                     .testDate(LocalDate.of(2000, 1, 1))
                                     .build());
@@ -131,7 +131,7 @@ public class ExamClassServiceImpl implements ExamClassService {
 
     @Override
     public List<ClassResponse> getStudentExamClass(Principal principal) {
-        var student = studentRepository.findByUsername(principal.getName()).get();
+        var student = studentRepository.findByUsernameAndEnabledIsTrue(principal.getName()).get();
         var examClasses = examClassRepository.findByStudentIdAndEnabledIsTrue(student.getId());
         return examClasses.stream()
                 .map(examClass -> mapper.map(examClass, ClassResponse.class))
@@ -140,10 +140,10 @@ public class ExamClassServiceImpl implements ExamClassService {
 
     @Override
     public ClassInfoResponse getExamClassInfo(Integer examClassId, Principal principal) {
-        var student = studentRepository.findByUsername(principal.getName()).get();
+        var student = studentRepository.findByUsernameAndEnabledIsTrue(principal.getName()).get();
         var examClass = examClassRepository.findById(examClassId)
                 .orElseThrow(() -> new EntityNotFoundException("Exam class not found !", HttpStatus.NOT_FOUND));
-        var studentTest = studentTestRepository.findFirstByStudentAndExamClassIdOrderByUpdatedAtDesc(student, examClassId)
+        var studentTest = studentTestRepository.findFirstByStudentAndExamClassIdAndEnabledIsTrueOrderByUpdatedAtDesc(student, examClassId)
                 .orElse(StudentTest.builder()
                         .state(State.NOT_ATTEMPT)
                         .build());
@@ -158,15 +158,15 @@ public class ExamClassServiceImpl implements ExamClassService {
 
     @Override
     public ByteArrayInputStream exportStudentTestToExcel(String code) throws IOException {
-        var examClass = examClassRepository.findByCode(code)
+        var examClass = examClassRepository.findByCodeAndEnabledIsTrue(code)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Exam class " + code + " not found !",
                         HttpStatus.NOT_FOUND));
-        var examClassStudents = examClassRepository.findByJoinStudentWhereId(examClass.getId());
+        var examClassStudents = examClassRepository.findByJoinStudentWhereIdAndEnabledIsTrue(examClass.getId());
         var studentTestExcelResponses = examClassStudents.parallelStream()
                 .map(examClassStudent -> {
                     var student = (Student) examClassStudent[1];
-                    var studentTest = studentTestRepository.findFirstByStudentAndExamClassIdOrderByUpdatedAtDesc(student, examClass.getId())
+                    var studentTest = studentTestRepository.findFirstByStudentAndExamClassIdAndEnabledIsTrueOrderByUpdatedAtDesc(student, examClass.getId())
                             .orElse(StudentTest.builder().state(State.NOT_ATTEMPT)
                                     .testDate(LocalDate.of(2000, 1, 1))
                                     .build());
@@ -193,6 +193,7 @@ public class ExamClassServiceImpl implements ExamClassService {
                 () -> new EntityNotFoundException("Exam class not found !", HttpStatus.NOT_FOUND)
         );
         examClass.setEnabled(false);
+        examClass.setStudents(null);
         examClassRepository.save(examClass);
     }
 }

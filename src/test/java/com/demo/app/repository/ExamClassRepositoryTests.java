@@ -21,8 +21,8 @@ public class ExamClassRepositoryTests {
 
     @Test
     public void testFindByCode(){
-        String code = "34422";
-        var examClass = examClassRepository.findByCode(code);
+        String code = "200789";
+        var examClass = examClassRepository.findByJoinStudentAndEnabledIsTrue(code);
         Assertions.assertThat(examClass).isNotNull();
     }
 

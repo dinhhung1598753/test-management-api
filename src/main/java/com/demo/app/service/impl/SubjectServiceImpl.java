@@ -63,7 +63,7 @@ public class SubjectServiceImpl implements SubjectService {
                     var response = mapper.map(subject, SubjectResponse.class);
                     var chapters = chapterRepository.findBySubjectIdAndEnabledTrue(subject.getId());
                     response.setChapterQuantity(chapters.size());
-                    response.setQuestionQuantity(questionRepository.countByChapterIn(chapters));
+                    response.setQuestionQuantity(questionRepository.countByEnabledIsTrueAndChapterIn(chapters));
                     return response;
                 })
                 .collect(Collectors.toList());
@@ -119,7 +119,7 @@ public class SubjectServiceImpl implements SubjectService {
                     var response = mapper.map(subject, SubjectChaptersResponse.class);
                     var chapters = chapterRepository.findBySubjectIdAndEnabledTrue(subject.getId());
                     response.setChapterQuantity(chapters.size());
-                    response.setQuestionQuantity(questionRepository.countByChapterIn(chapters));
+                    response.setQuestionQuantity(questionRepository.countByEnabledIsTrueAndChapterIn(chapters));
                     return response;
                 }).collect(Collectors.toList());
     }

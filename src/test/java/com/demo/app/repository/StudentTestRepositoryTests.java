@@ -33,7 +33,7 @@ public class StudentTestRepositoryTests {
     public void testFindStudentTestsByStudentAndState(){
         var student = new Student();
         student.setId(1);
-        var studentTest = studentTestRepository.findStudentTestsByStudentAndStateAndExamClassId(student, State.IN_PROGRESS, 2);
+        var studentTest = studentTestRepository.findStudentTestsByStudentAndStateAndExamClassIdAndEnabledIsTrue(student, State.IN_PROGRESS, 2);
         Assertions.assertThat(studentTest).isNotNull();
         System.out.println(studentTest);
     }

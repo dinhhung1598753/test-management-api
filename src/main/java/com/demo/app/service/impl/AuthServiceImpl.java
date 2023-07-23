@@ -22,7 +22,6 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -55,7 +54,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public AuthenticationResponse register(RegisterRequest registerRequest, HttpServletRequest request) {
         if(userRepository.existsByEmailAndEnabledTrue(registerRequest.getEmail()) ||
-                userRepository.existsByUsername(registerRequest.getUsername())){
+                userRepository.existsByUsernameAndEnabledIsTrue(registerRequest.getUsername())){
             throw new FieldExistedException("Email or Username already taken!", HttpStatus.CONFLICT);
         }
 
@@ -155,25 +154,6 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if(authHeader == null || !authHeader.startsWith("Bearer ")){
-            return;
-        }
-        final String refreshToken = authHeader.substring(7);
-        final String username = jwtUtils.extractUsername(refreshToken);
-        if(username != null){
-            var user = userRepository.findByUsername(username).orElseThrow(
-                    () -> new EntityNotFoundException("User not found !", HttpStatus.BAD_REQUEST));
-//            if(jwtUtils.isTokenValid(refreshToken, user)){
-//                var accessToken = jwtUtils.generateToken(user);
-//                revokeAllUserTokens(user);
-//                saveUserToken(user, accessToken);
-//                var authResponse = AuthenticationResponse.builder()
-//                        .accessToken(accessToken)
-//                        .refreshToken(refreshToken)
-//                        .build();
-//                new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
-//            }
-        }
+
     }
 }

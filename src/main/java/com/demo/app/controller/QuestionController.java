@@ -60,7 +60,6 @@ public class QuestionController {
                 .body(questionService.getAllQuestionsBySubjectCode(code));
     }
 
-
     @PutMapping(path = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateQuestion(@PathVariable(name = "id") int questionId,
                                             @RequestPart String jsonRequest,
@@ -69,7 +68,6 @@ public class QuestionController {
                 decodeCharset(jsonRequest),
                 SingleQuestionRequest.class
         );
-        System.out.println(request);
         questionService.updateQuestion(questionId, request, file);
         return ResponseEntity
                 .status(HttpStatus.OK)

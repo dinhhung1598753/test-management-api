@@ -124,7 +124,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     @Transactional
     public void updateStudentProfile(Principal principal, StudentUpdateRequest request) throws EntityNotFoundException, FieldExistedException {
-        var student = studentRepository.findByUsername(principal.getName())
+        var student = studentRepository.findByUsernameAndEnabledIsTrue(principal.getName())
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Student with username: %s not found !", principal.getName()),
                         HttpStatus.NOT_FOUND));
@@ -152,23 +152,20 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void disableStudent(int studentId) throws EntityNotFoundException {
-        @SuppressWarnings("DefaultLocale") var existStudent = studentRepository.findById(studentId).orElseThrow(
-                () -> new EntityNotFoundException(
-                        String.format("Not found any student with id = %d !", studentId),
-                        HttpStatus.NOT_FOUND)
-        );
+        var existStudent = studentRepository.findById(studentId)
+                .orElseThrow(() -> new EntityNotFoundException("Student not found", HttpStatus.NOT_FOUND));
         existStudent.getUser().setEnabled(false);
         studentRepository.save(existStudent);
     }
 
     private void checkIfUsernameExists(String username) throws FieldExistedException {
-        if (userRepository.existsByUsername(username)) {
+        if (userRepository.existsByUsernameAndEnabledIsTrue(username)) {
             throw new FieldExistedException("Username already taken!", HttpStatus.CONFLICT);
         }
     }
 
     private void checkIfPhoneNumberExists(String phoneNumber) throws FieldExistedException {
-        if (studentRepository.existsByPhoneNumber(phoneNumber)) {
+        if (studentRepository.existsByPhoneNumberAndEnabledIsTrue(phoneNumber)) {
             throw new FieldExistedException("Phone number already taken!", HttpStatus.CONFLICT);
         }
     }
@@ -180,7 +177,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     private void checkIfCodeExists(String code) throws FieldExistedException {
-        if (studentRepository.existsByCode(code)) {
+        if (studentRepository.existsByCodeAndEnabledIsTrue(code)) {
             throw new FieldExistedException("Code already taken!", HttpStatus.CONFLICT);
         }
     }

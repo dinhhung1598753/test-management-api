@@ -1,6 +1,7 @@
 package com.demo.app.controller;
 
 import com.demo.app.dto.message.ResponseMessage;
+import com.demo.app.dto.offline.OfflineExam;
 import com.demo.app.dto.studentTest.StudentTestFinishRequest;
 import com.demo.app.dto.studentTest.TestImageResponse;
 import com.demo.app.exception.FileInputException;
@@ -75,9 +76,19 @@ public class StudentTestController {
         return null;
     }
 
-    @PostMapping(path = "/marking")
-    public ResponseEntity<?> markingStudentTest(@RequestParam String classCode) throws IOException {
-        studentTestService.autoMarkingStudentTest(classCode);
-        return null;
+    @GetMapping(path = "/auto/read")
+    public ResponseEntity<?> autoReadStudentOfflineExam(@RequestParam String classCode)
+            throws IOException, InterruptedException {
+         var offlineExams = studentTestService.autoReadStudentOfflineExam(classCode);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(offlineExams);
+    }
+
+    @PostMapping(path = "/auto/mark")
+    public ResponseEntity<?> markStudentTest(@RequestBody List<OfflineExam> offlineExams){
+        offlineExams.forEach(offlineExam -> offlineExam.getAnswers().removeIf(answer -> answer.getIsSelected().isBlank()));
+        offlineExams.forEach(System.out::println);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(offlineExams);
     }
 }

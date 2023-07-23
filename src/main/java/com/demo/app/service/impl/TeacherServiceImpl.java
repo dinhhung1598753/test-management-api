@@ -150,7 +150,7 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     private void checkIfUsernameExists(String username) throws FieldExistedException {
-        if (userRepository.existsByUsername(username)) {
+        if (userRepository.existsByUsernameAndEnabledIsTrue(username)) {
             throw new FieldExistedException("Username already taken!", HttpStatus.CONFLICT);
         }
     }

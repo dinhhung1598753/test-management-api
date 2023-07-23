@@ -2,7 +2,6 @@ package com.demo.app.repository;
 
 import com.demo.app.ProjectDesignIApplication;
 import org.assertj.core.api.Assertions;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,11 +38,4 @@ public class QuestionRepositoryTests {
         Assertions.assertThat(count).isGreaterThan(0);
     }
 
-    @Test
-    @Ignore
-    public void testCountAllByChapterId(){
-        var chapterId = 1;
-        int count = questionRepository.countByChapterId(chapterId);
-        Assertions.assertThat(count).isGreaterThan(0);
-    }
 }

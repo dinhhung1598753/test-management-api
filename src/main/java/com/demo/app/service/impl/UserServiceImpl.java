@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private StudentProfileResponse getStudentProfile(String username){
-        var student = studentRepository.findByUsername(username).get();
+        var student = studentRepository.findByUsernameAndEnabledIsTrue(username).get();
         var response = mapper.map(student, StudentProfileResponse.class);
         response.setUsername(student.getUser().getUsername());
         response.setEmail(student.getUser().getEmail());

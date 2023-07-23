@@ -102,17 +102,14 @@ public class TestServiceImpl implements TestService {
                                     .collect(Collectors.toList())
                     );
                     return testResponse;
-                })
-                .collect(Collectors.toList());
+                }).collect(Collectors.toList());
     }
 
     @Override
     @Transactional
     public void updateTest(int testId, TestDetailRequest request) {
-        @SuppressWarnings("DefaultLocale") var test = testRepository.findById(testId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Cannot find any chapter with id %d", testId),
-                        HttpStatus.NOT_FOUND));
+        var test = testRepository.findById(testId)
+                .orElseThrow(() -> new EntityNotFoundException("Test not found !", HttpStatus.NOT_FOUND));
         var questions = request.getQuestionResponses()
                 .stream()
                 .map(questionResponse -> mapper.map(questionResponse, Question.class))
@@ -125,11 +122,12 @@ public class TestServiceImpl implements TestService {
 
     @Override
     public void disableTest(int testId) {
-        @SuppressWarnings("DefaultLocale") var test = testRepository.findById(testId)
+        var test = testRepository.findById(testId)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Cannot find any chapter with id %d", testId),
+                        "Test not found !",
                         HttpStatus.NOT_FOUND));
         test.setEnabled(false);
+        test.setQuestions(null);
         var testSets = testSetRepository.findByEnabledIsTrueAndTest(test);
         testSets.forEach(testSet -> testSet.setEnabled(false));
         testRepository.save(test);

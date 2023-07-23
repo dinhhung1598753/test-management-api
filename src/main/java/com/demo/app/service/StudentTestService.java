@@ -1,10 +1,12 @@
 package com.demo.app.service;
 
+import com.demo.app.dto.offline.OfflineExam;
 import com.demo.app.dto.studentTest.StudentTestDetailResponse;
 import com.demo.app.dto.studentTest.StudentTestFinishRequest;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.List;
 
 public interface StudentTestService {
 
@@ -12,5 +14,7 @@ public interface StudentTestService {
 
     void finishStudentTest(StudentTestFinishRequest request, Principal principal) throws InterruptedException;
 
-    void autoMarkingStudentTest(String classCode) throws IOException;
+    List<OfflineExam> autoReadStudentOfflineExam(String classCode) throws IOException, InterruptedException;
+
+    void markStudentOfflineTest(OfflineExam offlineExam);
 }

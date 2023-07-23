@@ -21,7 +21,7 @@ public interface TestSetRepository extends JpaRepository<TestSet, Integer> {
 
     List<TestSet> findByEnabledIsTrueAndTest(Test test);
 
-    Optional<TestSet> findByTestIdAndTestNo(Integer testId, Integer testNo);
+    Optional<TestSet> findByTestIdAndTestNoAndEnabledIsTrue(Integer testId, Integer testNo);
 
     @Query("""
             select ts

@@ -1,9 +1,9 @@
 package com.demo.app.service.impl;
 
 import com.demo.app.dto.offline.OfflineExam;
-import com.demo.app.dto.studentTest.StudentTestFinishRequest;
-import com.demo.app.dto.studentTest.StudentTestDetailResponse;
 import com.demo.app.dto.studentTest.QuestionSelectedAnswer;
+import com.demo.app.dto.studentTest.StudentTestDetailResponse;
+import com.demo.app.dto.studentTest.StudentTestFinishRequest;
 import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.exception.InvalidRoleException;
 import com.demo.app.model.*;
@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.Principal;
@@ -29,8 +31,6 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,15 +58,15 @@ public class StudentTestServiceImpl implements StudentTestService {
     @Override
     @Transactional
     public StudentTestDetailResponse attemptTest(String classCode, Principal principal) {
-        var examClass = examClassRepository.findByCode(classCode)
+        var examClass = examClassRepository.findByCodeAndEnabledIsTrue(classCode)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Class with code %s not found !", classCode),
                         HttpStatus.NOT_FOUND));
-        var student = studentRepository.findByUsername(principal.getName())
+        var student = studentRepository.findByUsernameAndEnabledIsTrue(principal.getName())
                 .orElseThrow(() -> new InvalidRoleException(
                         "You don't have role to do this action!",
                         HttpStatus.FORBIDDEN));
-        var studentTest = studentTestRepository.findStudentTestsByStudentAndStateAndExamClassId(
+        var studentTest = studentTestRepository.findStudentTestsByStudentAndStateAndExamClassIdAndEnabledIsTrue(
                 student,
                 State.IN_PROGRESS,
                 examClass.getId()
@@ -118,11 +118,11 @@ public class StudentTestServiceImpl implements StudentTestService {
 
     @Override
     public void finishStudentTest(StudentTestFinishRequest request, Principal principal) throws InterruptedException {
-        var student = studentRepository.findByUsername(principal.getName())
+        var student = studentRepository.findByUsernameAndEnabledIsTrue(principal.getName())
                 .orElseThrow(() -> new InvalidRoleException(
                         "You don't have role to do this action!",
                         HttpStatus.FORBIDDEN));
-        var studentTest = studentTestRepository.findStudentTestsByStudentAndStateAndExamClassId(
+        var studentTest = studentTestRepository.findStudentTestsByStudentAndStateAndExamClassIdAndEnabledIsTrue(
                 student,
                 State.IN_PROGRESS,
                 request.getExamClassId()
@@ -191,76 +191,77 @@ public class StudentTestServiceImpl implements StudentTestService {
     }
 
     @Override
-    public void autoMarkingStudentTest(String classCode) throws IOException {
+    public List<OfflineExam> autoReadStudentOfflineExam(String classCode)
+            throws IOException, InterruptedException {
+        runModelPython(classCode);
+        return getHandleResults(classCode);
+    }
+
+    private void runModelPython(String classCode) throws IOException, InterruptedException {
+        var processBuilder = new ProcessBuilder("python", "main2.py", classCode);
+        processBuilder.redirectErrorStream(true);
+        var process = processBuilder.start();
+        var results = IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8);
+        System.out.println(results);
+        process.waitFor();
+    }
+
+    private List<OfflineExam> getHandleResults(String classCode) throws IOException {
         try (var paths = Files.list(Paths.get("images/answer_sheets/" + classCode))) {
             var fileNames = paths.parallel()
                     .filter(path -> !Files.isDirectory(path))
                     .map(path -> path.getFileName().toString())
                     .collect(Collectors.toSet());
-            var executor = Executors.newFixedThreadPool(5);
-            fileNames.forEach(fileName -> executor.execute(() -> {
-                try {
-                    System.out.println(fileName);
-                    var response = runModelPython(fileName);
-                    System.out.println(response);
-                    markingOfflineAnswer(response);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }));
-            executor.shutdown();
-            try {
-                if (!executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS)) {
-                    executor.shutdownNow();
-                }
-            } catch (InterruptedException e) {
-                executor.shutdownNow();
-                Thread.currentThread().interrupt();
-            }
+            return fileNames.parallelStream()
+                    .map(fileName -> {
+                        var responseFilePath = "json/" + fileName + "/" + PYTHON_JSON_RESPONSE_FILE;
+                        var fileDataJson = new File(responseFilePath);
+                        try {
+                            var offlineExam = objectMapper.readValue(fileDataJson, OfflineExam.class);
+                            FileUtils.deleteDirectory(fileDataJson.getParentFile());
+                            return offlineExam;
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }).collect(Collectors.toList());
         }
     }
 
-    private OfflineExam runModelPython(String imageName) throws IOException, InterruptedException {
-        String commandLine = String.format("cmd /c python main.py %s", imageName);
-        var process = Runtime.getRuntime().exec(commandLine);
-        process.waitFor();
-        var responseFilePath = "json/" + imageName + "/" + PYTHON_JSON_RESPONSE_FILE;
-        var fileDataJson = new File(responseFilePath);
-        var offlineExam = objectMapper.readValue(fileDataJson, OfflineExam.class);
-        FileUtils.deleteDirectory(fileDataJson.getParentFile());
-        return offlineExam;
-    }
-
-    private void markingOfflineAnswer(OfflineExam offlineExam) {
-        var examClass = examClassRepository.findByCode(offlineExam.getClassCode())
+    @Override
+    @Transactional
+    public void markStudentOfflineTest(OfflineExam offlineExam) {
+        var examClass = examClassRepository.findByCodeAndEnabledIsTrue(offlineExam.getClassCode())
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Class %s not found !", offlineExam.getClassCode()),
-                        HttpStatus.NOT_FOUND));
-        var testSet = testSetRepository.findByTestAndTestNoAndEnabledTrue(examClass.getTest(), offlineExam.getTestNo())
-                .orElseThrow(() -> new EntityNotFoundException(
+                        HttpStatus.NOT_FOUND)
+                );
+        var testSet = testSetRepository.findByTestAndTestNoAndEnabledTrue(
+                        examClass.getTest(),
+                        offlineExam.getTestNo()
+                ).orElseThrow(() -> new EntityNotFoundException(
                         String.format("Test %s not found !", offlineExam.getTestNo()),
-                        HttpStatus.NOT_FOUND));
-        var student = studentRepository.findByCode(offlineExam.getStudentCode())
+                        HttpStatus.NOT_FOUND)
+        );
+        var student = studentRepository.findByCodeAndEnabledIsTrue(offlineExam.getStudentCode())
                 .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Student %s not found", offlineExam.getStudentCode()),
-                        HttpStatus.NOT_FOUND));
+                        String.format("Student %s not found !", offlineExam.getStudentCode()),
+                        HttpStatus.NOT_FOUND)
+                );
         var test = testSet.getTest();
-        var questionAnswers = testSetQuestionRepository.findByTestSetAndEnabledIsTrue(testSet)
-                .stream()
+        var questionAnswers = testSetQuestionRepository
+                .findByTestSetAndEnabledIsTrue(testSet).stream()
                 .collect(Collectors.toMap(
                         TestSetQuestion::getQuestionNo,
                         TestSetQuestion::getBinaryAnswer
                 ));
         var mark = markStudentTestOffline(offlineExam.getAnswers(), questionAnswers);
-        var grade = new DecimalFormat("#.0")
-                .format((double) mark / test.getQuestionQuantity() * test.getTotalPoint());
+        var grade = (double) mark / test.getQuestionQuantity() * test.getTotalPoint();
+        var roundedGrade = new DecimalFormat("#.0").format(grade);
         var studentTest = StudentTest.builder()
                 .student(student)
                 .testSet(testSet)
                 .mark(mark)
-                .grade(Double.parseDouble(grade))
+                .grade(Double.parseDouble(roundedGrade))
                 .testDate(test.getTestDay())
                 .examClassId(examClass.getId())
                 .state(State.FINISHED)
@@ -268,9 +269,8 @@ public class StudentTestServiceImpl implements StudentTestService {
         var studentTestDetails = offlineExam.getAnswers()
                 .parallelStream()
                 .map(offlineAnswer -> {
-                    var testSetQuestion = testSetQuestionRepository.findByTestSetAndQuestionNo(
-                            testSet,
-                            offlineAnswer.getQuestionNo());
+                    var testSetQuestion = testSetQuestionRepository
+                            .findByTestSetAndQuestionNo(testSet, offlineAnswer.getQuestionNo());
                     return StudentTestDetail.builder()
                             .studentTest(studentTest)
                             .selectedAnswer(offlineAnswer.getIsSelected())
