@@ -1,5 +1,6 @@
 package com.demo.app.service.impl;
 
+import com.demo.app.dto.chapter.ChapterResponse;
 import com.demo.app.dto.question.MultipleQuestionRequest;
 import com.demo.app.dto.question.QuestionExcelRequest;
 import com.demo.app.dto.question.SingleQuestionRequest;
@@ -171,9 +172,12 @@ public class QuestionServiceImpl implements QuestionService {
         var questions = questionRepository.findByEnabledIsTrueAndChapterIn(subject.getChapters());
         return questions.parallelStream()
                 .map(question -> {
-                    var response = mapper.map(question, QuestionResponse.class);
-                    response.setSubjectCode(subject.getCode());
-                    return response;
+                    var chapter = question.getChapter();
+                    var questionResponse = mapper.map(question, QuestionResponse.class);
+                    questionResponse.setChapter(mapper.map(chapter, ChapterResponse.class));
+                    questionResponse.setSubjectCode(subject.getCode());
+                    questionResponse.setSubjectTitle(subject.getTitle());
+                    return questionResponse;
                 })
                 .collect(Collectors.toList());
     }
