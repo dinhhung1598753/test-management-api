@@ -1,7 +1,6 @@
 package com.demo.app.dto.question;
 
 import com.demo.app.dto.answer.AnswerResponse;
-import com.demo.app.dto.chapter.ChapterResponse;
 import lombok.*;
 
 import java.util.List;
@@ -13,14 +12,6 @@ import java.util.List;
 public class QuestionResponse {
 
     private int id;
-
-    private String createdAt;
-
-    private ChapterResponse chapter;
-
-    private String subjectTitle;
-
-    private String subjectCode;
 
     private String topicText;
 

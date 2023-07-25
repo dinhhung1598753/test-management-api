@@ -38,7 +38,7 @@ public interface ExamClassRepository extends JpaRepository<ExamClass, Integer> {
         select ec, s
         from ExamClass ec
         join fetch ec.students s
-        where ec.id = :exam_class_id and s.enabled = true
+        where ec.id = :exam_class_id and ec.enabled = true
     """)
     List<Object[]> findByJoinStudentWhereIdAndEnabledIsTrue(@Param("exam_class_id") Integer examClassId);
 }

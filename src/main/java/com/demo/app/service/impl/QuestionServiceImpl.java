@@ -1,6 +1,5 @@
 package com.demo.app.service.impl;
 
-import com.demo.app.dto.chapter.ChapterResponse;
 import com.demo.app.dto.question.MultipleQuestionRequest;
 import com.demo.app.dto.question.QuestionExcelRequest;
 import com.demo.app.dto.question.SingleQuestionRequest;
@@ -51,7 +50,8 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     @Transactional
-    public void saveQuestion(SingleQuestionRequest request, MultipartFile file) throws EntityNotFoundException, IOException {
+    public void saveQuestion(SingleQuestionRequest request,
+                             MultipartFile file) throws EntityNotFoundException, IOException {
         var question = mapRequestToQuestion(request);
         var saved = questionRepository.save(question);
         if (file != null) {
@@ -166,20 +166,12 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     @Transactional
     public List<QuestionResponse> getAllQuestionsBySubjectCode(String code) {
-        var subject = subjectRepository.findByCodeAndEnabledIsTrue(code).orElseThrow(
-                () -> new EntityNotFoundException(
-                        String.format("Subject with code: %s not found !", code),
-                        HttpStatus.NOT_FOUND));
+        var subject = subjectRepository.findByCodeAndEnabledIsTrue(code)
+                .orElseThrow(() -> new EntityNotFoundException("Subject not found !", HttpStatus.NOT_FOUND));
         var questions = questionRepository.findByEnabledIsTrueAndChapterIn(subject.getChapters());
         return questions.parallelStream()
-                .map(question -> {
-                    var chapter = question.getChapter();
-                    var questionResponse = mapper.map(question, QuestionResponse.class);
-                    questionResponse.setChapter(mapper.map(chapter, ChapterResponse.class));
-                    questionResponse.setSubjectCode(subject.getCode());
-                    questionResponse.setSubjectTitle(subject.getTitle());
-                    return questionResponse;
-                }).collect(Collectors.toList());
+                .map(question -> mapper.map(question, QuestionResponse.class))
+                .collect(Collectors.toList());
     }
 
     @Override

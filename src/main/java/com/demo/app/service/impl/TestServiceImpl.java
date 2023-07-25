@@ -123,9 +123,7 @@ public class TestServiceImpl implements TestService {
     @Override
     public void disableTest(int testId) {
         var test = testRepository.findById(testId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Test not found !",
-                        HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException("Test not found !", HttpStatus.NOT_FOUND));
         test.setEnabled(false);
         test.setQuestions(null);
         var testSets = testSetRepository.findByEnabledIsTrueAndTest(test);
