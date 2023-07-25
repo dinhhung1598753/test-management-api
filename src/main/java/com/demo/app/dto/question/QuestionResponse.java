@@ -13,6 +13,8 @@ public class QuestionResponse {
 
     private int id;
 
+    private String subjectCode;
+
     private String topicText;
 
     private String topicImage;

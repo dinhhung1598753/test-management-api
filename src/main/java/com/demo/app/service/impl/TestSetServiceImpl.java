@@ -133,7 +133,7 @@ public class TestSetServiceImpl implements TestSetService {
     }
 
     private TestSetDetailResponse mapTestSetToDetailResponse(TestSet testSet) {
-        var testSetQuestions = testSetQuestionRepository.findByTestSetAndEnabledIsTrue(testSet);
+        var testSetQuestions = testSetQuestionRepository.findByTestSet(testSet);
         var questionResponses = testSetQuestions.parallelStream()
                 .map(testSetQuestion -> {
                     var questionResponse = mapper.map(
@@ -148,8 +148,7 @@ public class TestSetServiceImpl implements TestSetService {
                                 responseAnswer.setAnswerNo(Constant.ANSWER_TEXTS.get(answer.getAnswerNo()));
                             });
                     return questionResponse;
-                })
-                .collect(Collectors.toList());
+                }).collect(Collectors.toList());
         return TestSetDetailResponse.builder()
                 .questions(questionResponses)
                 .testSet(mapTestSetToResponse(testSet))

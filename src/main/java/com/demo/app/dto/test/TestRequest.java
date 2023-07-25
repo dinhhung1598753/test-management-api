@@ -1,5 +1,6 @@
 package com.demo.app.dto.test;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -17,7 +18,8 @@ public class TestRequest {
     @NotBlank(message = "Please enter subject's code !")
     private String subjectCode;
 
-    private List<Integer> chapterOrders;
+    @JsonProperty("chapterOrders")
+    private List<Integer> chapterIds;
 
     @Min(value = 1, message = "Question quantity must be greater than 1 !")
     @Max(value = 60, message = "Question quantity must be fewer than 60 !")

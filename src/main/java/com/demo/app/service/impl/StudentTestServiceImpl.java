@@ -139,7 +139,7 @@ public class StudentTestServiceImpl implements StudentTestService {
                             .build();
                 }).collect(Collectors.toList());
         var correctedAnswers = testSetQuestionRepository
-                .findByTestSetAndEnabledIsTrue(testSet)
+                .findByTestSet(testSet)
                 .parallelStream().collect(Collectors.toMap(
                         TestSetQuestion::getQuestionNo,
                         TestSetQuestion::getBinaryAnswer
@@ -255,7 +255,7 @@ public class StudentTestServiceImpl implements StudentTestService {
                 );
         var test = testSet.getTest();
         var questionAnswers = testSetQuestionRepository
-                .findByTestSetAndEnabledIsTrue(testSet).stream()
+                .findByTestSet(testSet).stream()
                 .collect(Collectors.toMap(
                         TestSetQuestion::getQuestionNo,
                         TestSetQuestion::getBinaryAnswer

@@ -12,6 +12,6 @@ public interface TestSetQuestionRepository extends JpaRepository<TestSetQuestion
 
     TestSetQuestion findByTestSetAndQuestionNo(TestSet testset, int questionNo);
 
-    List<TestSetQuestion> findByTestSetAndEnabledIsTrue(TestSet testSet);
+    List<TestSetQuestion> findByTestSet(TestSet testSet);
 
 }

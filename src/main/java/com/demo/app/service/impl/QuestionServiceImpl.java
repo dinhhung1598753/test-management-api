@@ -170,7 +170,11 @@ public class QuestionServiceImpl implements QuestionService {
                 .orElseThrow(() -> new EntityNotFoundException("Subject not found !", HttpStatus.NOT_FOUND));
         var questions = questionRepository.findByEnabledIsTrueAndChapterIn(subject.getChapters());
         return questions.parallelStream()
-                .map(question -> mapper.map(question, QuestionResponse.class))
+                .map(question -> {
+                    var response = mapper.map(question, QuestionResponse.class);
+                    response.setSubjectCode(subject.getCode());
+                    return response;
+                })
                 .collect(Collectors.toList());
     }
 

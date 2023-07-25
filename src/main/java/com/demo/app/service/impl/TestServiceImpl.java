@@ -52,7 +52,7 @@ public class TestServiceImpl implements TestService {
         var pageable = PageRequest.of(FIRST_RESULTS, request.getQuestionQuantity());
         var questions = questionRepository.findQuestionBySubjectChapterOrder(
                 request.getSubjectCode(),
-                request.getChapterOrders(),
+                request.getChapterIds(),
                 pageable
         );
         var test = Test.builder()

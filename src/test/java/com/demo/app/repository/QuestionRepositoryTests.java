@@ -24,9 +24,9 @@ public class QuestionRepositoryTests {
 
     @Test
     public void testFindQuestionBySubjectChapterOrder(){
-        var code = "IT4110";
-        var chapterOrders = List.of(new Integer[]{2});
-        var pageable = PageRequest.of(0, 2);
+        var code = "ET2060";
+        var chapterOrders = List.of(new Integer[]{1,2,4,6});
+        var pageable = PageRequest.of(0, 30);
         var questions = questionRepository.findQuestionBySubjectChapterOrder(code, chapterOrders, pageable);
         Assertions.assertThat(questions).isNotNull();
         int count = 0;

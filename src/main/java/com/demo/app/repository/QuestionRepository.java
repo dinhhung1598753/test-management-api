@@ -19,11 +19,11 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
             from Subject s
                 inner join Chapter c on s.id = c.subject.id
                 inner join Question q on c.id = q.chapter.id
-            where s.code = :code and c.order in :chapterOrders and q.enabled = true
+            where s.code = :code and c.id in :chapter_ids and q.enabled = true
             order by rand()
             """)
     Page<Question> findQuestionBySubjectChapterOrder(@Param("code") String code,
-                                                     @Param("chapterOrders") List<Integer> chapterOrders,
+                                                     @Param("chapter_ids") List<Integer> chapterIds,
                                                      Pageable pageable);
 
     int countByEnabledIsTrueAndChapterIn(List<Chapter> chapters);
