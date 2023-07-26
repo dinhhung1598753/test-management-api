@@ -67,7 +67,7 @@ public class StudentTestServiceImpl implements StudentTestService {
                 .orElseThrow(() -> new InvalidRoleException(
                         "You don't have role to do this action!",
                         HttpStatus.FORBIDDEN));
-        var studentTest = studentTestRepository.findStudentTestsByStudentAndStateAndExamClassIdAndEnabledIsTrue(
+        var studentTest = studentTestRepository.findStudentTestsByStudentAndStateAndExamClassId(
                 student,
                 State.IN_PROGRESS,
                 examClass.getId()
@@ -123,7 +123,7 @@ public class StudentTestServiceImpl implements StudentTestService {
                 .orElseThrow(() -> new InvalidRoleException(
                         "You don't have role to do this action!",
                         HttpStatus.FORBIDDEN));
-        var studentTest = studentTestRepository.findStudentTestsByStudentAndStateAndExamClassIdAndEnabledIsTrue(
+        var studentTest = studentTestRepository.findStudentTestsByStudentAndStateAndExamClassId(
                 student,
                 State.IN_PROGRESS,
                 request.getExamClassId()
@@ -217,7 +217,7 @@ public class StudentTestServiceImpl implements StudentTestService {
             var fileNames = paths.parallel()
                     .filter(path -> !Files.isDirectory(path))
                     .map(path -> path.getFileName().toString())
-                    .collect(Collectors.toSet());
+                    .toList();
             return fileNames.parallelStream()
                     .map(fileName -> {
                         var responseFilePath = "json/" + fileName + "/" + PYTHON_JSON_RESPONSE_FILE;

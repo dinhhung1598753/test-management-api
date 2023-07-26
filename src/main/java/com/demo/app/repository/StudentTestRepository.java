@@ -18,7 +18,7 @@ public interface StudentTestRepository extends JpaRepository<StudentTest, Intege
             Integer examClassId
     );
 
-    StudentTest findStudentTestsByStudentAndStateAndExamClassIdAndEnabledIsTrue(
+    StudentTest findStudentTestsByStudentAndStateAndExamClassId(
             Student student,
             State state,
             Integer examClassId

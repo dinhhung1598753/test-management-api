@@ -178,8 +178,7 @@ public class QuestionServiceImpl implements QuestionService {
                     questionResponse.setSubjectCode(subject.getCode());
                     questionResponse.setSubjectTitle(subject.getTitle());
                     return questionResponse;
-                })
-                .collect(Collectors.toList());
+                }).collect(Collectors.toList());
     }
 
     @Override

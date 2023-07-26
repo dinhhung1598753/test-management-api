@@ -27,7 +27,7 @@ public class Test extends BaseEntity {
     private Integer questionQuantity;
 
     @Column(name = "total_point")
-    private Integer totalPoint;
+    private Integer totalPoint = 10;
 
     @Column(name = "duration")
     private Integer duration;
