@@ -32,7 +32,7 @@ public class TestRequest {
     private String testTime;
 
     @Min(value = 1,message = "Total point must be greater than 0")
-    @Max(value = 10, message = "Total point must be less than 10")
+    @Max(value = 100, message = "Total point must be less than 100")
     private Integer totalPoint;
 
     @Min(value = 1, message = "Duration quantity must be greater than 1 !")

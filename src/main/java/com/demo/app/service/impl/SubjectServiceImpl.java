@@ -203,18 +203,18 @@ public class SubjectServiceImpl implements SubjectService {
         var oldChapters = chapterRepository.findBySubjectIdAndEnabledTrue(subject.getId())
                 .iterator();
         var newChapters = request.getChapters()
-                .parallelStream().map(chapterRequest -> {
+                .stream().map(chapterRequest -> {
                     var chapter = mapper.map(chapterRequest, Chapter.class);
                     chapter.setSubject(subject);
                     chapter.setId(oldChapters.next().getId());
                     return chapter;
                 }).collect(Collectors.toList());
-
+        newChapters.forEach(System.out::println);
         subject.setTitle(request.getTitle());
         subject.setCode(request.getCode());
         subject.setCredit(request.getCredit());
         subject.setDescription(request.getDescription());
-        subject.setChapters(newChapters);
+        chapterRepository.saveAll(newChapters);
         subjectRepository.save(subject);
     }
 

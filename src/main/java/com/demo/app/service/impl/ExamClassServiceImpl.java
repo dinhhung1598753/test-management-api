@@ -62,7 +62,6 @@ public class ExamClassServiceImpl implements ExamClassService {
         examClassRepository.save(examClass);
     }
 
-
     @Override
     @Transactional
     public ExamClass joinExamClassByCode(String classCode, Principal principal) {
