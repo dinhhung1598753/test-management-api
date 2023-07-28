@@ -30,6 +30,8 @@ public class TestResponse {
 
     private String subjectTitle;
 
+    private Integer totalPoint;
+
     private List<Integer> testSetNos;
 
 }
