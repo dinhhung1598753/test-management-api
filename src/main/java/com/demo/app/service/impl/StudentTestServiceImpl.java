@@ -117,6 +117,7 @@ public class StudentTestServiceImpl implements StudentTestService {
     }
 
     @Override
+    @Transactional
     public void finishStudentTest(StudentTestFinishRequest request,
                                   Principal principal) throws InterruptedException {
         var student = studentRepository.findByUsernameAndEnabledIsTrue(principal.getName())
@@ -130,6 +131,8 @@ public class StudentTestServiceImpl implements StudentTestService {
         );
         var testSet = studentTest.getTestSet();
         var test = testSet.getTest();
+        System.out.println(testSet);
+        System.out.println(test);
         var binarySelectedAnswers = request.getQuestions()
                 .parallelStream().map(question -> {
                     var convertedSelected = convertSelectedTextToBinary(question.getSelectedAnswerNo());

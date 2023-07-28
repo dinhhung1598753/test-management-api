@@ -16,10 +16,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,13 +38,14 @@ public class TestSetServiceImpl implements TestSetService {
 
     @Override
     @Transactional
-    public void createTestSetFromTest(int testId, Integer testSetQuantity) {
+    public List<Integer> createTestSetFromTest(int testId, Integer testSetQuantity) {
         var test = testRepository.findByIdAndEnabledIsTrue(testId)
                 .orElseThrow(() -> new EntityNotFoundException("Test not found !", HttpStatus.NOT_FOUND));
         var executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        var futures = new ArrayList<Future<Integer>>();
         for (var i = 1; i <= testSetQuantity; ++i) {
             var digit = i;
-            executor.execute(() -> {
+            var future = executor.submit(() -> {
                 int root = 100, testNo = digit + root;
                 while (testSetRepository.existsByTestAndTestNoAndEnabledTrue(test, testNo)) {
                     root = (root / 100 + 1) * 100;
@@ -56,8 +57,9 @@ public class TestSetServiceImpl implements TestSetService {
                         .build();
                 var testSetQuestions = assignQuestionsNumber(testSet, test.getQuestions());
                 testSet.setTestSetQuestions(testSetQuestions);
-                testSetRepository.save(testSet);
+                return testSetRepository.save(testSet).getTestNo();
             });
+            futures.add(future);
         }
         executor.shutdown();
         try {
@@ -68,9 +70,18 @@ public class TestSetServiceImpl implements TestSetService {
             executor.shutdownNow();
             Thread.currentThread().interrupt();
         }
+        return futures.parallelStream()
+                .map(future -> {
+                    try {
+                        return future.get();
+                    } catch (ExecutionException | InterruptedException ee) {
+                        throw new RuntimeException();
+                    }
+                }).collect(Collectors.toList());
     }
 
-    private List<TestSetQuestion> assignQuestionsNumber(TestSet testset, List<Question> questions) {
+    private List<TestSetQuestion> assignQuestionsNumber(TestSet testset,
+                                                        List<Question> questions) {
         Collections.shuffle(questions);
         var testSetQuestions = questions.parallelStream()
                 .map(question -> {
@@ -92,7 +103,8 @@ public class TestSetServiceImpl implements TestSetService {
         return testSetQuestions;
     }
 
-    private List<TestSetQuestionAnswer> assignAnswersNumber(TestSetQuestion testSetQuestion, List<Answer> answers) {
+    private List<TestSetQuestionAnswer> assignAnswersNumber(TestSetQuestion testSetQuestion,
+                                                            List<Answer> answers) {
         Collections.shuffle(answers);
         var testSetAnswers = answers.stream()
                 .map(answer -> TestSetQuestionAnswer.builder()

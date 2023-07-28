@@ -5,11 +5,12 @@ import jakarta.transaction.Transactional;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.List;
 
 public interface TestSetService {
 
     @Transactional
-    void createTestSetFromTest(int testId, Integer testSetQuantity) throws InterruptedException;
+    List<Integer> createTestSetFromTest(int testId, Integer testSetQuantity) throws InterruptedException;
 
     TestSetDetailResponse getTestSetDetail(Integer testId, Integer testNo);
 

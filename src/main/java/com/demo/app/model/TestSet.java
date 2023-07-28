@@ -29,5 +29,10 @@ public class TestSet extends BaseEntity {
     @OneToMany(mappedBy = "testSet", cascade = CascadeType.ALL)
     private List<StudentTest> studentTests;
 
-
+    @Override
+    public String toString() {
+        return "TestSet{" +
+                "id=" + super.getId() +
+                '}';
+    }
 }

@@ -43,7 +43,7 @@ public class TestServiceImpl implements TestService {
 
     @Override
     @Transactional
-    public void createTestRandomQuestion(TestRequest request) throws EntityNotFoundException {
+    public Integer createTestRandomQuestion(TestRequest request) throws EntityNotFoundException {
         var subject = subjectRepository.findByCodeAndEnabledIsTrue(request.getSubjectCode())
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Code: %s not found !", request.getSubjectCode()),
@@ -58,17 +58,18 @@ public class TestServiceImpl implements TestService {
         var test = Test.builder()
                 .testDay(LocalDate.parse(request.getTestDay(), DATE_FORMATTER))
                 .testTime(LocalTime.parse(request.getTestTime(), TIME_FORMATTER))
-                .questionQuantity(request.getQuestionQuantity())
-                .duration(request.getDuration())
                 .questions(questions.stream().parallel().toList())
+                .questionQuantity(request.getQuestionQuantity())
+                .totalPoint(request.getTotalPoint())
+                .duration(request.getDuration())
                 .subject(subject)
                 .build();
-        testRepository.save(test);
+        return testRepository.save(test).getId();
     }
 
     @Override
     @Transactional
-    public void createTestByChooseQuestions(TestQuestionRequest request) {
+    public Integer createTestByChooseQuestions(TestQuestionRequest request) {
         var questions = questionRepository.findAllById(request.getQuestionIds());
         if (questions.isEmpty()) {
             throw new EntityNotFoundException("Not found any question to add to test !", HttpStatus.NOT_FOUND);
@@ -79,10 +80,11 @@ public class TestServiceImpl implements TestService {
                 .testTime(LocalTime.parse(request.getTestTime(), TIME_FORMATTER))
                 .questionQuantity(questions.size())
                 .duration(request.getDuration())
+                .totalPoint(request.getTotalPoint())
                 .build();
         test.setQuestions(questions);
         test.setSubject(subject);
-        testRepository.save(test);
+        return testRepository.save(test).getId();
     }
 
     @Override

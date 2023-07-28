@@ -22,19 +22,20 @@ public class TestController {
     private final TestService testService;
 
     @PostMapping(path = "/create/random")
-    public ResponseEntity<?> createTest(@RequestBody @Valid final TestRequest request) throws EntityNotFoundException {
-        testService.createTestRandomQuestion(request);
+    public ResponseEntity<?> createTest(@RequestBody @Valid final TestRequest request)
+            throws EntityNotFoundException {
+        Integer testId = testService.createTestRandomQuestion(request);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new ResponseMessage("Test random created successfully !"));
+                .body(testId);
     }
 
     @PostMapping(path = "/create")
     public ResponseEntity<?> saveTestByChooseQuestions(@RequestBody @Valid final TestQuestionRequest request){
-        testService.createTestByChooseQuestions(request);
+        var testId = testService.createTestByChooseQuestions(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new ResponseMessage("Created test successfully !"));
+                .body(testId);
     }
 
     @GetMapping(path = "/list")

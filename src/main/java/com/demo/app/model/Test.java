@@ -48,4 +48,10 @@ public class Test extends BaseEntity {
     @ManyToOne
     private Subject subject;
 
+    @Override
+    public String toString() {
+        return "Test{" +
+                "id=" + super.getId() +
+                '}';
+    }
 }

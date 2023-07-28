@@ -6,10 +6,10 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 
 public interface TestService {
-    void createTestRandomQuestion(TestRequest request);
+    Integer createTestRandomQuestion(TestRequest request);
 
     @Transactional
-    void createTestByChooseQuestions(TestQuestionRequest request);
+    Integer createTestByChooseQuestions(TestQuestionRequest request);
 
     List<TestResponse> getAllTests();
 

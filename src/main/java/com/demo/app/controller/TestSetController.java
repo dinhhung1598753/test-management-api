@@ -1,6 +1,5 @@
 package com.demo.app.controller;
 
-import com.demo.app.dto.message.ResponseMessage;
 import com.demo.app.service.TestSetService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,10 +21,10 @@ public class TestSetController {
     @PostMapping(path = "/{testId}/create")
     public ResponseEntity<?> createTestSetFromTest(@PathVariable(name = "testId") int testId,
                                                    @RequestParam final Integer testSetQuantity) throws InterruptedException {
-        testSetService.createTestSetFromTest(testId, testSetQuantity);
+        var testSetIds = testSetService.createTestSetFromTest(testId, testSetQuantity);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new ResponseMessage("Created Set of test successfully !"));
+                .body(testSetIds);
     }
 
     @GetMapping(path = "/word/export/{testId}/{testNo}")
