@@ -94,21 +94,22 @@ public class StudentTestServiceImpl implements StudentTestService {
 
     private StudentTestDetailResponse mapTestSetToResponse(TestSet testSet) {
         var questions = testSet.getTestSetQuestions()
-                .parallelStream()
-                .map(testSetQuestion -> {
-                    var question = modelMapper.map(
+                .stream().map(testSetQuestion -> {
+                    var questionResponse = modelMapper.map(
                             testSetQuestion.getQuestion(),
                             StudentTestDetailResponse.StudentTestQuestion.class);
-                    question.setQuestionNo(testSetQuestion.getQuestionNo());
-                    var answers = question.getAnswers().iterator();
+                    questionResponse.setQuestionNo(testSetQuestion.getQuestionNo());
+                    var answerResponses = questionResponse.getAnswers().iterator();
                     testSetQuestion.getTestSetQuestionAnswers()
                             .forEach(questionAnswer -> {
+                                var answerResponse = answerResponses.next();
                                 var answerNo = Constant.ANSWER_TEXTS.get(questionAnswer.getAnswerNo());
-                                answers.next().setAnswerNo(answerNo);
+                                var content = questionAnswer.getAnswer().getContent();
+                                answerResponse.setAnswerNo(answerNo);
+                                answerResponse.setContent(content);
                             });
-                    return question;
-                })
-                .toList();
+                    return questionResponse;
+                }).toList();
         return StudentTestDetailResponse.builder()
                 .testNo(testSet.getTestNo())
                 .questions(questions)
