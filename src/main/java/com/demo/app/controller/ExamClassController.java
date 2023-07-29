@@ -42,7 +42,7 @@ public class ExamClassController {
     @PostMapping("/join")
     @PreAuthorize("hasAnyRole('STUDENT')")
     public ResponseEntity<?> joinExamClassByCode(@RequestParam String classCode, Principal principal) {
-        if (principal == null) {
+        if (principal == null || principal.getName().equals("anonymousUser")){
             throw new UserNotSignInException("You're not logged in !", HttpStatus.UNAUTHORIZED);
         }
         var examClass = examClassService.joinExamClassByCode(classCode, principal);

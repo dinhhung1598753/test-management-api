@@ -11,7 +11,8 @@ import java.util.Optional;
 @Repository
 public interface StudentTestRepository extends JpaRepository<StudentTest, Integer> {
 
-    Boolean existsByStudentAndState(Student student, State state);
+    Boolean existsByStudentAndState(Student student,
+                                    State state);
 
     Optional<StudentTest> findFirstByStudentAndExamClassIdAndEnabledIsTrueOrderByUpdatedAtDesc(
             Student student,

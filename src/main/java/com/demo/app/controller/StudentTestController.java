@@ -86,8 +86,10 @@ public class StudentTestController {
 
     @PostMapping(path = "/auto/mark")
     public ResponseEntity<?> markStudentTest(@RequestBody List<OfflineExamRequest> requests) {
-        requests.parallelStream().forEach(studentTestService::markStudentOfflineTest);
+        var responses = requests.parallelStream()
+                .map(studentTestService::markStudentOfflineTest)
+                .collect(Collectors.toList());
         return ResponseEntity.status(HttpStatus.OK)
-                .body(requests);
+                .body(responses);
     }
 }

@@ -7,15 +7,16 @@ import com.demo.app.dto.subject.SubjectChaptersResponse;
 import com.demo.app.dto.subject.SubjectRequest;
 import com.demo.app.dto.subject.SubjectResponse;
 import com.demo.app.exception.EntityNotFoundException;
-import com.demo.app.exception.FieldExistedException;
+import com.demo.app.exception.DuplicatedUniqueValueException;
 import jakarta.transaction.Transactional;
 
+import java.security.Principal;
 import java.util.List;
 
 public interface SubjectService {
-    void addSubject(SubjectRequest request) throws FieldExistedException;
+    void addSubject(SubjectRequest request, Principal principal) throws DuplicatedUniqueValueException;
 
-    void addSubjectChapters(SubjectChaptersRequest request);
+    void addSubjectChapters(SubjectChaptersRequest request, Principal principal);
 
     List<SubjectResponse> getAllSubjects() throws EntityNotFoundException;
 

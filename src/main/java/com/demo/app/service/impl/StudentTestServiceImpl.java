@@ -2,6 +2,7 @@ package com.demo.app.service.impl;
 
 import com.demo.app.dto.offline.OfflineExam;
 import com.demo.app.dto.offline.OfflineExamRequest;
+import com.demo.app.dto.offline.OfflineExamResponse;
 import com.demo.app.dto.studentTest.QuestionSelectedAnswer;
 import com.demo.app.dto.studentTest.StudentTestDetailResponse;
 import com.demo.app.dto.studentTest.StudentTestFinishRequest;
@@ -51,8 +52,6 @@ public class StudentTestServiceImpl implements StudentTestService {
     private final StudentTestRepository studentTestRepository;
 
     private final TestSetRepository testSetRepository;
-
-    private final StudentTestDetailRepository studentTestDetailRepository;
 
     private final TestSetQuestionRepository testSetQuestionRepository;
 
@@ -119,7 +118,7 @@ public class StudentTestServiceImpl implements StudentTestService {
     @Override
     @Transactional
     public void finishStudentTest(StudentTestFinishRequest request,
-                                  Principal principal) throws InterruptedException {
+                                  Principal principal) {
         var student = studentRepository.findByUsernameAndEnabledIsTrue(principal.getName())
                 .orElseThrow(() -> new InvalidRoleException(
                         "You don't have role to do this action!",
@@ -131,18 +130,17 @@ public class StudentTestServiceImpl implements StudentTestService {
         );
         var testSet = studentTest.getTestSet();
         var test = testSet.getTest();
-        System.out.println(testSet);
-        System.out.println(test);
+
         var binarySelectedAnswers = request.getQuestions()
                 .parallelStream().map(question -> {
-                    var convertedSelected = convertSelectedTextToBinary(question.getSelectedAnswerNo());
+                    var selectedAnswerNo = question.getSelectedAnswerNo();
+                    var binaryAnswer = convertSelectedTextToBinary(selectedAnswerNo);
                     return QuestionSelectedAnswer.builder()
-                            .selectedAnswer(convertedSelected)
+                            .selectedAnswer(binaryAnswer)
                             .questionNo(question.getQuestionNo())
                             .build();
                 }).collect(Collectors.toList());
-        var correctedAnswers = testSetQuestionRepository
-                .findByTestSet(testSet)
+        var correctedAnswers = testSetQuestionRepository.findByTestSet(testSet)
                 .parallelStream().collect(Collectors.toMap(
                         TestSetQuestion::getQuestionNo,
                         TestSetQuestion::getBinaryAnswer
@@ -150,45 +148,16 @@ public class StudentTestServiceImpl implements StudentTestService {
         var mark = markStudentTestOnline(binarySelectedAnswers, correctedAnswers);
         var grade = ((double) mark / test.getQuestionQuantity()) * test.getTotalPoint();
         var roundedGrade = new DecimalFormat("#.0").format(grade);
-        var markingThread = new Thread(
-                () -> saveStudentTest(studentTest, mark, Double.parseDouble(roundedGrade))
-        );
-        var saveStudentTestThread = new Thread(
-                () -> saveStudentTestDetail(binarySelectedAnswers, studentTest)
-        );
-        markingThread.start();
-        saveStudentTestThread.start();
-        markingThread.join();
-        saveStudentTestThread.join();
-    }
-
-    private void saveStudentTest(StudentTest studentTest, Integer mark, Double grade) {
         studentTest.setMark(mark);
-        studentTest.setGrade(grade);
+        studentTest.setGrade(Double.parseDouble(roundedGrade));
         studentTest.setState(State.FINISHED);
-        studentTestRepository.save(studentTest);
-    }
 
-    private int markStudentTestOnline(List<QuestionSelectedAnswer> binarySelectedAnswers,
-                                      Map<Integer, String> correctedAnswers) {
-        return (int) binarySelectedAnswers.parallelStream()
-                .filter(selectedAnswer -> {
-                    String corrected = correctedAnswers.get(selectedAnswer.getQuestionNo());
-                    var isCorrected = selectedAnswer.getSelectedAnswer().equals(corrected);
-                    selectedAnswer.setIsCorrected(isCorrected);
-                    return isCorrected;
-                }).count();
-    }
-
-    private void saveStudentTestDetail(List<QuestionSelectedAnswer> questionSelectedAnswers,
-                                       StudentTest studentTest) {
-        var testSet = studentTest.getTestSet();
-        var studentTestDetails = questionSelectedAnswers
-                .parallelStream()
+        var studentTestDetails = binarySelectedAnswers.parallelStream()
                 .map(selectedAnswer -> {
                     var testSetQuestion = testSetQuestionRepository.findByTestSetAndQuestionNo(
                             testSet,
-                            selectedAnswer.getQuestionNo());
+                            selectedAnswer.getQuestionNo()
+                    );
                     return StudentTestDetail.builder()
                             .selectedAnswer(selectedAnswer.getSelectedAnswer())
                             .isCorrected(selectedAnswer.getIsCorrected())
@@ -196,7 +165,20 @@ public class StudentTestServiceImpl implements StudentTestService {
                             .studentTest(studentTest)
                             .build();
                 }).collect(Collectors.toList());
-        studentTestDetailRepository.saveAll(studentTestDetails);
+        studentTest.setStudentTestDetails(studentTestDetails);
+        studentTestRepository.save(studentTest);
+
+    }
+
+    private int markStudentTestOnline(List<QuestionSelectedAnswer> binarySelectedAnswers,
+                                      Map<Integer, String> correctedAnswers) {
+        return (int) binarySelectedAnswers.parallelStream()
+                .filter(selectedAnswer -> {
+                    var corrected = correctedAnswers.get(selectedAnswer.getQuestionNo());
+                    var isCorrected = selectedAnswer.getSelectedAnswer().equals(corrected);
+                    selectedAnswer.setIsCorrected(isCorrected);
+                    return isCorrected;
+                }).count();
     }
 
     @Override
@@ -238,32 +220,25 @@ public class StudentTestServiceImpl implements StudentTestService {
 
     @Override
     @Transactional
-    public void markStudentOfflineTest(OfflineExamRequest request) {
+    public OfflineExamResponse markStudentOfflineTest(OfflineExamRequest request) {
         var examClass = examClassRepository.findByCodeAndEnabledIsTrue(request.getClassCode())
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Class %s not found !", request.getClassCode()),
-                        HttpStatus.NOT_FOUND)
-                );
-        var testSet = testSetRepository.findByTestAndTestNoAndEnabledTrue(
-                examClass.getTest(),
-                request.getTestNo()
-        ).orElseThrow(() -> new EntityNotFoundException(
-                String.format("Test %s not found !", request.getTestNo()),
-                HttpStatus.NOT_FOUND)
-        );
+                        HttpStatus.NOT_FOUND));
+        var testSet = testSetRepository.findByTestAndTestNoAndEnabledTrue(examClass.getTest(), request.getTestNo())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Test %s not found !", request.getTestNo()),
+                        HttpStatus.NOT_FOUND));
         var student = studentRepository.findByCodeAndEnabledIsTrue(request.getStudentCode())
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Student %s not found !", request.getStudentCode()),
-                        HttpStatus.NOT_FOUND)
-                );
+                        HttpStatus.NOT_FOUND));
         var test = testSet.getTest();
         var questionAnswers = testSetQuestionRepository
                 .findByTestSet(testSet).stream()
                 .collect(Collectors.toMap(
                         TestSetQuestion::getQuestionNo,
-                        TestSetQuestion::getBinaryAnswer
-                ));
-
+                        TestSetQuestion::getBinaryAnswer));
         var mark = markStudentTestOffline(request.getAnswers(), questionAnswers);
         var grade = ((double) mark / test.getQuestionQuantity()) * test.getTotalPoint();
         var roundedGrade = new DecimalFormat("#.0").format(grade);
@@ -289,6 +264,11 @@ public class StudentTestServiceImpl implements StudentTestService {
 
         studentTest.setStudentTestDetails(studentTestDetails);
         studentTestRepository.save(studentTest);
+        var response = modelMapper.map(request, OfflineExamResponse.class);
+        response.setGrade(grade);
+        response.setMark(mark);
+        response.setTotalPoint(test.getTotalPoint());
+        return response;
     }
 
     private int markStudentTestOffline(List<OfflineExamRequest.OfflineAnswer> offlineAnswers,
@@ -297,25 +277,22 @@ public class StudentTestServiceImpl implements StudentTestService {
                 .peek(offlineAnswer -> {
                     var selectedText = offlineAnswer.getIsSelected();
                     offlineAnswer.setIsSelected(convertSelectedTextToBinary(selectedText));
-                })
-                .filter(offlineAnswer -> {
+                }).filter(offlineAnswer -> {
                     String corrected = correctedAnswers.get(offlineAnswer.getQuestionNo());
                     var isCorrected = offlineAnswer.getIsSelected().equals(corrected);
                     offlineAnswer.setIsCorrected(isCorrected);
                     return isCorrected;
-                })
-                .count();
+                }).count();
     }
 
     private String convertSelectedTextToBinary(String selectedAnswerNo) {
         var stringBuilder = new StringBuilder();
         var sortedAnswerNoText = Constant.ANSWER_TEXTS
-                .entrySet().stream()
-                .sorted(Map.Entry.comparingByKey())
+                .entrySet().stream().sorted(Map.Entry.comparingByKey())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
                         (oldValue, newValue) -> oldValue, HashMap::new));
-        sortedAnswerNoText.forEach((no, text) ->
-                stringBuilder.append(selectedAnswerNo.contains(text) ? "1" : "0"));
+        sortedAnswerNoText.forEach((no, text) -> stringBuilder.append(
+                selectedAnswerNo.contains(text) ? "1" : "0"));
         return stringBuilder.toString();
     }
 

@@ -3,7 +3,7 @@ package com.demo.app.controller;
 import com.demo.app.dto.message.ResponseMessage;
 import com.demo.app.dto.teacher.TeacherRequest;
 import com.demo.app.dto.teacher.TeacherUpdateRequest;
-import com.demo.app.exception.FieldExistedException;
+import com.demo.app.exception.DuplicatedUniqueValueException;
 import com.demo.app.exception.InvalidRoleException;
 import com.demo.app.service.TeacherService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -81,7 +81,7 @@ public class TeacherController {
             }
     )
     @PostMapping(path = "/add")
-    public ResponseEntity<?> addNewTeacher(@RequestBody @Valid TeacherRequest request) throws FieldExistedException {
+    public ResponseEntity<?> addNewTeacher(@RequestBody @Valid TeacherRequest request) throws DuplicatedUniqueValueException {
         teacherService.saveTeacher(request);
         String message = String.format("Teacher %s have been saved successfully !", request.getFullName());
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.CREATED);

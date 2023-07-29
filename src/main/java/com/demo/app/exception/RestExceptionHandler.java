@@ -33,9 +33,9 @@ public class RestExceptionHandler {
         return new ErrorResponse(status, ex.getMessage());
     }
 
-    @ExceptionHandler(FieldExistedException.class)
+    @ExceptionHandler(DuplicatedUniqueValueException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleFieldExistedExceptions(FieldExistedException ex){
+    public ErrorResponse handleDuplicatedUniqueValueException(DuplicatedUniqueValueException ex){
         HttpStatus status = ex.getStatus();
         return new ErrorResponse(status, ex.getMessage());
     }

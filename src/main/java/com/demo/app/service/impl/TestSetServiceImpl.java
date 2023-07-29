@@ -82,7 +82,7 @@ public class TestSetServiceImpl implements TestSetService {
 
     private List<TestSetQuestion> assignQuestionsNumber(TestSet testset,
                                                         List<Question> questions) {
-        Collections.shuffle(questions);
+        questions = shuffleQuestions(questions);
         var testSetQuestions = questions.parallelStream()
                 .map(question -> {
                     var testSetQuestion = TestSetQuestion.builder()
@@ -101,6 +101,14 @@ public class TestSetServiceImpl implements TestSetService {
         for (var testSetQuestion : testSetQuestions)
             testSetQuestion.setQuestionNo(questionNo++);
         return testSetQuestions;
+    }
+
+    private List<Question> shuffleQuestions(List<Question> questions) {
+        return questions.parallelStream()
+                .collect(Collectors.collectingAndThen(Collectors.toList(), ques -> {
+                    Collections.shuffle(ques);
+                    return ques;
+                }));
     }
 
     private List<TestSetQuestionAnswer> assignAnswersNumber(TestSetQuestion testSetQuestion,

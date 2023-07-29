@@ -5,7 +5,7 @@ import com.demo.app.dto.teacher.TeacherRequest;
 import com.demo.app.dto.teacher.TeacherResponse;
 import com.demo.app.dto.teacher.TeacherUpdateRequest;
 import com.demo.app.exception.EntityNotFoundException;
-import com.demo.app.exception.FieldExistedException;
+import com.demo.app.exception.DuplicatedUniqueValueException;
 import com.demo.app.exception.FileInputException;
 import com.demo.app.model.Gender;
 import com.demo.app.model.Role;
@@ -48,7 +48,7 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     @Transactional
-    public void saveTeacher(TeacherRequest request) throws FieldExistedException {
+    public void saveTeacher(TeacherRequest request) throws DuplicatedUniqueValueException {
         userRepository.save(mapRequestToUser(request));
     }
 
@@ -112,7 +112,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     @Transactional
     public void updateTeacherById(int teacherId, TeacherUpdateRequest request)
-            throws EntityNotFoundException, FieldExistedException {
+            throws EntityNotFoundException, DuplicatedUniqueValueException {
          @SuppressWarnings("DefaultLocale") var teacher = teacherRepository.findById(teacherId).
                 orElseThrow(() -> new EntityNotFoundException(
                         String.format("Teacher with id %d not found !", teacherId),
@@ -122,7 +122,7 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     @Transactional
-    public void updateTeacherProfile(Principal principal, TeacherUpdateRequest request)  throws EntityNotFoundException, FieldExistedException{
+    public void updateTeacherProfile(Principal principal, TeacherUpdateRequest request)  throws EntityNotFoundException, DuplicatedUniqueValueException {
         var teacher = teacherRepository.findByUsername(principal.getName())
                         .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Teacher %s not found !", principal.getName()),
@@ -149,27 +149,27 @@ public class TeacherServiceImpl implements TeacherService {
         teacherRepository.save(teacher);
     }
 
-    private void checkIfUsernameExists(String username) throws FieldExistedException {
+    private void checkIfUsernameExists(String username) throws DuplicatedUniqueValueException {
         if (userRepository.existsByUsernameAndEnabledIsTrue(username)) {
-            throw new FieldExistedException("Username already taken!", HttpStatus.CONFLICT);
+            throw new DuplicatedUniqueValueException("Username already taken!", HttpStatus.CONFLICT);
         }
     }
 
-    private void checkIfPhoneNumberExists(String phoneNumber) throws FieldExistedException {
+    private void checkIfPhoneNumberExists(String phoneNumber) throws DuplicatedUniqueValueException {
         if (teacherRepository.existsByPhoneNumber(phoneNumber)) {
-            throw new FieldExistedException("Phone number already taken!", HttpStatus.CONFLICT);
+            throw new DuplicatedUniqueValueException("Phone number already taken!", HttpStatus.CONFLICT);
         }
     }
 
-    private void checkIfEmailExists(String email) throws FieldExistedException {
+    private void checkIfEmailExists(String email) throws DuplicatedUniqueValueException {
         if (userRepository.existsByEmailAndEnabledTrue(email)) {
-            throw new FieldExistedException("Email already taken!", HttpStatus.CONFLICT);
+            throw new DuplicatedUniqueValueException("Email already taken!", HttpStatus.CONFLICT);
         }
     }
 
-    private void checkIfCodeExists(String code) throws FieldExistedException {
+    private void checkIfCodeExists(String code) throws DuplicatedUniqueValueException {
         if (teacherRepository.existsByCode(code)) {
-            throw new FieldExistedException("Code already taken!", HttpStatus.CONFLICT);
+            throw new DuplicatedUniqueValueException("Code already taken!", HttpStatus.CONFLICT);
         }
     }
 

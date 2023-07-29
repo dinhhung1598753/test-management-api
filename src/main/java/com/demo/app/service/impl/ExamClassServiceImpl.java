@@ -44,7 +44,7 @@ public class ExamClassServiceImpl implements ExamClassService {
     @Transactional
     public void createExamClass(ClassRequest request, Principal principal) {
         if (examClassRepository.existsByCodeAndEnabledIsTrue(request.getCode())) {
-            throw new FieldExistedException("Class's code already taken !", HttpStatus.CONFLICT);
+            throw new DuplicatedUniqueValueException("Class's code already taken !", HttpStatus.CONFLICT);
         }
         var teacher = teacherRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new InvalidRoleException("You don't have role to do this action!", HttpStatus.FORBIDDEN));

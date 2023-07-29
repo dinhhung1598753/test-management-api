@@ -4,7 +4,7 @@ import com.demo.app.dto.auth.AuthenticationRequest;
 import com.demo.app.dto.auth.AuthenticationResponse;
 import com.demo.app.dto.auth.RegisterRequest;
 import com.demo.app.dto.message.ErrorResponse;
-import com.demo.app.exception.FieldExistedException;
+import com.demo.app.exception.DuplicatedUniqueValueException;
 import com.demo.app.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -79,7 +79,7 @@ public class AuthController {
             }
     )
     @PostMapping(path = "/signup")
-    public ResponseEntity<?> registerUser(@RequestBody @Valid final RegisterRequest registerRequest, final HttpServletRequest request) throws FieldExistedException {
+    public ResponseEntity<?> registerUser(@RequestBody @Valid final RegisterRequest registerRequest, final HttpServletRequest request) throws DuplicatedUniqueValueException {
         var authResponse = authService.register(registerRequest, request);
         return ResponseEntity.ok()
                 .header("token", authResponse.getAccessToken())

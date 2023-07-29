@@ -3,6 +3,7 @@ package com.demo.app.controller;
 import com.demo.app.dto.message.ResponseMessage;
 import com.demo.app.dto.subject.SubjectChaptersRequest;
 import com.demo.app.dto.subject.SubjectRequest;
+import com.demo.app.exception.UserNotSignInException;
 import com.demo.app.service.SubjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -52,16 +54,23 @@ public class SubjectController {
                                     schema = @Schema(implementation = ResponseMessage.class)))
             })
     @PostMapping(path = "/add")
-    public ResponseEntity<?> addSubject(@RequestBody @Valid final SubjectRequest request) {
-        subjectService.addSubject(request);
-        String message = "Add subject successfully !";
+    public ResponseEntity<?> addSubject(@RequestBody @Valid final SubjectRequest request,
+                                        Principal principal) {
+        if (principal == null || principal.getName().equals("anonymousUser")){
+            throw new UserNotSignInException("You're not logged in !", HttpStatus.UNAUTHORIZED);
+        }
+        subjectService.addSubject(request, principal);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ResponseMessage(message));
+                .body(new ResponseMessage("Add subject successfully !"));
     }
 
     @PostMapping(path = "/add/chapters")
-    public ResponseEntity<?> addSubjectWithChapters(@RequestBody final SubjectChaptersRequest request) {
-        subjectService.addSubjectChapters(request);
+    public ResponseEntity<?> addSubjectWithChapters(@RequestBody final SubjectChaptersRequest request,
+                                                    Principal principal) {
+        if (principal == null || principal.getName().equals("anonymousUser")){
+            throw new UserNotSignInException("You're not logged in !", HttpStatus.UNAUTHORIZED);
+        }
+        subjectService.addSubjectChapters(request, principal);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseMessage("Subject with chapters created successfully !"));
     }

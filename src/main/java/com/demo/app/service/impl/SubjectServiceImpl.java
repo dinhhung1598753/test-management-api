@@ -7,12 +7,14 @@ import com.demo.app.dto.subject.SubjectChaptersResponse;
 import com.demo.app.dto.subject.SubjectRequest;
 import com.demo.app.dto.subject.SubjectResponse;
 import com.demo.app.exception.EntityNotFoundException;
-import com.demo.app.exception.FieldExistedException;
+import com.demo.app.exception.DuplicatedUniqueValueException;
+import com.demo.app.exception.UserNotEnrolledException;
 import com.demo.app.model.Chapter;
 import com.demo.app.model.Subject;
 import com.demo.app.repository.ChapterRepository;
 import com.demo.app.repository.QuestionRepository;
 import com.demo.app.repository.SubjectRepository;
+import com.demo.app.repository.TeacherRepository;
 import com.demo.app.service.SubjectService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +33,8 @@ public class SubjectServiceImpl implements SubjectService {
 
     private final ModelMapper mapper;
 
+    private final TeacherRepository teacherRepository;
+
     private final SubjectRepository subjectRepository;
 
     private final ChapterRepository chapterRepository;
@@ -36,54 +42,57 @@ public class SubjectServiceImpl implements SubjectService {
     private final QuestionRepository questionRepository;
 
     @Override
-    public void addSubject(SubjectRequest request) throws FieldExistedException {
+    @Transactional
+    public void addSubject(SubjectRequest request, Principal principal) throws DuplicatedUniqueValueException {
         if (subjectRepository.existsByCodeAndEnabledTrue(request.getCode())) {
-            throw new FieldExistedException("Subject's code already taken !", HttpStatus.BAD_REQUEST);
+            throw new DuplicatedUniqueValueException("Subject's code already taken !", HttpStatus.BAD_REQUEST);
         }
+        var teacher = teacherRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new UserNotEnrolledException(
+                        "You are not permitted to do this action !",
+                        HttpStatus.FORBIDDEN));
         var subject = mapper.map(request, Subject.class);
+        subject.setTeachers(Collections.singletonList(teacher));
         subjectRepository.save(subject);
     }
 
     @Override
-    public void addSubjectChapters(SubjectChaptersRequest request) {
+    public void addSubjectChapters(SubjectChaptersRequest request, Principal principal) {
         if (subjectRepository.existsByCodeAndEnabledTrue(request.getCode())) {
-            throw new FieldExistedException("Subject's code already taken !", HttpStatus.BAD_REQUEST);
+            throw new DuplicatedUniqueValueException("Subject's code already taken !", HttpStatus.BAD_REQUEST);
         }
+        var teacher = teacherRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new UserNotEnrolledException(
+                        "You are not permitted to do this action !",
+                        HttpStatus.FORBIDDEN));
         var subject = mapper.map(request, Subject.class);
-        subject.getChapters()
-                .forEach(chapter -> chapter.setSubject(subject));
+        subject.getChapters().forEach(chapter -> chapter.setSubject(subject));
+        subject.setTeachers(Collections.singletonList(teacher));
         subjectRepository.save(subject);
     }
 
     @Override
     public List<SubjectResponse> getAllSubjects() throws EntityNotFoundException {
         List<Subject> subjects = subjectRepository.findByEnabledIsTrue();
-        return subjects.stream()
-                .map(subject -> {
-                    var response = mapper.map(subject, SubjectResponse.class);
-                    var chapters = chapterRepository.findBySubjectIdAndEnabledTrue(subject.getId());
-                    response.setChapterQuantity(chapters.size());
-                    response.setQuestionQuantity(questionRepository.countByEnabledIsTrueAndChapterIn(chapters));
-                    return response;
-                })
-                .collect(Collectors.toList());
+        return subjects.stream().map(subject -> {
+            var response = mapper.map(subject, SubjectResponse.class);
+            var chapters = chapterRepository.findBySubjectIdAndEnabledTrue(subject.getId());
+            response.setChapterQuantity(chapters.size());
+            response.setQuestionQuantity(questionRepository.countByEnabledIsTrueAndChapterIn(chapters));
+            return response;
+        }).collect(Collectors.toList());
     }
 
     @Override
     public void updateSubject(int subjectId, SubjectRequest request) throws EntityNotFoundException {
-        var existSubject = subjectRepository.findById(subjectId).orElseThrow(
-                () -> new EntityNotFoundException("", HttpStatus.NOT_FOUND)
+        var subject = subjectRepository.findById(subjectId).orElseThrow(
+                () -> new EntityNotFoundException("Subject not found !", HttpStatus.NOT_FOUND)
         );
-        String updateCode = request.getCode();
-        if (!updateCode.equalsIgnoreCase(existSubject.getCode())) {
-            if (subjectRepository.existsByCodeAndEnabledTrue(updateCode)) {
-                throw new FieldExistedException("", HttpStatus.CONFLICT);
-            }
+        if (!request.getCode().equalsIgnoreCase(subject.getCode())) {
+            throw new DuplicatedUniqueValueException("Subject code already taken !", HttpStatus.CONFLICT);
         }
-        var subject = mapper.map(request, Subject.class);
-        subject.setId(existSubject.getId());
-        subject.setEnabled(existSubject.getEnabled());
-
+        subject.setId(subject.getId());
+        subject.setEnabled(subject.getEnabled());
         subjectRepository.save(subject);
     }
 
@@ -145,7 +154,7 @@ public class SubjectServiceImpl implements SubjectService {
                         HttpStatus.NOT_FOUND)
                 );
         if (chapterRepository.existsBySubjectIdAndOrderAndEnabledTrue(subject.getId(), request.getOrder())) {
-            throw new FieldExistedException("This chapter already existed in subject !", HttpStatus.BAD_REQUEST);
+            throw new DuplicatedUniqueValueException("This chapter already existed in subject !", HttpStatus.BAD_REQUEST);
         }
         var chapter = mapper.map(request, Chapter.class);
         chapter.setSubject(subject);
@@ -166,7 +175,7 @@ public class SubjectServiceImpl implements SubjectService {
                     if (chapterRepository.existsBySubjectIdAndOrderAndEnabledTrue(
                             subject.getId(),
                             chapterRequest.getOrder())) {
-                        throw new FieldExistedException(
+                        throw new DuplicatedUniqueValueException(
                                 "This chapter already existed in subject !",
                                 HttpStatus.BAD_REQUEST);
                     }

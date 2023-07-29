@@ -16,7 +16,7 @@ import java.util.Set;
 @Service
 public class FileStorageServiceImpl implements FileStorageService {
 
-    @Value("${file.upload-path}")
+    @Value("${file.upload.image.path}")
     private String uploadPath;
 
     private static final Set<String> FILE_FORMATs = Set.of(new String[] {".jpg", ".jpeg", ".png"});

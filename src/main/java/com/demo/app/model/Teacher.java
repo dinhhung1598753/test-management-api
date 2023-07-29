@@ -21,13 +21,8 @@ public class Teacher extends Person {
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
     private List<ExamClass> examClasses;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "teacher_subject",
-            joinColumns = @JoinColumn(name = "teacher_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "subject_id", referencedColumnName = "id"))
-    private List<Subject> subjects;
-
     @OneToOne
     @JoinColumn(referencedColumnName = "id", name = "user_id")
     private User user;
+
 }

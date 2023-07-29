@@ -40,4 +40,10 @@ public class Subject extends BaseEntity {
     @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL)
     private List<Test> tests;
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "teacher_subject",
+            joinColumns = @JoinColumn(name = "subject_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "teacher_id", referencedColumnName = "id"))
+    private List<Teacher> teachers;
+
 }

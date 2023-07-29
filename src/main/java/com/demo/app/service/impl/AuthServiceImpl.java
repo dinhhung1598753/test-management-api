@@ -6,7 +6,7 @@ import com.demo.app.dto.auth.AuthenticationResponse;
 import com.demo.app.dto.auth.RegisterRequest;
 import com.demo.app.event.RegisterCompleteEvent;
 import com.demo.app.exception.EntityNotFoundException;
-import com.demo.app.exception.FieldExistedException;
+import com.demo.app.exception.DuplicatedUniqueValueException;
 import com.demo.app.exception.InvalidVerificationTokenException;
 import com.demo.app.model.Role;
 import com.demo.app.model.Token;
@@ -55,7 +55,7 @@ public class AuthServiceImpl implements AuthService {
     public AuthenticationResponse register(RegisterRequest registerRequest, HttpServletRequest request) {
         if(userRepository.existsByEmailAndEnabledTrue(registerRequest.getEmail()) ||
                 userRepository.existsByUsernameAndEnabledIsTrue(registerRequest.getUsername())){
-            throw new FieldExistedException("Email or Username already taken!", HttpStatus.CONFLICT);
+            throw new DuplicatedUniqueValueException("Email or Username already taken!", HttpStatus.CONFLICT);
         }
 
         var roles = Collections.singletonList(roleRepository.findByRoleName(Role.RoleType.ROLE_USER).get());
