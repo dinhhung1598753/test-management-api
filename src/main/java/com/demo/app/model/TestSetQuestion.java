@@ -27,8 +27,8 @@ public class TestSetQuestion extends BaseEntity {
     @ManyToOne
     private Question question;
 
-    @OneToOne(mappedBy = "testSetQuestion", cascade = CascadeType.ALL)
-    private StudentTestDetail studentTestDetail;
+    @OneToMany(mappedBy = "testSetQuestion", cascade = CascadeType.ALL)
+    private List<StudentTestDetail> studentTestDetails;
 
     @OneToMany(mappedBy = "testSetQuestion", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<TestSetQuestionAnswer> testSetQuestionAnswers;

@@ -44,6 +44,8 @@ public class ClassInfoResponse {
 
         private String code;
 
+        private Integer studentTestId;
+
     }
 
 

@@ -76,6 +76,13 @@ public class StudentTestController {
         return null;
     }
 
+    @GetMapping(path = "/detail/{id}")
+    public ResponseEntity<?> getStudentTestDetail(@PathVariable(name = "id") Integer studentTestId){
+        var response = studentTestService.getStudentTestDetail(studentTestId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(response);
+    }
+
     @GetMapping(path = "/auto/read")
     public ResponseEntity<?> autoReadStudentOfflineExam(@RequestParam String classCode)
             throws IOException, InterruptedException {

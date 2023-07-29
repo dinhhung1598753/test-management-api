@@ -4,6 +4,7 @@ import com.demo.app.dto.offline.OfflineExam;
 import com.demo.app.dto.offline.OfflineExamRequest;
 import com.demo.app.dto.offline.OfflineExamResponse;
 import com.demo.app.dto.studentTest.QuestionSelectedAnswer;
+import com.demo.app.dto.studentTest.StudentTestAttemptResponse;
 import com.demo.app.dto.studentTest.StudentTestDetailResponse;
 import com.demo.app.dto.studentTest.StudentTestFinishRequest;
 import com.demo.app.exception.EntityNotFoundException;
@@ -55,9 +56,11 @@ public class StudentTestServiceImpl implements StudentTestService {
 
     private final TestSetQuestionRepository testSetQuestionRepository;
 
+    private final StudentTestDetailRepository studentTestDetailRepository;
+
     @Override
     @Transactional
-    public StudentTestDetailResponse attemptTest(String classCode, Principal principal) {
+    public StudentTestAttemptResponse attemptTest(String classCode, Principal principal) {
         var examClass = examClassRepository.findByCodeAndEnabledIsTrue(classCode)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Class with code %s not found !", classCode),
@@ -72,12 +75,12 @@ public class StudentTestServiceImpl implements StudentTestService {
                 examClass.getId()
         );
         if (studentTest != null) {
-            return mapTestSetToResponse(studentTest.getTestSet());
+            return mapTestSetToAttemptResponse(studentTest.getTestSet());
         }
         return attemptNewTest(examClass, student);
     }
 
-    private StudentTestDetailResponse attemptNewTest(ExamClass examClass, Student student) {
+    private StudentTestAttemptResponse attemptNewTest(ExamClass examClass, Student student) {
         var test = examClass.getTest();
         var pageable = PageRequest.of(0, 1);
         var testSet = testSetRepository.findRandomTestSetByTest(test.getId(), pageable)
@@ -89,15 +92,15 @@ public class StudentTestServiceImpl implements StudentTestService {
                 .examClassId(examClass.getId())
                 .build();
         studentTestRepository.save(studentTest);
-        return mapTestSetToResponse(testSet);
+        return mapTestSetToAttemptResponse(testSet);
     }
 
-    private StudentTestDetailResponse mapTestSetToResponse(TestSet testSet) {
+    private StudentTestAttemptResponse mapTestSetToAttemptResponse(TestSet testSet) {
         var questions = testSet.getTestSetQuestions()
-                .stream().map(testSetQuestion -> {
+                .parallelStream().map(testSetQuestion -> {
                     var questionResponse = modelMapper.map(
                             testSetQuestion.getQuestion(),
-                            StudentTestDetailResponse.StudentTestQuestion.class);
+                            StudentTestAttemptResponse.StudentTestQuestion.class);
                     questionResponse.setQuestionNo(testSetQuestion.getQuestionNo());
                     var answerResponses = questionResponse.getAnswers().iterator();
                     testSetQuestion.getTestSetQuestionAnswers()
@@ -110,7 +113,7 @@ public class StudentTestServiceImpl implements StudentTestService {
                             });
                     return questionResponse;
                 }).toList();
-        return StudentTestDetailResponse.builder()
+        return StudentTestAttemptResponse.builder()
                 .testNo(testSet.getTestNo())
                 .questions(questions)
                 .build();
@@ -131,7 +134,6 @@ public class StudentTestServiceImpl implements StudentTestService {
         );
         var testSet = studentTest.getTestSet();
         var test = testSet.getTest();
-
         var binarySelectedAnswers = request.getQuestions()
                 .parallelStream().map(question -> {
                     var selectedAnswerNo = question.getSelectedAnswerNo();
@@ -152,7 +154,6 @@ public class StudentTestServiceImpl implements StudentTestService {
         studentTest.setMark(mark);
         studentTest.setGrade(Double.parseDouble(roundedGrade));
         studentTest.setState(State.FINISHED);
-
         var studentTestDetails = binarySelectedAnswers.parallelStream()
                 .map(selectedAnswer -> {
                     var testSetQuestion = testSetQuestionRepository.findByTestSetAndQuestionNo(
@@ -168,7 +169,6 @@ public class StudentTestServiceImpl implements StudentTestService {
                 }).collect(Collectors.toList());
         studentTest.setStudentTestDetails(studentTestDetails);
         studentTestRepository.save(studentTest);
-
     }
 
     private int markStudentTestOnline(List<QuestionSelectedAnswer> binarySelectedAnswers,
@@ -295,6 +295,31 @@ public class StudentTestServiceImpl implements StudentTestService {
         sortedAnswerNoText.forEach((no, text) -> stringBuilder.append(
                 selectedAnswerNo.contains(text) ? "1" : "0"));
         return stringBuilder.toString();
+    }
+
+    @Override
+    public StudentTestDetailResponse getStudentTestDetail(Integer studentTestId){
+        var studentTest = studentTestRepository.findByIdAndEnabledIsTrue(studentTestId)
+                .orElseThrow(() -> new EntityNotFoundException("Student Test not found !", HttpStatus.NOT_FOUND));
+        var studentTestDetails = studentTestDetailRepository.findByStudentTest(studentTest).iterator();
+        var testAttempted = mapTestSetToAttemptResponse(studentTest.getTestSet());
+        var testDetail = modelMapper.map(testAttempted, StudentTestDetailResponse.class);
+        testDetail.setGrade(studentTest.getGrade());
+        testDetail.setMark(studentTest.getMark());
+        testDetail.getQuestions().forEach(question -> {
+            var studentTestDetail = studentTestDetails.next();
+            question.setIsCorrected(studentTestDetail.getIsCorrected());
+            var isSelects = convertBinaryToSelected(studentTestDetail.getSelectedAnswer()).iterator();
+            question.getAnswers().forEach(answer -> answer.setIsSelected(isSelects.next()));
+        });
+        return testDetail;
+    }
+
+    private List<Boolean> convertBinaryToSelected(String selectedAnswer){
+        return selectedAnswer.chars().mapToObj(e->(char)e)
+                .toList().parallelStream()
+                .map(binaryLetter -> binaryLetter.equals('1'))
+                .collect(Collectors.toList());
     }
 
 }

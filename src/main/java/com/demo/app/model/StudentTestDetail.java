@@ -22,7 +22,7 @@ public class StudentTestDetail extends BaseEntity {
     @ManyToOne
     private StudentTest studentTest;
 
-    @OneToOne
+    @ManyToOne
     private TestSetQuestion testSetQuestion;
 
 

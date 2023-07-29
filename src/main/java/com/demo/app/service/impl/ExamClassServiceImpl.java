@@ -121,6 +121,7 @@ public class ExamClassServiceImpl implements ExamClassService {
                             .state(studentTest.getState().toString())
                             .testDate(studentTest.getTestDate().toString())
                             .grade(studentTest.getGrade())
+                            .studentTestId(studentTest.getId())
                             .build();
                 }).collect(Collectors.toList());
         return ClassDetailResponse.builder()
@@ -148,6 +149,7 @@ public class ExamClassServiceImpl implements ExamClassService {
                         .build());
         var classResponse = mapper.map(examClass, ClassInfoResponse.ClassResponse.class);
         var testResponse = mapper.map(examClass.getTest(), ClassInfoResponse.TestResponse.class);
+        classResponse.setStudentTestId(studentTest.getId());
         testResponse.setState(studentTest.getState().toString());
         return ClassInfoResponse.builder()
                 .examClass(classResponse)

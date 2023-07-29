@@ -13,7 +13,9 @@ import lombok.ToString;
 @ToString
 public class StudentTestResponse {
 
-    @JsonIgnoreProperties({"id", "username", "phoneNumber", "birthday", "createdAt"})
+    @JsonIgnoreProperties(
+            {"id", "username", "phoneNumber",
+            "birthday", "createdAt"})
     private StudentResponse student;
 
     private String testDate;

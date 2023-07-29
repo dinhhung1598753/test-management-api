@@ -8,9 +8,10 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudentTestResultResponse {
+@Builder
+public class StudentTestAttemptResponse {
 
-    private Integer testNo;
+    private int testNo;
 
     private List<StudentTestQuestion> questions;
 
@@ -25,9 +26,9 @@ public class StudentTestResultResponse {
 
         private String topicText;
 
-        private String topicImage;
+        private String level;
 
-        private boolean isCorrected;
+        private String topicImage;
 
         private List<StudentTestAnswer> answers;
 
@@ -42,9 +43,6 @@ public class StudentTestResultResponse {
 
             private String content;
 
-            private boolean isSelected;
-
         }
     }
-
 }

@@ -30,6 +30,8 @@ public class ClassDetailResponse {
 
         private Double grade;
 
+        private Integer studentTestId;
+
     }
 
 }

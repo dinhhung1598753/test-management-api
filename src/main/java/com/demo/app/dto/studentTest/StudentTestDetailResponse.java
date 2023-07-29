@@ -7,11 +7,14 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@ToString
 public class StudentTestDetailResponse {
 
     private int testNo;
+
+    private Integer mark;
+
+    private Double grade;
 
     private List<StudentTestQuestion> questions;
 
@@ -20,15 +23,16 @@ public class StudentTestDetailResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
+    @ToString
     public static class StudentTestQuestion {
 
         private int questionNo;
 
         private String topicText;
 
-        private String level;
-
         private String topicImage;
+
+        private Boolean isCorrected;
 
         private List<StudentTestAnswer> answers;
 
@@ -37,11 +41,14 @@ public class StudentTestDetailResponse {
         @NoArgsConstructor
         @AllArgsConstructor
         @Builder
+        @ToString
         public static class StudentTestAnswer {
 
             private String answerNo;
 
             private String content;
+
+            private Boolean isSelected;
 
         }
     }

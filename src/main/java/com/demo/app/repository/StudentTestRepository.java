@@ -25,4 +25,6 @@ public interface StudentTestRepository extends JpaRepository<StudentTest, Intege
             Integer examClassId
     );
 
+    Optional<StudentTest> findByIdAndEnabledIsTrue(Integer id);
+
 }
