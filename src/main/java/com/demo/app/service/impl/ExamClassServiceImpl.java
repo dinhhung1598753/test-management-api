@@ -69,7 +69,7 @@ public class ExamClassServiceImpl implements ExamClassService {
                 .orElseThrow(() -> new InvalidRoleException("You don't have role to do this action!", HttpStatus.FORBIDDEN));
         var examClass = examClassRepository.findByCodeAndEnabledIsTrue(classCode)
                 .orElseThrow(() -> new EntityNotFoundException("Class does not existed", HttpStatus.BAD_REQUEST));
-        var objects = examClassRepository.findByJoinStudentAndEnabledIsTrue(classCode);
+        var objects = examClassRepository.findStudentsByCodeAndEnabledIsTrue(classCode);
         var students = objects.parallelStream()
                 .map(object -> (Student) object[1])
                 .collect(Collectors.toSet());
@@ -107,7 +107,7 @@ public class ExamClassServiceImpl implements ExamClassService {
 
     @Override
     public ClassDetailResponse getExamClassDetail(int examClassId) {
-        var objects = examClassRepository.findByJoinStudentWhereIdAndEnabledIsTrue(examClassId);
+        var objects = examClassRepository.findStudentsByIdAndEnabledIsTrue(examClassId);
         var studentClasses = objects.parallelStream()
                 .map(object -> {
                     var student = (Student) object[1];
@@ -121,6 +121,7 @@ public class ExamClassServiceImpl implements ExamClassService {
                             .state(studentTest.getState().toString())
                             .testDate(studentTest.getTestDate().toString())
                             .grade(studentTest.getGrade())
+                            .mark(studentTest.getMark())
                             .studentTestId(studentTest.getId())
                             .build();
                 }).collect(Collectors.toList());
@@ -163,7 +164,7 @@ public class ExamClassServiceImpl implements ExamClassService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Exam class " + code + " not found !",
                         HttpStatus.NOT_FOUND));
-        var examClassStudents = examClassRepository.findByJoinStudentWhereIdAndEnabledIsTrue(examClass.getId());
+        var examClassStudents = examClassRepository.findStudentsByIdAndEnabledIsTrue(examClass.getId());
         var studentTestExcelResponses = examClassStudents.parallelStream()
                 .map(examClassStudent -> {
                     var student = (Student) examClassStudent[1];
@@ -171,9 +172,9 @@ public class ExamClassServiceImpl implements ExamClassService {
                             .orElse(StudentTest.builder().state(State.NOT_ATTEMPT)
                                     .testDate(LocalDate.of(2000, 1, 1))
                                     .build());
+                    var testDate = studentTest.getTestDate().toString();
                     return StudentTestExcelResponse.builder()
-                            .classCode(code)
-                            .testDate(studentTest.getTestDate().toString())
+                            .classCode(code).testDate(testDate)
                             .fullName(student.getFullname())
                             .grade(studentTest.getGrade())
                             .studentCode(student.getCode())
@@ -182,17 +183,18 @@ public class ExamClassServiceImpl implements ExamClassService {
                             .email(student.getUser().getEmail())
                             .build();
                 }).collect(Collectors.toList());
-        if (studentTestExcelResponses.size() == 0){
-            studentTestExcelResponses.add(StudentTestExcelResponse.builder().build());
+        if (studentTestExcelResponses.isEmpty()){
+            studentTestExcelResponses.add(
+                    StudentTestExcelResponse.builder().build()
+            );
         }
         return ExcelUtils.convertContentsToExcel(studentTestExcelResponses);
     }
 
     @Override
     public void disableExamClass(int examClassId) {
-         var examClass = examClassRepository.findById(examClassId).orElseThrow(
-                () -> new EntityNotFoundException("Exam class not found !", HttpStatus.NOT_FOUND)
-        );
+         var examClass = examClassRepository.findById(examClassId)
+                 .orElseThrow(() -> new EntityNotFoundException("Exam class not found !", HttpStatus.NOT_FOUND));
         examClass.setEnabled(false);
         examClass.setStudents(null);
         examClassRepository.save(examClass);

@@ -22,7 +22,7 @@ public class ExamClassRepositoryTests {
     @Test
     public void testFindByCode(){
         String code = "200789";
-        var examClass = examClassRepository.findByJoinStudentAndEnabledIsTrue(code);
+        var examClass = examClassRepository.findStudentsByCodeAndEnabledIsTrue(code);
 
         Assertions.assertThat(examClass).isNotNull();
     }
@@ -30,7 +30,7 @@ public class ExamClassRepositoryTests {
     @Test
     public void test2(){
         Integer id = 2;
-        var objects = examClassRepository.findByJoinStudentWhereIdAndEnabledIsTrue(id);
+        var objects = examClassRepository.findStudentsByIdAndEnabledIsTrue(id);
         Assertions.assertThat(objects).isNotNull();
         System.out.println(objects);
     }

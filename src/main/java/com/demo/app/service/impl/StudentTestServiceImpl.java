@@ -12,7 +12,6 @@ import com.demo.app.exception.InvalidRoleException;
 import com.demo.app.model.*;
 import com.demo.app.repository.*;
 import com.demo.app.service.StudentTestService;
-import com.demo.app.util.constant.Constant;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.demo.app.util.constant.Constant.ANSWER_TEXTS;
 
 @Service
 @RequiredArgsConstructor
@@ -106,7 +107,7 @@ public class StudentTestServiceImpl implements StudentTestService {
                     testSetQuestion.getTestSetQuestionAnswers()
                             .forEach(questionAnswer -> {
                                 var answerResponse = answerResponses.next();
-                                var answerNo = Constant.ANSWER_TEXTS.get(questionAnswer.getAnswerNo());
+                                var answerNo = ANSWER_TEXTS.get(questionAnswer.getAnswerNo());
                                 var content = questionAnswer.getAnswer().getContent();
                                 answerResponse.setAnswerNo(answerNo);
                                 answerResponse.setContent(content);
@@ -235,12 +236,12 @@ public class StudentTestServiceImpl implements StudentTestService {
                         String.format("Student %s not found !", request.getStudentCode()),
                         HttpStatus.NOT_FOUND));
         var test = testSet.getTest();
-        var questionAnswers = testSetQuestionRepository
+        var correctedAnswers = testSetQuestionRepository
                 .findByTestSet(testSet).stream()
                 .collect(Collectors.toMap(
                         TestSetQuestion::getQuestionNo,
                         TestSetQuestion::getBinaryAnswer));
-        var mark = markStudentTestOffline(request.getAnswers(), questionAnswers);
+        var mark = markStudentTestOffline(request.getAnswers(), correctedAnswers);
         var grade = ((double) mark / test.getQuestionQuantity()) * test.getTotalPoint();
         var roundedGrade = new DecimalFormat("#.0").format(grade);
         grade = Double.parseDouble(roundedGrade);
@@ -269,7 +270,24 @@ public class StudentTestServiceImpl implements StudentTestService {
         response.setGrade(grade);
         response.setMark(mark);
         response.setTotalPoint(test.getTotalPoint());
+        response.getAnswers().forEach(questionAnswer -> {
+            var correctedAnswer = correctedAnswers.get(questionAnswer.getQuestionNo());
+            questionAnswer.setCorrected(convertBinaryToText(correctedAnswer));
+        });
         return response;
+    }
+
+    private String convertBinaryToText(String binary){
+        if (binary == null) return null;
+        StringBuilder stringBuilder = new StringBuilder();
+        List<Character> selected = binary.chars()
+                .mapToObj(e -> (char) e).toList();
+        for (int i = 0; i < selected.size(); i++) {
+            if (selected.get(i).equals('1')) {
+                stringBuilder.append(ANSWER_TEXTS.get(i + 1));
+            }
+        }
+        return stringBuilder.toString();
     }
 
     private int markStudentTestOffline(List<OfflineExamRequest.OfflineAnswer> offlineAnswers,
@@ -288,7 +306,7 @@ public class StudentTestServiceImpl implements StudentTestService {
 
     private String convertSelectedTextToBinary(String selectedAnswerNo) {
         var stringBuilder = new StringBuilder();
-        var sortedAnswerNoText = Constant.ANSWER_TEXTS
+        var sortedAnswerNoText = ANSWER_TEXTS
                 .entrySet().stream().sorted(Map.Entry.comparingByKey())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
                         (oldValue, newValue) -> oldValue, HashMap::new));

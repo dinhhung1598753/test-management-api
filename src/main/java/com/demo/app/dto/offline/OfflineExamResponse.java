@@ -25,7 +25,7 @@ public class OfflineExamResponse {
 
     private Integer totalPoint;
 
-    private List<OfflineExamRequest.OfflineAnswer> answers;
+    private List<OfflineAnswer> answers;
 
     @Getter
     @Setter
@@ -38,6 +38,8 @@ public class OfflineExamResponse {
         private String isSelected;
 
         private Boolean isCorrected;
+
+        private String corrected;
 
     }
 

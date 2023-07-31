@@ -32,7 +32,7 @@ public interface ExamClassRepository extends JpaRepository<ExamClass, Integer> {
         join fetch ec.students s
         where ec.code = :exam_class_code and s.enabled = true
     """)
-    List<Object[]> findByJoinStudentAndEnabledIsTrue(@Param("exam_class_code") String classCode);
+    List<Object[]> findStudentsByCodeAndEnabledIsTrue(@Param("exam_class_code") String classCode);
 
     @Query("""
         select ec, s
@@ -40,5 +40,5 @@ public interface ExamClassRepository extends JpaRepository<ExamClass, Integer> {
         join fetch ec.students s
         where ec.id = :exam_class_id and ec.enabled = true
     """)
-    List<Object[]> findByJoinStudentWhereIdAndEnabledIsTrue(@Param("exam_class_id") Integer examClassId);
+    List<Object[]> findStudentsByIdAndEnabledIsTrue(@Param("exam_class_id") Integer examClassId);
 }

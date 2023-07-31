@@ -32,6 +32,8 @@ public class ClassDetailResponse {
 
         private Integer studentTestId;
 
+        private Integer mark;
+
     }
 
 }
