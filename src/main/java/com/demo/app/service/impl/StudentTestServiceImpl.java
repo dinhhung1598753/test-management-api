@@ -275,7 +275,7 @@ public class StudentTestServiceImpl implements StudentTestService {
         return response;
     }
 
-    private String convertBinaryToText(String binary){
+    private String convertBinaryToText(String binary) {
         if (binary == null) return null;
         StringBuilder stringBuilder = new StringBuilder();
         List<Character> selected = binary.chars()
@@ -314,32 +314,47 @@ public class StudentTestServiceImpl implements StudentTestService {
     }
 
     @Override
-    public StudentTestDetailResponse getStudentTestDetail(Integer studentTestId){
+    public StudentTestDetailResponse getStudentTestDetail(Integer studentTestId) {
         var studentTest = studentTestRepository.findByIdAndEnabledIsTrue(studentTestId)
                 .orElseThrow(() -> new EntityNotFoundException("Student Test not found !", HttpStatus.NOT_FOUND));
-        var studentTestDetails = studentTestDetailRepository.findByStudentTest(studentTest).iterator();
+        var studentTestDetails = studentTestDetailRepository.findByStudentTest(studentTest);
         var testAttempted = mapTestSetToAttemptResponse(studentTest.getTestSet());
         var testDetail = modelMapper.map(testAttempted, StudentTestDetailResponse.class);
         testDetail.setGrade(studentTest.getGrade());
         testDetail.setMark(studentTest.getMark());
-        testDetail.getQuestions().forEach(question -> {
-            var studentTestDetail = studentTestDetails.next();
-            question.setIsCorrected(studentTestDetail.getIsCorrected());
-            var isSelects = convertBinaryToSelected(studentTestDetail.getSelectedAnswer()).iterator();
-            question.getAnswers().forEach(answer -> answer.setIsSelected(isSelects.next()));
-        });
+
+        var questionNoStudentTestDetails = studentTestDetails
+                .parallelStream()
+                .collect(Collectors.toMap(
+                        studentTestDetail -> studentTestDetail.getTestSetQuestion().getQuestionNo(),
+                        StudentTestDetail::getIsCorrected)
+                );
+        var selectedAnswerStudentTestDetails = studentTestDetails
+                .parallelStream()
+                .collect(Collectors.toMap(
+                        studentTestDetail -> studentTestDetail.getTestSetQuestion().getQuestionNo(),
+                        StudentTestDetail::getSelectedAnswer)
+                );
+        testDetail.getQuestions()
+                .forEach(question -> {
+                    question.setIsCorrected(questionNoStudentTestDetails.get(question.getQuestionNo()));
+                    var selectAnswer = selectedAnswerStudentTestDetails.get(question.getQuestionNo());
+                    var isSelects = convertBinaryToSelected(selectAnswer != null ? selectAnswer : "0000")
+                            .iterator();
+                    question.getAnswers().forEach(answer -> answer.setIsSelected(isSelects.next()));
+                });
         return testDetail;
     }
 
-    private List<Boolean> convertBinaryToSelected(String selectedAnswer){
-        return selectedAnswer.chars().mapToObj(e->(char)e)
+    private List<Boolean> convertBinaryToSelected(String selectedAnswer) {
+        return selectedAnswer.chars().mapToObj(e -> (char) e)
                 .toList().parallelStream()
                 .map(binaryLetter -> binaryLetter.equals('1'))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<StudentTestResponse> getAllTestOfStudent(Principal principal){
+    public List<StudentTestResponse> getAllTestOfStudent(Principal principal) {
         var student = studentRepository.findByUsernameAndEnabledIsTrue(principal.getName())
                 .orElseThrow(() -> new EntityNotFoundException("Student not found !", HttpStatus.NOT_FOUND));
         var studentTests = studentTestRepository.findByStudentAndEnabledIsTrue(student);
