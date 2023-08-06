@@ -34,6 +34,8 @@ public class StudentTestDetailResponse {
 
         private Boolean isCorrected;
 
+        private String correctedAnswer;
+
         private List<StudentTestAnswer> answers;
 
         @Getter

@@ -335,13 +335,24 @@ public class StudentTestServiceImpl implements StudentTestService {
                         studentTestDetail -> studentTestDetail.getTestSetQuestion().getQuestionNo(),
                         StudentTestDetail::getSelectedAnswer)
                 );
+        var questionNoCorrectedAnswers = studentTestDetails
+                .parallelStream()
+                .collect(Collectors.toMap(
+                        studentTestDetail -> studentTestDetail.getTestSetQuestion().getQuestionNo(),
+                        studentTestDetail -> {
+                            var binaryAnswer = studentTestDetail.getTestSetQuestion().getBinaryAnswer();
+                            return convertBinaryToText(binaryAnswer);
+                        })
+                );
         testDetail.getQuestions()
                 .forEach(question -> {
-                    question.setIsCorrected(questionNoStudentTestDetails.get(question.getQuestionNo()));
+                    var questionIsCorrected = questionNoStudentTestDetails.get(question.getQuestionNo());
                     var selectAnswer = selectedAnswerStudentTestDetails.get(question.getQuestionNo());
-                    var isSelects = convertBinaryToSelected(selectAnswer != null ? selectAnswer : "0000")
-                            .iterator();
+                    var correctedAnswer = questionNoCorrectedAnswers.get(question.getQuestionNo());
+                    question.setIsCorrected(questionIsCorrected);
+                    var isSelects = convertBinaryToSelected(selectAnswer != null ? selectAnswer : "0000").iterator();
                     question.getAnswers().forEach(answer -> answer.setIsSelected(isSelects.next()));
+                    question.setCorrectedAnswer(correctedAnswer);
                 });
         return testDetail;
     }
