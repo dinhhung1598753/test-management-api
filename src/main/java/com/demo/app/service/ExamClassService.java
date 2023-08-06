@@ -20,6 +20,9 @@ public interface ExamClassService {
     ExamClass joinExamClassByCode(String classCode, Principal principal);
 
     @Transactional
+    void addStudentToClass(String examClassCode, List<String> studentCodes);
+
+    @Transactional
     void importClassStudents(String classCode, MultipartFile file) throws IOException;
 
     List<ClassResponse> getAllEnabledExamClass();

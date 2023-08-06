@@ -6,6 +6,7 @@ import com.demo.app.model.StudentTest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -26,5 +27,7 @@ public interface StudentTestRepository extends JpaRepository<StudentTest, Intege
     );
 
     Optional<StudentTest> findByIdAndEnabledIsTrue(Integer id);
+
+    List<StudentTest> findByStudentAndEnabledIsTrue(Student student);
 
 }

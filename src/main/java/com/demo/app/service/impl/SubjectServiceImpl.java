@@ -140,8 +140,9 @@ public class SubjectServiceImpl implements SubjectService {
                         String.format("Subject %s not found !", code),
                         HttpStatus.NOT_FOUND)
                 );
-        subject.getChapters()
-                .removeIf(chapter -> !chapter.getEnabled());
+        var chapters = chapterRepository.findBySubjectAndEnabledIsTrue(subject);
+        chapters.forEach(System.out::println);
+        subject.setChapters(chapters);
         return mapper.map(subject, SubjectChaptersResponse.class);
     }
 

@@ -153,7 +153,7 @@ public class TestSetServiceImpl implements TestSetService {
     }
 
     private TestSetDetailResponse mapTestSetToDetailResponse(TestSet testSet) {
-        var testSetQuestions = testSetQuestionRepository.findByTestSet(testSet);
+        var testSetQuestions = testSetQuestionRepository.findByTestSetOrderByQuestionNoAsc(testSet);
         var questionResponses = testSetQuestions.parallelStream()
                 .map(testSetQuestion -> {
                     var questionResponse = mapper.map(

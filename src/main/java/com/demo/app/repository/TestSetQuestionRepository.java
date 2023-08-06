@@ -10,8 +10,8 @@ import java.util.List;
 @Repository
 public interface TestSetQuestionRepository extends JpaRepository<TestSetQuestion, Integer> {
 
-    TestSetQuestion findByTestSetAndQuestionNo(TestSet testset, int questionNo);
+    TestSetQuestion findByTestSetAndQuestionNoOrderByQuestionNoAsc(TestSet testset, int questionNo);
 
-    List<TestSetQuestion> findByTestSet(TestSet testSet);
+    List<TestSetQuestion> findByTestSetOrderByQuestionNoAsc(TestSet testSet);
 
 }

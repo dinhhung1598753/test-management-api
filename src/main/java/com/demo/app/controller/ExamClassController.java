@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/v1/class")
@@ -30,7 +31,7 @@ public class ExamClassController {
     @PostMapping("/create")
     @PreAuthorize("hasAnyRole('TEACHER')")
     public ResponseEntity<?> createExamClass(@RequestBody ClassRequest request, Principal principal) {
-        if (principal == null) {
+        if (principal == null || principal.getName().equals("anonymousUser")){
             throw new UserNotSignInException("You're not logged in !", HttpStatus.UNAUTHORIZED);
         }
         examClassService.createExamClass(request, principal);
@@ -64,6 +65,14 @@ public class ExamClassController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(examClassService.getAllEnabledExamClass());
+    }
+
+    @PostMapping(path = "/student/add")
+    public ResponseEntity<?> addStudentsToClass(@RequestParam String examClassCode,
+                                                @RequestBody List<String> studentCodes){
+        examClassService.addStudentToClass(examClassCode, studentCodes);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseMessage("Add students to class successfully !"));
     }
 
     @GetMapping(path = "/student/list")

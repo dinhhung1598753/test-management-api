@@ -1,7 +1,5 @@
 package com.demo.app.dto.studentTest;
 
-import com.demo.app.dto.student.StudentResponse;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,13 +11,18 @@ import lombok.ToString;
 @ToString
 public class StudentTestResponse {
 
-    @JsonIgnoreProperties(
-            {"id", "username", "phoneNumber",
-            "birthday", "createdAt"})
-    private StudentResponse student;
+    private Integer id;
+
+    private String examClassCode;
+
+    private Integer testNo;
+
+    private String state;
 
     private String testDate;
 
     private Double grade;
+
+    private Integer mark;
 
 }

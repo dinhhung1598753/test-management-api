@@ -6,6 +6,7 @@ import com.demo.app.dto.offline.OfflineExamResponse;
 import com.demo.app.dto.studentTest.StudentTestAttemptResponse;
 import com.demo.app.dto.studentTest.StudentTestDetailResponse;
 import com.demo.app.dto.studentTest.StudentTestFinishRequest;
+import com.demo.app.dto.studentTest.StudentTestResponse;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -22,4 +23,6 @@ public interface StudentTestService {
     OfflineExamResponse markStudentOfflineTest(OfflineExamRequest request);
 
     StudentTestDetailResponse getStudentTestDetail(Integer studentTestId);
+
+    List<StudentTestResponse> getAllTestOfStudent(Principal principal);
 }

@@ -5,7 +5,6 @@ import com.demo.app.dto.offline.OfflineExamRequest;
 import com.demo.app.dto.studentTest.StudentTestFinishRequest;
 import com.demo.app.dto.studentTest.TestImageResponse;
 import com.demo.app.exception.FileInputException;
-import com.demo.app.exception.InvalidVerificationTokenException;
 import com.demo.app.exception.UserNotSignInException;
 import com.demo.app.service.FileStorageService;
 import com.demo.app.service.StudentTestService;
@@ -57,8 +56,8 @@ public class StudentTestController {
     @GetMapping(path = "/attempt")
     @PreAuthorize("hasAnyRole('STUDENT')")
     public ResponseEntity<?> attemptTest(@RequestParam String classCode, Principal principal) {
-        if (principal == null) {
-            throw new UserNotSignInException("You are not logged in !", HttpStatus.UNAUTHORIZED);
+        if (principal == null || principal.getName().equals("anonymousUser")){
+            throw new UserNotSignInException("You're not logged in !", HttpStatus.UNAUTHORIZED);
         }
         var response = studentTestService.attemptTest(classCode, principal);
         return ResponseEntity.status(HttpStatus.OK)
@@ -69,8 +68,8 @@ public class StudentTestController {
     @PreAuthorize("hasAnyRole('STUDENT')")
     public ResponseEntity<?> finishTest(@RequestBody StudentTestFinishRequest request,
                                         Principal principal) throws InterruptedException {
-        if (principal == null) {
-            throw new InvalidVerificationTokenException("Please login first !", HttpStatus.UNAUTHORIZED);
+        if (principal == null || principal.getName().equals("anonymousUser")){
+            throw new UserNotSignInException("You're not logged in !", HttpStatus.UNAUTHORIZED);
         }
         studentTestService.finishStudentTest(request, principal);
         return null;
@@ -96,6 +95,16 @@ public class StudentTestController {
         var responses = requests.parallelStream()
                 .map(studentTestService::markStudentOfflineTest)
                 .collect(Collectors.toList());
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(responses);
+    }
+
+    @GetMapping(path = "/list")
+    public ResponseEntity<?> getAllTestOfStudent(Principal principal){
+        if (principal == null || principal.getName().equals("anonymousUser")){
+            throw new UserNotSignInException("You're not logged in !", HttpStatus.UNAUTHORIZED);
+        }
+        var responses = studentTestService.getAllTestOfStudent(principal);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(responses);
     }

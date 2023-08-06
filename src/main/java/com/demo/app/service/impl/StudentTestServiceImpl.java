@@ -3,10 +3,7 @@ package com.demo.app.service.impl;
 import com.demo.app.dto.offline.OfflineExam;
 import com.demo.app.dto.offline.OfflineExamRequest;
 import com.demo.app.dto.offline.OfflineExamResponse;
-import com.demo.app.dto.studentTest.QuestionSelectedAnswer;
-import com.demo.app.dto.studentTest.StudentTestAttemptResponse;
-import com.demo.app.dto.studentTest.StudentTestDetailResponse;
-import com.demo.app.dto.studentTest.StudentTestFinishRequest;
+import com.demo.app.dto.studentTest.*;
 import com.demo.app.exception.EntityNotFoundException;
 import com.demo.app.exception.InvalidRoleException;
 import com.demo.app.model.*;
@@ -144,7 +141,7 @@ public class StudentTestServiceImpl implements StudentTestService {
                             .questionNo(question.getQuestionNo())
                             .build();
                 }).collect(Collectors.toList());
-        var correctedAnswers = testSetQuestionRepository.findByTestSet(testSet)
+        var correctedAnswers = testSetQuestionRepository.findByTestSetOrderByQuestionNoAsc(testSet)
                 .parallelStream().collect(Collectors.toMap(
                         TestSetQuestion::getQuestionNo,
                         TestSetQuestion::getBinaryAnswer
@@ -157,7 +154,7 @@ public class StudentTestServiceImpl implements StudentTestService {
         studentTest.setState(State.FINISHED);
         var studentTestDetails = binarySelectedAnswers.parallelStream()
                 .map(selectedAnswer -> {
-                    var testSetQuestion = testSetQuestionRepository.findByTestSetAndQuestionNo(
+                    var testSetQuestion = testSetQuestionRepository.findByTestSetAndQuestionNoOrderByQuestionNoAsc(
                             testSet,
                             selectedAnswer.getQuestionNo()
                     );
@@ -200,12 +197,13 @@ public class StudentTestServiceImpl implements StudentTestService {
     }
 
     private List<OfflineExam> getHandleResults(String classCode) throws IOException {
-        try (var paths = Files.list(Paths.get("images/answer_sheets/" + classCode))) {
+        try (var paths = Files.list(Paths.get("src/main/resources/images/answer_sheets/" + classCode))) {
             var fileNames = paths.parallel()
                     .filter(path -> !Files.isDirectory(path))
                     .map(path -> path.getFileName().toString())
                     .toList();
             return fileNames.parallelStream()
+                    .filter(fileName -> !fileName.startsWith("."))
                     .map(fileName -> {
                         var responseFilePath = "json/" + fileName + "/" + PYTHON_JSON_RESPONSE_FILE;
                         var fileDataJson = new File(responseFilePath);
@@ -237,7 +235,7 @@ public class StudentTestServiceImpl implements StudentTestService {
                         HttpStatus.NOT_FOUND));
         var test = testSet.getTest();
         var correctedAnswers = testSetQuestionRepository
-                .findByTestSet(testSet).stream()
+                .findByTestSetOrderByQuestionNoAsc(testSet).stream()
                 .collect(Collectors.toMap(
                         TestSetQuestion::getQuestionNo,
                         TestSetQuestion::getBinaryAnswer));
@@ -255,7 +253,7 @@ public class StudentTestServiceImpl implements StudentTestService {
         var studentTestDetails = request.getAnswers()
                 .parallelStream().map(offlineAnswer -> {
                     var testSetQuestion = testSetQuestionRepository
-                            .findByTestSetAndQuestionNo(testSet, offlineAnswer.getQuestionNo());
+                            .findByTestSetAndQuestionNoOrderByQuestionNoAsc(testSet, offlineAnswer.getQuestionNo());
                     return StudentTestDetail.builder()
                             .studentTest(studentTest)
                             .selectedAnswer(offlineAnswer.getIsSelected())
@@ -339,5 +337,22 @@ public class StudentTestServiceImpl implements StudentTestService {
                 .map(binaryLetter -> binaryLetter.equals('1'))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<StudentTestResponse> getAllTestOfStudent(Principal principal){
+        var student = studentRepository.findByUsernameAndEnabledIsTrue(principal.getName())
+                .orElseThrow(() -> new EntityNotFoundException("Student not found !", HttpStatus.NOT_FOUND));
+        var studentTests = studentTestRepository.findByStudentAndEnabledIsTrue(student);
+
+        return studentTests.parallelStream()
+                .map(studentTest -> {
+                    var examClass = examClassRepository.findById(studentTest.getExamClassId()).get();
+                    var response = modelMapper.map(studentTest, StudentTestResponse.class);
+                    response.setTestNo(studentTest.getTestSet().getTestNo());
+                    response.setExamClassCode(examClass.getCode());
+                    return response;
+                }).collect(Collectors.toList());
+    }
+
 
 }

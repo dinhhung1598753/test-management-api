@@ -10,8 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor
@@ -32,18 +31,16 @@ public class DatabaseLoader implements CommandLineRunner {
 
     private void initializeRoles() {
         if (roleRepository.count() != 0) return;
-        List<Role> roles = new ArrayList<>();
-        for (Role.RoleType type : Role.RoleType.values()) {
-            roles.add(new Role(type));
-        }
+        var roles = Arrays.stream(Role.RoleType.values())
+                .map(Role::new)
+                .toList();
         roleRepository.saveAll(roles);
-
     }
  
     private void initializeAdminUser(){
         if (!userRepository.existsByUsernameAndEnabledIsTrue("admin")) {
             var roles = roleRepository.findAll();
-            User user = User.builder()
+            var user = User.builder()
                     .username("admin")
                     .email("knkuro00@gmail.com")
                     .password(passwordEncoder.passwordEncode().encode("admin"))

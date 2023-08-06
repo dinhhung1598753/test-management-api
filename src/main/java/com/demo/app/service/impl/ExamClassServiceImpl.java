@@ -68,7 +68,7 @@ public class ExamClassServiceImpl implements ExamClassService {
         var student = studentRepository.findByUsernameAndEnabledIsTrue(principal.getName())
                 .orElseThrow(() -> new InvalidRoleException("You don't have role to do this action!", HttpStatus.FORBIDDEN));
         var examClass = examClassRepository.findByCodeAndEnabledIsTrue(classCode)
-                .orElseThrow(() -> new EntityNotFoundException("Class does not existed", HttpStatus.BAD_REQUEST));
+                .orElseThrow(() -> new EntityNotFoundException("Class does not existed", HttpStatus.NOT_FOUND));
         var objects = examClassRepository.findStudentsByCodeAndEnabledIsTrue(classCode);
         var students = objects.parallelStream()
                 .map(object -> (Student) object[1])
@@ -76,6 +76,21 @@ public class ExamClassServiceImpl implements ExamClassService {
         students.add(student);
         examClass.setStudents(students);
         return examClassRepository.save(examClass);
+    }
+
+    @Override
+    @Transactional
+    public void addStudentToClass(String examClassCode, List<String> studentCodes){
+        var examClass = examClassRepository.findByCodeAndEnabledIsTrue(examClassCode)
+                .orElseThrow(() -> new EntityNotFoundException("Class does not existed", HttpStatus.NOT_FOUND));
+        var objects = examClassRepository.findStudentsByCodeAndEnabledIsTrue(examClassCode);
+        var students = objects.parallelStream()
+                .map(object -> (Student) object[1])
+                .collect(Collectors.toSet());
+        var addStudents = studentRepository.findByCodeIn(studentCodes);
+        students.addAll(addStudents);
+        examClass.setStudents(students);
+        examClassRepository.save(examClass);
     }
 
     @Override

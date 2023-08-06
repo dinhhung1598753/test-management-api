@@ -50,7 +50,7 @@ public class TestSetRepositoryTests {
     public void testTestSetQuestionRepo(){
         var testSet = new TestSet();
         testSet.setId(139);
-        var questions = testSetQuestionRepository.findByTestSet(testSet);
+        var questions = testSetQuestionRepository.findByTestSetOrderByQuestionNoAsc(testSet);
         Assertions.assertThat(questions).isNotNull();
         questions.forEach(System.out::println);
     }
